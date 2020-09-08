@@ -1,16 +1,35 @@
 /* eslint-disable no-restricted-globals */
-import { GithubOutlined } from '@ant-design/icons';
-import { Button, Card } from 'antd';
 import * as React from 'react';
+import { GithubOutlined } from '@ant-design/icons';
+import { Button, Card, Select, Divider } from 'antd';
+
 import rssLogo from '../../static/images/logo-rs-school.svg'
 
 const { Meta } = Card;
+const { Option } = Select;
 
-export default function LoginPage() {
+type Props = {
+  login: () => void;
+}
+
+export const LoginPage: React.FC<Props> = (props) => {
+
+  const [role, setRole] = React.useState("");
   return (
     <main>
       <div className="login-form">
         <img className="login-image" src={rssLogo} alt="RS School Logo" />
+
+        <Divider>Choose youre role</Divider>
+
+        <Select defaultValue="student" style={{ width: 150 }} onChange={(value: string): void => setRole(value)}>
+          <Option value="student">Student</Option>
+          <Option value="author">Author</Option>
+          <Option value="supervisor">Supervisor</Option>
+          <Option value="course_manager">Course manager</Option>
+        </Select>
+
+        <Divider />
 
         <Card
           style={{ width: 320 }}
@@ -24,7 +43,7 @@ export default function LoginPage() {
           actions={[
             <Button
               key={'github'}
-              onClick={() => (window.location.href = `/api/auth/github${location.search}`)}
+              onClick={props.login}
               size="large"
               icon={<GithubOutlined />}
               type="primary"

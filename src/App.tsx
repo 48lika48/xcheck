@@ -4,9 +4,13 @@ import { LoginPage } from './pages';
 import 'antd/dist/antd.css'
 
 function App() {
+
+  const login = () => console.log('login');
+
+
   return (
     <div className="App">
-      <LoginPage />
+      <LoginPage login={login} />
     </div>
   );
 }
