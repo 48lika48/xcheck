@@ -42,11 +42,7 @@ function App() {
     )
   }
 
-  return (
-    <div className="App">
-      <LoginPage login={loginHandler} />
-    </div>
-  );
+  return <LoginPage login={loginHandler} />;
 }
 
 export default App;
