@@ -9,12 +9,15 @@ const { Meta } = Card;
 const { Option } = Select;
 
 type Props = {
-  login: () => void;
+  login: (role: string) => void;
 }
 
 export const LoginPage: React.FC<Props> = (props) => {
 
-  const [role, setRole] = React.useState("");
+  const [role, setRole] = React.useState('student');
+
+  const buttonClickHandler = () => props.login(role);
+
   return (
     <main>
       <div className="login-form">
@@ -43,7 +46,7 @@ export const LoginPage: React.FC<Props> = (props) => {
           actions={[
             <Button
               key={'github'}
-              onClick={props.login}
+              onClick={buttonClickHandler}
               size="large"
               icon={<GithubOutlined />}
               type="primary"

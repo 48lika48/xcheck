@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+.ant-layout {
+  min-height: 100vh;
+  padding: 0;
+
+  &-header {
+    text-align: center;
+    color: #fff;
+  }
+
+  &-content {
+    padding: 0 10px;
+  }
+}
