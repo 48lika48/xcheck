@@ -4,19 +4,39 @@ import { GithubOutlined } from '@ant-design/icons';
 import { Button, Card, Select, Divider } from 'antd';
 
 import rssLogo from '../../static/images/logo-rs-school.svg'
+import { setGithubCookie } from 'src/utils/githubCookies';
+import { GITHUB_AUTH_URL, GITHUB_AUTH_PAGE } from '../../constants';
 
 const { Meta } = Card;
 const { Option } = Select;
 
-type Props = {
-  login: (role: string) => void;
-}
-
-export const LoginPage: React.FC<Props> = (props) => {
+export const LoginPage: React.FC = () => {
 
   const [role, setRole] = React.useState('student');
 
-  const buttonClickHandler = () => props.login(role);
+  const query = window.location.search.substring(1)
+  const token = query ? query.split('access_token=')[1] : null;
+
+  React.useEffect(() => {
+    if (token) {
+      fetch(GITHUB_AUTH_URL, {
+        headers: {
+          Authorization: 'token ' + token
+        }
+      })
+        .then(res => res.json())
+        .then(res => {
+          localStorage.role = role;
+          setGithubCookie(res);
+          window.location.href = '/';
+        })
+
+    }
+  }, []);
+
+  const buttonClickHandler = () => {
+    window.location.href = GITHUB_AUTH_PAGE;
+  }
 
   return (
     <main>

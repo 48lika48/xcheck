@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LoginPage } from './pages';
-import { Layout, Tabs } from 'antd';
-import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone } from '@ant-design/icons';
+import { Layout, Tabs, PageHeader, Button, Tooltip } from 'antd'
+import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone, LogoutOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css'
 import './App.scss';
+import { checkGihubCookie, getGithubUserName, deleteCookie } from './utils/githubCookies';
 
-const { Header, Footer, Content } = Layout;
+
+const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
 
 function App() {
@@ -13,16 +15,29 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState('');
 
-  const loginHandler = (role: string): void => {
-    setIsLoggedIn(true);
-    setRole(role);
-    console.log('login', ' role: ', role);
-  }
+
+  useEffect(() => {
+    if (checkGihubCookie()) {
+      const role = localStorage.getItem('role');
+
+      setIsLoggedIn(true);
+      setRole(role || 'student'); //TODO
+    }
+  }, []);
 
   if (isLoggedIn) {
     return (
       <Layout>
-        <Header>{role}</Header>
+        <PageHeader
+          className="site-page-header"
+          title="RS School XCheck"
+          subTitle={`${getGithubUserName()} (${role})`}
+          extra={
+            <Tooltip title="logout">
+              <Button type="link" shape="circle" icon={<LogoutOutlined onClick={() => { setIsLoggedIn(false); deleteCookie() }} />} />
+            </Tooltip>
+          }
+        />
         <Content>
           <Tabs defaultActiveKey="1">
             <TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
@@ -42,7 +57,7 @@ function App() {
     )
   }
 
-  return <LoginPage login={loginHandler} />;
+  return <LoginPage />;
 }
 
 export default App;
