@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import { GithubOutlined } from '@ant-design/icons';
 import { Button, Card, Select, Divider } from 'antd';
@@ -11,9 +10,6 @@ const { Meta } = Card;
 const { Option } = Select;
 
 export const LoginPage: React.FC = () => {
-
-  const [role, setRole] = React.useState('student');
-
   const query = window.location.search.substring(1)
   const token = query ? query.split('access_token=')[1] : null;
 
@@ -26,13 +22,12 @@ export const LoginPage: React.FC = () => {
       })
         .then(res => res.json())
         .then(res => {
-          localStorage.role = role;
           setGithubCookie(res);
           window.location.href = '/';
         })
 
     }
-  }, []);
+  }, [token]);
 
   const buttonClickHandler = () => {
     window.location.href = GITHUB_AUTH_PAGE;
@@ -45,7 +40,8 @@ export const LoginPage: React.FC = () => {
 
         <Divider>Choose youre role</Divider>
 
-        <Select defaultValue="student" style={{ width: 150 }} onChange={(value: string): void => setRole(value)}>
+        <Select defaultValue="student" style={{ width: 150 }}
+          onChange={(value: string) => localStorage.role = (value)}>
           <Option value="student">Student</Option>
           <Option value="author">Author</Option>
           <Option value="supervisor">Supervisor</Option>

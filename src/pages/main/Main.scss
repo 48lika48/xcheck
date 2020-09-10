@@ -1,4 +1,4 @@
-.ant-layout {
+#root .ant-layout {
   min-height: 100vh;
   padding: 0;
 
@@ -8,6 +8,6 @@
   }
 
   &-content {
-    padding: 0 10px;
+    padding: 0 20px;
   }
 }
