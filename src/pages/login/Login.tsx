@@ -5,6 +5,8 @@ import { Button, Card, Select, Divider } from 'antd';
 import rssLogo from '../../static/images/logo-rs-school.svg'
 import { setGithubCookie } from 'src/utils/githubCookies';
 import { GITHUB_AUTH_URL, GITHUB_AUTH_PAGE } from '../../constants';
+import { GithubInfo } from 'src/models';
+import { getUsers } from 'src/services/heroku';
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -21,13 +23,18 @@ export const LoginPage: React.FC = () => {
         }
       })
         .then(res => res.json())
-        .then(res => {
-          setGithubCookie(res);
-          window.location.href = '/';
-        })
-
+        .then(loginUser)
     }
   }, [token]);
+
+  const loginUser = async (res: GithubInfo) => {
+    const users = await getUsers();
+    const data = await users.text();
+    console.log(data);
+    console.log(res);
+    setGithubCookie(res);
+    window.location.href = '/';
+  }
 
   const buttonClickHandler = () => {
     window.location.href = GITHUB_AUTH_PAGE;
