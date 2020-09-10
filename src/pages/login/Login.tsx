@@ -40,7 +40,7 @@ export const LoginPage: React.FC = () => {
 
         <Divider>Choose youre role</Divider>
 
-        <Select defaultValue="student" style={{ width: 150 }}
+        <Select defaultValue={localStorage.role || "student"} style={{ width: 150 }}
           onChange={(value: string) => localStorage.role = (value)}>
           <Option value="student">Student</Option>
           <Option value="author">Author</Option>

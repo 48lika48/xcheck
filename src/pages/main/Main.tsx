@@ -18,7 +18,7 @@ export const Main: React.FC<{ logoutHandler: any }> = (props) => {
     <Layout>
       <PageHeader
         className="site-page-header"
-        title="RS School XCheck"
+        title="RS School xCheck"
         subTitle={`${getGithubUserName()} (${role})`}
         extra={
           <Tooltip title="logout">
