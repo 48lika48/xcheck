@@ -27,6 +27,13 @@ export enum Category {
   Fines = 'Fines',
 }
 
+export enum UserRole {
+  author = 'author',
+  student = 'student',
+  supervisor = 'supervisor',
+  courseManager = 'course_manager',
+}
+
 export type DataTypes = IUser | ITask | ICheckSession;
 
 export interface ITaskItem {
@@ -41,7 +48,7 @@ export interface ITaskItem {
 export interface IUser {
   id: string;
   githubId: string;
-  roles: string[];
+  roles: UserRole[];
 }
 
 export interface ITask {
