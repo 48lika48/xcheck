@@ -3,41 +3,18 @@ import { GithubOutlined } from '@ant-design/icons';
 import { Button, Card, Select, Divider } from 'antd';
 
 import rssLogo from '../../static/images/logo-rs-school.svg'
-import { setGithubCookie } from 'src/utils/githubCookies';
-import { GITHUB_AUTH_URL, GITHUB_AUTH_PAGE } from '../../constants';
-import { IGithubInfo } from 'src/models';
-import { getUsers } from 'src/services/heroku';
+import { GITHUB_AUTH_PAGE } from '../../constants';
+import { loginUser } from 'src/services/github-auth';
 
 const { Meta } = Card;
 const { Option } = Select;
 
 export const LoginPage: React.FC = () => {
-  const query = window.location.search.substring(1)
-  const token = query ? query.split('access_token=')[1] : null;
+  // const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
-    const asyncData = async () => {
-      if (token) {
-        const res = await fetch(GITHUB_AUTH_URL, {
-          headers: {
-            Authorization: 'token ' + token
-          }
-        });
-        const userData = await res.json();
-        loginUser(userData);
-      }
-    }
-    asyncData();
-  }, [token]);
-
-  const loginUser = async (res: IGithubInfo) => {
-    const users = await getUsers();
-    const data = await users.text();
-    console.log(data);
-    console.log(res);
-    setGithubCookie(res);
-    window.location.href = '/';
-  }
+    loginUser();
+  });
 
   const buttonClickHandler = () => {
     window.location.href = GITHUB_AUTH_PAGE;

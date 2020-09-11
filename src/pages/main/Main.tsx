@@ -3,7 +3,7 @@ import React from 'react';
 import { Layout, Tabs, PageHeader, Button, Tooltip } from 'antd'
 import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone, LogoutOutlined } from '@ant-design/icons';
 
-import { getGithubUserName, deleteCookie } from '../../utils/githubCookies';
+import { getGithubUserName, deleteCookie } from '../../services/github-auth';
 
 import './Main.scss';
 

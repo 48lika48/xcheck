@@ -1,5 +1,26 @@
 import { HEROKU_URL } from '../constants';
 import { Endpoint, ITask, DataTypes, IUser, ICheckSession } from 'src/models';
+import { getGithubLogin } from './github-auth';
+
+export const checkUser = async () => {
+  const usersRes = await getUsers();
+  const users = await usersRes.json();
+  const githubLogin = getGithubLogin();
+  const user = users.find((user: { githubId: string }) => user.githubId === githubLogin);
+  if (!user) {
+    registerUser(githubLogin, users);
+  }
+  return true;
+};
+
+const registerUser = async (githubLogin: string, users: IUser[]) => {
+  const user = {
+    id: `user-${users.length + 1}`,
+    githubId: githubLogin,
+    roles: [localStorage.role || 'student'],
+  };
+  addUser(user);
+};
 
 export const getUsers = async () => {
   const res = await getData(Endpoint.users);

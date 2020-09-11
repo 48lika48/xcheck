@@ -39,8 +39,8 @@ export interface ITaskItem {
 }
 
 export interface IUser {
-  githubId: 'string';
-  id: 'string';
+  id: string;
+  githubId: string;
   roles: string[];
 }
 
