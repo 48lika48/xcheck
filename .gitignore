@@ -24,3 +24,6 @@ yarn-error.log*
 
 #debug
 debug.log
+
+#webstorm idea
+.idea/
