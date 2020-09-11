@@ -1,5 +1,5 @@
 import { HEROKU_URL } from '../constants';
-import { Endpoint, Task, DataTypes, User } from 'src/models';
+import { Endpoint, ITask, DataTypes, IUser, ICheckSession } from 'src/models';
 
 export const getUsers = async () => {
   const res = await getData(Endpoint.users);
@@ -29,13 +29,18 @@ export const getData = async (endpoint: Endpoint) => {
   return res;
 };
 
-export const addUser = async (user: User) => {
+export const addUser = async (user: IUser) => {
   const res = await addData(Endpoint.users, user);
   return res;
 };
 
-export const addTask = async (task: Task) => {
+export const addTask = async (task: ITask) => {
   const res = await addData(Endpoint.tasks, task);
+  return res;
+};
+
+export const addCheckSession = async (checkSession: ICheckSession) => {
+  const res = await addData(Endpoint.checkSessions, checkSession);
   return res;
 };
 

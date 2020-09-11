@@ -10,7 +10,7 @@ const clientID = '8fa44ce53ae4904183bf';
 const clientSecret = 'de17e42f20e97484f31b9209a6187a6a1ea0b8ed';
 
 // Declare the redirect route
-app.get('/user/signin/callback', (req, res) => {
+app.get('/auth/user', (req, res) => {
   // The req.query object has the query params that were sent to this route.
   const requestToken = req.query.code;
 

@@ -1,5 +1,10 @@
-export interface GithubInfo {
+export interface IGithubInfo {
+  login: string;
+  id: number;
+  node_id: string;
+  avatar_url: string;
   name: string;
+  html_url: string;
 }
 
 export enum Endpoint {
@@ -22,9 +27,9 @@ export enum Category {
   Fines = 'Fines',
 }
 
-export type DataTypes = User | Task;
+export type DataTypes = IUser | ITask | ICheckSession;
 
-export interface TaskItem {
+export interface ITaskItem {
   id: string;
   minScore: number;
   maxScore: number;
@@ -33,16 +38,35 @@ export interface TaskItem {
   description: string;
 }
 
-export interface User {
+export interface IUser {
   githubId: 'string';
   id: 'string';
   roles: string[];
 }
 
-export interface Task {
+export interface ITask {
   id: string;
   author: string;
   state: TaskState;
   categoriesOrder: Category[];
-  items: TaskItem[];
+  items: ITaskItem[];
+}
+
+export interface ICheckSessionAttendee {
+  githubId: string;
+  reviewOf: string[];
+}
+
+export interface ICheckSession {
+  id: string;
+  state: TaskState;
+  taskId: string;
+  coefficient: number;
+  startDate: Date;
+  endDate: Date;
+  discardMinScore: true;
+  discardMaxScore: false;
+  minReiewsAmount: number;
+  desiredReviewersAmount: number;
+  attendees: ICheckSessionAttendee[];
 }

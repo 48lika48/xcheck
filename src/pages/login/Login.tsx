@@ -5,7 +5,7 @@ import { Button, Card, Select, Divider } from 'antd';
 import rssLogo from '../../static/images/logo-rs-school.svg'
 import { setGithubCookie } from 'src/utils/githubCookies';
 import { GITHUB_AUTH_URL, GITHUB_AUTH_PAGE } from '../../constants';
-import { GithubInfo } from 'src/models';
+import { IGithubInfo } from 'src/models';
 import { getUsers } from 'src/services/heroku';
 
 const { Meta } = Card;
@@ -16,18 +16,21 @@ export const LoginPage: React.FC = () => {
   const token = query ? query.split('access_token=')[1] : null;
 
   React.useEffect(() => {
-    if (token) {
-      fetch(GITHUB_AUTH_URL, {
-        headers: {
-          Authorization: 'token ' + token
-        }
-      })
-        .then(res => res.json())
-        .then(loginUser)
+    const asyncData = async () => {
+      if (token) {
+        const res = await fetch(GITHUB_AUTH_URL, {
+          headers: {
+            Authorization: 'token ' + token
+          }
+        });
+        const userData = await res.json();
+        loginUser(userData);
+      }
     }
+    asyncData();
   }, [token]);
 
-  const loginUser = async (res: GithubInfo) => {
+  const loginUser = async (res: IGithubInfo) => {
     const users = await getUsers();
     const data = await users.text();
     console.log(data);

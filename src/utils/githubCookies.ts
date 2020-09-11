@@ -1,6 +1,6 @@
-import { GithubInfo } from 'src/models';
+import { IGithubInfo } from 'src/models';
 
-export const setGithubCookie = (res: GithubInfo) => {
+export const setGithubCookie = (res: IGithubInfo) => {
   document.cookie = `gituser=${JSON.stringify(res)}; max-age=${60 * 60 * 24}`;
 };
 
