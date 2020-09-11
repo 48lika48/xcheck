@@ -1,3 +1,4 @@
 import { LoginPage } from './login';
+import { Main } from './main/Main';
 
-export { LoginPage };
+export { LoginPage, Main };
