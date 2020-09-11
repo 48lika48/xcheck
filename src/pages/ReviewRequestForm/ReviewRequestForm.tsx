@@ -1,33 +1,42 @@
-import React from 'react';
-import { useAsync } from 'react-use';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 
 import { urlWithIpPattern, githubPrUrl } from '../../services/validators';
 
+interface ITask {
+  id: string;
+  author: string;
+  state: string;
+}
+
 export const ReviewRequestForm: React.FC = () => {
   const [form] = Form.useForm();
-  
-  const onReset = () => {
-    form.resetFields();
-  };
+  const [tasks, setTasks] = useState<ITask[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const tasks = useAsync(async () => {
-    const response = await fetch(`https://xcheck-db-project.herokuapp.com/tasks`);
-    const result = await response.json();
-    return result
-  });
-
-  console.log(tasks)
+  useEffect(() => {
+    const getTasks = async () => {
+      const response = await fetch('https://xcheck-db-project.herokuapp.com/tasks');
+      const data = await response.json();
+      setTasks(data)
+      setIsLoading(false)
+    }
+    getTasks()
+  })
 
   return (
     <Row gutter={24}>
       <Col>
         <Form form={form} layout="vertical">
           <Form.Item name="courseTaskId" label="Task" rules={[{ required: true, message: 'Please select a task' }]}>
-            <Select placeholder="Select task" >
-              <Select.Option value='xcheck'>
-                xcheck
-              </Select.Option>
+            <Select placeholder={isLoading ? 'Loading...' : 'Select task'} >
+              {tasks.map((task) => {
+                return (                  
+                  <Select.Option value={task.id}>
+                    {task.id}
+                  </Select.Option>
+                )
+              })}
             </Select>
           </Form.Item>
           <Form.Item
@@ -47,7 +56,7 @@ export const ReviewRequestForm: React.FC = () => {
             <Button style={{ marginTop: 16, marginRight: 16 }} type="primary" htmlType="submit">
               Submit
             </Button>
-            <Button htmlType="button" onClick={onReset}>
+            <Button htmlType="button" onClick={() => form.resetFields()}>
               Reset
             </Button>
         </Form>
