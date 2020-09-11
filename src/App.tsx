@@ -5,6 +5,7 @@ import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone, LogoutOutl
 import 'antd/dist/antd.css'
 import './App.scss';
 import { checkGihubCookie, getGithubUserName, deleteCookie } from './utils/githubCookies';
+import { ReviewRequestPage } from './pages'
 
 
 const { Footer, Content } = Layout;
@@ -44,12 +45,12 @@ function App() {
               Страница тасков
         </TabPane>
             <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
-              Страница зопроса на ревью
+            <ReviewRequestPage />
         </TabPane>
             <TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
               Страница ревью
         </TabPane>
-          </Tabs>
+          </Tabs>          
         </Content>
         <Footer>Footer</Footer>
       </Layout>
