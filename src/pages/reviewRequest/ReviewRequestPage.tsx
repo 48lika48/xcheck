@@ -1,6 +1,6 @@
 import React from 'react';
-import { ReviewRequestForm } from '../ReviewRequestForm';
-import { ReviewRequestList } from '../ReviewRequestList';
+import { ReviewRequestForm } from '../../components/ReviewRequestForm';
+import { ReviewRequestList } from '../../components/ReviewRequestList';
 
 export const ReviewRequestPage: React.FC = () => {
   

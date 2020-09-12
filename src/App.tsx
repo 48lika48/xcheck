@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LoginPage, Main } from './pages';
 import 'antd/dist/antd.css'
-<<<<<<< HEAD
-import './App.scss';
-import { checkGihubCookie, getGithubUserName, deleteCookie } from './utils/githubCookies';
-import { ReviewRequestPage } from './pages'
-=======
->>>>>>> 52ddf751beb153fbf16e6cbbd9c0da15859431eb
 
 import { checkAuthorization } from './services/github-auth';
 import { checkUser } from './services/heroku';

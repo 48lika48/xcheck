@@ -32,7 +32,7 @@ export const ReviewRequestForm: React.FC = () => {
             <Select placeholder={isLoading ? 'Loading...' : 'Select task'} >
               {tasks.map((task) => {
                 return (                  
-                  <Select.Option value={task.id}>
+                  <Select.Option value={task.id} key={task.id}>
                     {task.id}
                   </Select.Option>
                 )
