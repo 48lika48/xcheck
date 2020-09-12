@@ -70,3 +70,12 @@ export interface ICheckSession {
   desiredReviewersAmount: number;
   attendees: ICheckSessionAttendee[];
 }
+
+export interface IReviewRequest {
+  id: string;
+  crossCheckSessionId: string | null;
+  author: string;
+  task: string;
+  state: string;
+  selfGrade: any; /* ToDO */
+}
