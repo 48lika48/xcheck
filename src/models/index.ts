@@ -46,6 +46,9 @@ export interface IUser {
 
 export interface ITask {
   id: string;
+  description: string;
+  startDate: string;
+  endDate: string;
   author: string;
   state: TaskState;
   categoriesOrder: Category[];

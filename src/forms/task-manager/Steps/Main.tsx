@@ -1,15 +1,16 @@
 import React from 'react';
 import { Form, Button, Input, Space, Upload, DatePicker, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined  } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined, InboxOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import {formItemLayout, formItemLayoutWithOutLabel} from '../constants/constants'
+import { formItemLayout, formItemLayoutWithOutLabel } from '../constants/constants'
+import { ITask } from 'src/models';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 const { Dragger } = Upload;
 
 
-const Main: React.FC = (props) => {
+const Main: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
   const load = {
     name: 'file',
     multiple: true,
@@ -27,7 +28,7 @@ const Main: React.FC = (props) => {
     },
   };
 
-    return (
+  return (
     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
       <Form.Item
         label="Task name"
@@ -35,7 +36,8 @@ const Main: React.FC = (props) => {
         name="task-name"
         rules={[{ required: true, message: 'Please input task name!' }]}
       >
-      <Input placeholder="task name" style={{ width: '60%' }}/>
+        <Input placeholder="task name" style={{ width: '60%' }}
+          onChange={(value: any) => props.onDataChange('id', value.currentTarget.value)} />
       </Form.Item>
       <Form.Item
         label="Short description"
@@ -43,7 +45,9 @@ const Main: React.FC = (props) => {
         name="short-description"
         rules={[{ required: true, message: 'Please input short description!' }]}
       >
-        <TextArea placeholder="short description" style={{ width: '60%' }} autoSize/>
+        <TextArea placeholder="short description" style={{ width: '60%' }} autoSize
+          defaultValue={props.taskData.description}
+          onChange={(value: any) => props.onDataChange('description', value.currentTarget.value)} />
       </Form.Item>
       <Form.Item
         label="Task range:"
@@ -51,16 +55,16 @@ const Main: React.FC = (props) => {
         name="task-name"
         rules={[{ required: true, message: 'Please input task name!' }]}
       >
-      <Space direction="vertical" size={12}>
-        <RangePicker
-          ranges={{
-            Today: [moment(), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-          }}
-          showTime
-          format="YYYY/MM/DD HH:mm:ss"
-        />
-      </Space>,
+        <Space direction="vertical" size={12}>
+          <RangePicker
+            ranges={{
+              Today: [moment(), moment()],
+              'This Month': [moment().startOf('month'), moment().endOf('month')],
+            }}
+            showTime
+            format="YYYY/MM/DD HH:mm:ss"
+          />
+        </Space>,
       </Form.Item>
       <Form.List name="names">
         {(fields, { add, remove }) => {
@@ -85,7 +89,7 @@ const Main: React.FC = (props) => {
                     ]}
                     noStyle
                   >
-                    <TextArea placeholder="task goal" style={{ width: '60%' }} autoSize/>
+                    <TextArea placeholder="task goal" style={{ width: '60%' }} autoSize />
                   </Form.Item>
                   {fields.length > 1 ? (
                     <MinusCircleOutlined
@@ -118,16 +122,16 @@ const Main: React.FC = (props) => {
         {...formItemLayout}
         name="screenshot"
       >
-      <Dragger {...load}>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
+        <Dragger {...load}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">Click or drag file to this area to upload</p>
+          <p className="ant-upload-hint">
+            Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+            band files
             </p>
-            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-            <p className="ant-upload-hint">
-              Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-              band files
-            </p>
-       </Dragger>,
+        </Dragger>,
       </Form.Item>
     </Form>
   );
