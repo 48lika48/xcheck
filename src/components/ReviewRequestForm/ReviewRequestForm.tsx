@@ -21,7 +21,7 @@ export const ReviewRequestForm: React.FC = () => {
       setIsLoading(false)
     }
     getTasks()
-  }, [tasks])
+  }, [])
 
   // const handleSubmit = async (values: any) => {
   //   if (!courseTaskId) {
