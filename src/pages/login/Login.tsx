@@ -1,22 +1,24 @@
-/* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import { GithubOutlined } from '@ant-design/icons';
 import { Button, Card, Select, Divider } from 'antd';
 
 import rssLogo from '../../static/images/logo-rs-school.svg'
+import { GITHUB_AUTH_PAGE } from '../../constants';
+import { loginUser } from 'src/services/github-auth';
 
 const { Meta } = Card;
 const { Option } = Select;
 
-type Props = {
-  login: (role: string) => void;
-}
+export const LoginPage: React.FC = () => {
+  // const [isLoading, setIsLoading] = React.useState(false);
 
-export const LoginPage: React.FC<Props> = (props) => {
+  React.useEffect(() => {
+    loginUser();
+  });
 
-  const [role, setRole] = React.useState('student');
-
-  const buttonClickHandler = () => props.login(role);
+  const buttonClickHandler = () => {
+    window.location.href = GITHUB_AUTH_PAGE;
+  }
 
   return (
     <main>
@@ -25,7 +27,8 @@ export const LoginPage: React.FC<Props> = (props) => {
 
         <Divider>Choose youre role</Divider>
 
-        <Select defaultValue="student" style={{ width: 150 }} onChange={(value: string): void => setRole(value)}>
+        <Select defaultValue={localStorage.role || "student"} style={{ width: 150 }}
+          onChange={(value: string) => localStorage.role = (value)}>
           <Option value="student">Student</Option>
           <Option value="author">Author</Option>
           <Option value="supervisor">Supervisor</Option>

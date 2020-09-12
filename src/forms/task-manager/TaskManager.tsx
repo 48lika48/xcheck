@@ -56,6 +56,12 @@ export const TaskManager: React.FC = (props) => {
     showModal(false);
   }
 
+  const saveChanges = (): void => {
+    message.success('Changes saved!');
+    changeProgress(0);
+    showModal(false);
+  }
+
 
   return (
     <>
@@ -67,7 +73,7 @@ export const TaskManager: React.FC = (props) => {
         width={1000}
         visible={modal}
         okText="Save"
-        onOk={() => message.success('Changes saved!')}
+        onOk={saveChanges}
         onCancel={closeManager}
         okButtonProps={{ disabled: false }}
         cancelButtonProps={{ disabled: false }}
