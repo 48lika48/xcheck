@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { LoginPage } from './pages';
+import { TaskManager } from './forms';
+
 import { Layout, Tabs } from 'antd';
 import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone } from '@ant-design/icons';
 import 'antd/dist/antd.css'
@@ -26,7 +28,7 @@ function App() {
         <Content>
           <Tabs defaultActiveKey="1">
             <TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
-              Страница тасков
+              <TaskManager />
         </TabPane>
             <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
               Страница зопроса на ревью
