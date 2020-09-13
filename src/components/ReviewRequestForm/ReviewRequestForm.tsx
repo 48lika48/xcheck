@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Col, Form, Input, Row, Select, Alert } from 'antd';
+import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 
 import { urlWithIpPattern, githubPrUrl } from '../../services/validators';
 import { ITask, IReviewRequest } from '../../models';
-import { getReviewRequest } from '../../services/rev-req';
+import { postReviewRequest } from '../../services/rev-req';
 
-export const ReviewRequestForm: React.FC = () => {
+type ReviewRequestFormProps = {
+  reviewRequests: Array<any>,
+  user: string
+}
+
+export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequests, user }) => {
 
   const [form] = Form.useForm();
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [submittedRequest, setSubmittedRequest] = useState(null as IReviewRequest | null);
   const [isSelfGradeDone, setIsSelfGradeDone] = useState(null as boolean | null);
+  const [taskId, setTaskId] = useState(null as string | null);
 
   useEffect(() => {
     const getTasks = async () => {
@@ -23,18 +29,27 @@ export const ReviewRequestForm: React.FC = () => {
     getTasks()
   }, [])
 
-  // const handleSubmit = async (values: any) => {
-  //   if (!courseTaskId) {
-  //     return;
-  //   }
-  //   try {
-  //     await courseService.postTaskSolution(props.session.githubId, courseTaskId, values.url);
-  //     message.success('The task solution has been submitted');
-  //     form.resetFields();
-  //   } catch (e) {
-  //     message.error('An error occured. Please try later.');
-  //   }
-  // };
+  const handleSubmit = async (values: any) => {     
+    if (!taskId) {
+      return;
+    }
+    try {
+      // const data = {...values, crossCheckSessionId: null, author: null, state: 'PUBLSHED', selfGrade: {}}
+      const data = {
+        author: user,
+        crossCheckSessionId: "rss2020Q3react-xcheck",
+        id: "rev-req-1",
+        selfGrade: {},
+        state: "PUBLISHED",
+        task: taskId,
+      }
+      await postReviewRequest(data);
+      message.success('The task solution has been submitted');
+      form.resetFields();
+    } catch (e) {
+      message.error('An error occured. Please try later.');
+    }
+  };
 
   const handleTaskChange = async (value: string) => {
     const taskId = value;
@@ -42,17 +57,18 @@ export const ReviewRequestForm: React.FC = () => {
     if (task == null) {
       return;
     }
-    const submittedRequest = await getReviewRequest(taskId);
+    const submittedRequest = reviewRequests.find((request: any) => request.task === taskId) || null
     // const isSelfGradeDone = submittedRequest ? Object.keys(submittedRequest.selfGrade).length !== 0 : false;
     setSubmittedRequest(submittedRequest);
     setIsSelfGradeDone(true); /* ToDo */
+    setTaskId(task.id)
   };
 
   return (
     <Row gutter={24}>
       <Col>
-        <Form form={form} layout="vertical" >
-          <Form.Item name="courseTaskId" label="Task" rules={[{ required: true, message: 'Please select a task' }]}>
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item name="taskId" label="Task" rules={[{ required: true, message: 'Please select a task' }]}>
             <Select placeholder={isLoading ? 'Loading...' : 'Select task'} onChange={handleTaskChange} >
               {tasks.map((task) => {
                 return (                  
@@ -75,7 +91,7 @@ export const ReviewRequestForm: React.FC = () => {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="url"
+                name="githubPR"
                 label="Pull request URL"
                 rules={[{ required: true, pattern: githubPrUrl, message: 'Please provide a valid link' }]}
               >
@@ -95,14 +111,14 @@ export const ReviewRequestForm: React.FC = () => {
     </Row>
   );
 
-  function renderRevRequestStatus(submittedSolution: IReviewRequest | null) {
-    return submittedSolution ? (
+  function renderRevRequestStatus(submittedRequest: IReviewRequest | null) {
+    return submittedRequest ? (
       <Alert
         message={
           <>
-            Submitted {submittedSolution.task}
-            {/* <a target="_blank" href={submittedSolution.task}>
-              {submittedSolution.task}
+            Submitted {submittedRequest.task}
+            {/* <a target="_blank" href={submittedRequest.task}>
+              {submittedRequest.task}
             </a>{' '}.   ToDo  */}
           </>
         }

@@ -1,7 +1,14 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Spin, Button } from 'antd';
 
-export const ReviewRequestList: React.FC = () => {
+import { DeleteOutlined } from '@ant-design/icons';
+
+type UserRequestListProps = {
+  reviewRequests: Array<Object>,
+  user: string
+}
+
+export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, user }) => {
 
   const columns = [
     {
@@ -12,43 +19,65 @@ export const ReviewRequestList: React.FC = () => {
       sorter: (a: any, b: any) => a.task - b.task,
     },
     {
-      title: 'Student',
-      dataIndex: 'student',
-      key: 'student',
-      sorter: (a: any, b: any) => a.student - b.student,
-    },
-    {
-      title: 'GitHub',
-      dataIndex: 'github',
-      key: 'github',
-      sorter: (a: any, b: any) => a.github - b.github,
-    },  
-    {
       title: 'Status',
       dataIndex: 'status',
-      key: 'sstatus',
+      key: 'status',
       sorter: (a: any, b: any) => a.status - b.status,
     },
+    {
+      title: 'Self-check',
+      dataIndex: 'sefCheck',
+      key: 'sefCheck',
+      render: () => (
+        <Button type="primary" ghost onClick={() => console.log('Show self-check modal')}>
+          Show self-check result
+        </Button>
+      ),
+    },  
+    {
+      title: 'Review',
+      dataIndex: 'review',
+      key: 'review',
+      render: () => (
+        <Button type="primary" ghost onClick={() => console.log('Show review results')}>
+          Show review results
+        </Button>
+      ),
+    },
+    {
+      title: 'Delete',
+      key: 'action',
+      render: () => (
+        <Button shape="circle" icon={<DeleteOutlined />} onClick={() => console.log('Delete')}/>
+      ),
+    },
+
+    // ToDo
+
+    // {
+    //   url: 'URL',
+    //   dataIndex: 'url',
+    //   key: 'url',
+    // },
+    // {
+    //   url: 'Pull Request URL',
+    //   dataIndex: 'PRUrl',
+    //   key: 'PRUrl',
+    // },
   ];
   
-  const data = [
-    {
-      key: '1',
-      task: 'simple-task-v1',
-      student: 'Maksim Dziubo',
-      github: 'MaksimDiubo',
-      status: 'pablished',
-    },
-    {
-      key: '2',
-      task: 'xcheck',
-      student: 'Maksim Dziubo',
-      github: 'MaksimDiubo',
-      status: 'draft',
-    },
-  ];
+  console.log(reviewRequests)
 
-  return (
-    <Table columns={columns} dataSource={data} style={{marginTop: '20px'}} />
-  );
+  const data = reviewRequests
+    .filter((req: any) => req.author === user || req.author === 'someauthor')  /*  ToDo: remove req.author === 'someauthor' */
+    .map((req: any, index: number) => {
+      return {
+        key: index.toString(),
+        task: req.task,
+        status: req.state,
+        sefCheck: req.state,
+      }
+  })
+
+  return reviewRequests.length ? <Table columns={columns} dataSource={data} style={{marginTop: '20px'}} /> : <Spin />
 }
