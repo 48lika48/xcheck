@@ -6,6 +6,7 @@ import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone, LogoutOutl
 import { getGithubUserName, deleteCookie } from '../../services/github-auth';
 
 import './Main.scss';
+import { ReviewPage } from '../reviews';
 
 const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
@@ -36,7 +37,7 @@ export const Main: React.FC<{ logoutHandler: any }> = (props) => {
             Страница зопроса на ревью
         </TabPane>
           <TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
-            Страница ревью
+            <ReviewPage/>
         </TabPane>
         </Tabs>
       </Content>
