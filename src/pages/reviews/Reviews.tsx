@@ -30,7 +30,6 @@ export const ReviewPage: React.FC = () => {
   const dispatch = useDispatch();
   const {taskLoading, dataLoading, reviews} = useSelector((state: RootState) => state.reviewsPage)
   useEffect(() => {
-    // @ts-ignore
     dispatch(fetchReviewsByAuthor())
   }, []);
 
