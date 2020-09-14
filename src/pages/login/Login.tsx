@@ -1,21 +1,31 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux'
+
 import { GithubOutlined } from '@ant-design/icons';
-import { Button, Card, Select, Divider, Spin } from 'antd';
+import { Modal, Button, Card, Select, Divider, Spin } from 'antd';
 
 import rssLogo from '../../static/images/logo-rs-school.svg'
 import { GITHUB_AUTH_PAGE } from '../../constants';
-import { loginUser } from 'src/services/github-auth';
-import Modal from 'antd/lib/modal/Modal';
+import { deleteCookie, loginUser } from 'src/services/github-auth';
+import { RootState } from 'src/store/rootReducer';
 
 const { Meta } = Card;
 const { Option } = Select;
 
 export const LoginPage: React.FC = () => {
+  const { error } = useSelector((state: RootState) => state.users);
   const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     loginUser();
-  }, []);
+    if (error) {
+      deleteCookie();
+      Modal.error({
+        title: 'Access error',
+        content: 'Select your role or the role of the student.',
+      });
+    }
+  }, [error]);
 
   const buttonClickHandler = () => {
     window.location.href = GITHUB_AUTH_PAGE;
