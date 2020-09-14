@@ -7,6 +7,8 @@ import { getGithubUserName, deleteCookie } from '../../services/github-auth';
 
 import './Main.scss';
 
+import TaskManager from '../../forms/index'
+
 const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
 
@@ -30,7 +32,7 @@ export const Main: React.FC<{ logoutHandler: any }> = (props) => {
       <Content>
         <Tabs defaultActiveKey="1">
           <TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
-            Страница тасков
+            <TaskManager />
         </TabPane>
           <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
             Страница зопроса на ревью
