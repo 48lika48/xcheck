@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
-import { IReview } from '../../models';
-import { getReviews } from '../../services/dbApi';
+import { IReview, IReviewRequest } from '../../models';
+import { getReviewRequests, getReviews } from '../../services/dbApi';
 import { getGithubLogin } from '../../services/github-auth';
 
 const initialState ={
@@ -15,8 +15,11 @@ const reviewsPageSlice = createSlice({
   name: 'reviewPage',
   initialState,
   reducers:{
-    setLoading(state){
+    startLoading(state){
       state.taskLoading = true;
+    },
+    endLoading(state){
+      state.taskLoading = false;
     },
     getReviewsSuccess(state, action){
       state.taskLoading = false
@@ -30,15 +33,27 @@ const reviewsPageSlice = createSlice({
     sortReviewsByAuthor(state){
       const name = getGithubLogin();
       state.reviews = state.reviews.filter((item: IReview) => item.author === name)
+    },
+    setData(state, action){
+      state.reviews.forEach((item: IReview) => {
+        const x = action.payload.find((x: IReviewRequest) => x.id === item.requestId)
+        item.reviewedStudent = x.author
+        item.task = x.task
+      })
+    },
+    setTask(state){
+
     }
   },
 })
 
 export const {
-  setLoading,
+  startLoading,
+  endLoading,
   getReviewsSuccess,
   getReviewsFail,
-  sortReviewsByAuthor
+  sortReviewsByAuthor,
+  setData
 } = reviewsPageSlice.actions
 
 export const fetchReviewsByAuthor = ():AppThunk => async dispatch => {
@@ -46,6 +61,19 @@ export const fetchReviewsByAuthor = ():AppThunk => async dispatch => {
     const reviews = await getReviews();
     dispatch(getReviewsSuccess(reviews))
     dispatch(sortReviewsByAuthor())
+    dispatch(fetchReviewsRequests())
+  }catch (err) {
+    dispatch(getReviewsFail(err.toString()))
+  }
+}
+
+export const fetchReviewsRequests = ():AppThunk => async dispatch => {
+  try {
+    dispatch(startLoading())
+    const reviewRequests = await getReviewRequests();
+    dispatch(setData(reviewRequests))
+    dispatch(endLoading())
+
   }catch (err) {
     dispatch(getReviewsFail(err.toString()))
   }
