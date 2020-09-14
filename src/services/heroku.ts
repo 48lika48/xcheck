@@ -98,7 +98,7 @@ export const checkUser = async () => {
     return true;
   }
 
-  const role = localStorage.role || 'student';
+  const role = localStorage.lastRole || 'student';
   if (!user.roles.includes(role)) {
     user.roles.push(role);
     setUserRoles(user.id, user.roles);
@@ -116,7 +116,7 @@ const registerUser = async (githubLogin: string, users: IUser[]) => {
   const user = {
     id: `user-${lastIdNumber + 1}`,
     githubId: githubLogin,
-    roles: [localStorage.role || 'student'],
+    roles: [localStorage.lastRole || 'student'],
   };
   addUser(user);
 };
