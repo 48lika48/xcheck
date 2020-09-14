@@ -5,13 +5,18 @@ import Advanced from './Steps/Advanced';
 import Extra from './Steps/Extra';
 import Fines from './Steps/Fines';
 import { Modal, Button, Steps, message } from 'antd';
+import moment from 'moment';
 const { Step } = Steps;
 
 const task = {
   id: '',
   description: '',
-  startDate: '',
-  endDate: '',
+  startDate: moment(),
+  endDate: moment(),
+  goals: [],
+  requirements: [],
+  subtasks: [{basic: [], score: 0}, {advanced: [], score: 0}, {extra: [], score: 0}, {fines: [], score: 0}],
+  screenshot: {},
   author: '',
   state: '',
   categoriesOrder: [],
@@ -27,6 +32,7 @@ export const TaskManager: React.FC = () => {
     setTaskData((task) => {
       return { ...task, [field]: value }
     })
+    console.log(taskData)
   }
 
   const steps = [
@@ -36,19 +42,19 @@ export const TaskManager: React.FC = () => {
     },
     {
       title: 'Basic Scope',
-      content: <Basic />,
+      content: <Basic onDataChange={onDataChange} taskData={taskData}/>,
     },
     {
       title: 'Advanced scope',
-      content: <Advanced />,
+      content: <Advanced onDataChange={onDataChange} taskData={taskData}/>,
     },
     {
       title: 'Extra scope',
-      content: <Extra />,
+      content: <Extra onDataChange={onDataChange} taskData={taskData}/>,
     },
     {
       title: 'Fines',
-      content: <Fines />,
+      content: <Fines onDataChange={onDataChange} taskData={taskData}/>,
     }
   ];
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Form, Button, Input, InputNumber } from 'antd'; 
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import {formItemLayout, formItemLayoutWithOutLabel} from '../constants/constants'
-
+import {formItemLayout, formItemLayoutWithOutLabel} from '../constants/constants';
+import { updateArray, updateSubtasks } from './helpers';
 
 const { TextArea } = Input;
 
-const Extra: React.FC = (props) => {
+const Extra: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
  
   return (
     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
@@ -16,7 +16,12 @@ const Extra: React.FC = (props) => {
         name="extra-description"
         rules={[{ required: true, message: 'Please input short description!' }]}
       >
-        <TextArea placeholder="advanced scope short description" style={{ width: '60%' }} autoSize/>
+        <TextArea 
+          placeholder="advanced scope short description" 
+          style={{ width: '60%' }} 
+          onChange={(value: any) => {props.onDataChange('requirements', updateArray(props.taskData.requirements, 2, value.currentTarget.value))}}
+          defaultValue={props.taskData.requirements[2]} 
+          autoSize/>
       </Form.Item>
       <Form.List name="advanced-tasks">
         {(fields, { add, remove }) => {
@@ -42,7 +47,12 @@ const Extra: React.FC = (props) => {
                     noStyle
                   >
                     <div style={{display: 'flex'}}>
-                      <TextArea placeholder="subtask" style={{ width: '60%' }} autoSize/>
+                      <TextArea 
+                        placeholder="subtask" 
+                        style={{ width: '60%' }} 
+                        onChange={(value: any) => {props.onDataChange('subtasks', updateSubtasks(props.taskData.subtasks, 'extra', index, value.currentTarget.value))}}
+                        defaultValue={props.taskData.subtasks[2].extra[index]}  
+                        autoSize/>
                       <InputNumber placeholder="Score" min={0} style={{ width: '11%', marginLeft: '2%' }}/>
                     </div>
                   </Form.Item>
