@@ -106,6 +106,8 @@ export interface IReview {
   author: string;
   state: ReviewState;
   grade: ITaskScore;
+  reviewedStudent?: String;
+  task?: String;
 }
 
 export interface ITaskScore {
