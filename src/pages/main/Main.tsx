@@ -23,7 +23,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
       <PageHeader
         className="site-page-header"
         title="RS School xCheck"
-        subTitle={`${userName} (${users.currentUser.currentRole})`}
+        subTitle={`${userName} (${users.currentUser.currentRole.replace('_', ' ')})`}
         extra={
           <Tooltip title="logout">
             <Button type="link" shape="circle"
