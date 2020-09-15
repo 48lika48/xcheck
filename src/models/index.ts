@@ -21,7 +21,7 @@ export enum UserRole {
   author = 'author',
   student = 'student',
   supervisor = 'supervisor',
-  courseManager = 'course_manager',
+  course_manager = 'course_manager',
 }
 
 export interface IUser {
