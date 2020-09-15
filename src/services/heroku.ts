@@ -79,7 +79,7 @@ export const getData = async (endpoint: Endpoint) => {
 };
 
 export const addData = async (endpoint: Endpoint, data: DataTypes) => {
-  const resolve = await fetch(HEROKU_URL + endpoint, {
+  const res = await fetch(HEROKU_URL + endpoint, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -87,7 +87,10 @@ export const addData = async (endpoint: Endpoint, data: DataTypes) => {
     },
     body: JSON.stringify(data),
   });
-  return resolve;
+  if (res.status === 200) {
+    return res.json();
+  }
+  throw Error(`error fetching ${endpoint}`);
 };
 
 export const registerUser = async (githubLogin: string, users: IUser[]) => {
