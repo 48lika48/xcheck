@@ -8,7 +8,7 @@ const defaultUser = { id: '', githubId: '', roles: [UserRole.student] };
 
 interface UsersState {
   currentUser: {
-    userData: {};
+    userData: IUser;
     currentRole: UserRole;
   };
   allUsers: {}[];
