@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ReviewRequestForm } from '../../components/ReviewRequestForm';
-import { ReviewRequestList } from '../../components/ReviewRequestList';
+import { ReviewRequestForm } from './components';
+import { ReviewRequestList } from './components';
 
 import { getReviewRequest } from '../../services/rev-req';
 import { getGithubLogin } from '../../services/github-auth';

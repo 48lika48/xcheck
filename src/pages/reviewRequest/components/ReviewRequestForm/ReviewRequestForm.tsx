@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 
-import { urlWithIpPattern, githubPrUrl } from '../../services/validators';
-import { ITask, IReviewRequest } from '../../models';
-import { postReviewRequest } from '../../services/rev-req';
+import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
+import { ITask, IReviewRequest } from '../../../../models';
+import { postReviewRequest } from '../../../../services/rev-req';
 
 type ReviewRequestFormProps = {
   reviewRequests: Array<any>,
@@ -35,7 +35,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
     }
     try {
       // const data = {...values, crossCheckSessionId: null, author: null, state: 'PUBLSHED', selfGrade: {}}
-      const data = {
+      const data: any = {
         author: user,
         crossCheckSessionId: "rss2020Q3react-xcheck",
         id: "rev-req-1",
