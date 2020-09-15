@@ -1,23 +1,35 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux'
+
 import { GithubOutlined } from '@ant-design/icons';
-import { Button, Card, Select, Divider } from 'antd';
+import { Modal, Button, Card, Select, Divider, Spin } from 'antd';
 
 import rssLogo from '../../static/images/logo-rs-school.svg'
 import { GITHUB_AUTH_PAGE } from '../../constants';
-import { loginUser } from 'src/services/github-auth';
+import { deleteCookie, loginUser } from 'src/services/github-auth';
+import { RootState } from 'src/store/rootReducer';
 
 const { Meta } = Card;
 const { Option } = Select;
 
 export const LoginPage: React.FC = () => {
-  // const [isLoading, setIsLoading] = React.useState(false);
+  const { error } = useSelector((state: RootState) => state.users);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     loginUser();
-  });
+    if (error) {
+      deleteCookie();
+      Modal.error({
+        title: 'Access error',
+        content: 'Select your role or the role of the student.',
+      });
+    }
+  }, [error]);
 
   const buttonClickHandler = () => {
     window.location.href = GITHUB_AUTH_PAGE;
+    setIsLoading(true);
   }
 
   return (
@@ -27,8 +39,8 @@ export const LoginPage: React.FC = () => {
 
         <Divider>Choose youre role</Divider>
 
-        <Select defaultValue={localStorage.role || "student"} style={{ width: 150 }}
-          onChange={(value: string) => localStorage.role = (value)}>
+        <Select defaultValue={localStorage.lastRole || "student"} style={{ width: 150 }}
+          onChange={(value: string) => localStorage.lastRole = (value)}>
           <Option value="student">Student</Option>
           <Option value="author">Author</Option>
           <Option value="supervisor">Supervisor</Option>
@@ -56,6 +68,7 @@ export const LoginPage: React.FC = () => {
             >
               Sign up with GitHub
             </Button>,
+
           ]}
         >
           <Meta
@@ -64,6 +77,13 @@ export const LoginPage: React.FC = () => {
           />
         </Card>
       </div>
+      <Modal visible={isLoading}
+        closable={false}
+        footer={null}
+        width={108}
+        centered>
+        <Spin tip="Loading..." size='large' />
+      </Modal>
     </main>
   );
 }
