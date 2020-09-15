@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Tasks.scss';
 // import { Button } from 'antd';
 
@@ -17,19 +17,19 @@ const columns = [
     key: 'deadline',
   },
   {
-    title: 'Creator',
-    dataIndex: 'creator',
-    key: 'creator',
+    title: 'Author',
+    dataIndex: 'author',
+    key: 'author',
   },
   {
-    title: 'Type',
+    title: 'Status',
     key: 'tags',
     dataIndex: 'tags',
     render: (tags: any) => (
       <>
         {tags.map((tag: any) => {
           let color = tag.length > 5 ? 'geekblue' : 'green';
-          if (tag === 'loser') {
+          if (tag === 'DISPUTED') {
             color = 'volcano';
           }
           return (
@@ -63,16 +63,24 @@ const data = [
     key: '1',
     name: 'Songbird',
     deadline: '01.09.2020',
-    creator: 'yuliahope',
-    tags: ['js', 'react'],
+    author: 'yuliahope',
+    tags: ['PUBLISHED'],
     comment: '',
   },
   {
     key: '2',
     name: 'X Check App',
     deadline: '22.09.2020',
-    creator: 'yuliahope',
-    tags: ['loser'],
+    author: 'yuliahope',
+    tags: ['DISPUTED'],
+    comment: '',
+  },
+  {
+    key: '3',
+    name: 'New Task',
+    deadline: '--.--.----',
+    author: 'yuliahope',
+    tags: ['TO DO'],
     comment: '',
   },
 ];
