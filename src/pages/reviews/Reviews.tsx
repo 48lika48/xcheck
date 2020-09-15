@@ -9,7 +9,7 @@ import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 
 export const ReviewPage: React.FC = () => {
   const dispatch = useDispatch();
-  const {taskLoading, reviews} = useSelector((state: RootState) => state.reviewsPage)
+  const { taskLoading, reviews } = useSelector((state: RootState) => state.reviewsPage)
   useEffect(() => {
     dispatch(fetchReviewsByAuthor())
   }, []);
@@ -19,7 +19,7 @@ export const ReviewPage: React.FC = () => {
       title: 'rev ID',
       dataIndex: 'id',
       key: 'id',
-      render(text:String) {
+      render(text: String) {
         return <a>{text}</a>;
       },
     },
@@ -27,7 +27,7 @@ export const ReviewPage: React.FC = () => {
       title: 'Reviewed Student',
       dataIndex: 'reviewedStudent',
       key: 'reviewedStudent',
-      render(text:String) {
+      render(text: String) {
         return <a>{text}</a>;
       },
     },
@@ -40,11 +40,11 @@ export const ReviewPage: React.FC = () => {
       title: 'Status',
       key: 'state',
       dataIndex: 'state',
-      render: function(state: any) {
+      render: function (state: any) {
         const getColor = (state: string) => {
           switch (state.toUpperCase()) {
             case 'DRAFT':
-              return  'magenta';
+              return 'magenta';
             case 'PUBLISHED':
               return 'blue';
             case 'DISPUTED':
@@ -63,10 +63,10 @@ export const ReviewPage: React.FC = () => {
     {
       title: 'Action',
       key: 'action',
-      render: (text:String, record:any) => (
+      render: (text: String, record: any) => (
         <Space size="middle">
-          <a onClick={()=> console.log(record.id)}>Open</a>
-          {record.state === 'DISPUTED' && <a onClick={()=> console.log('dispute')}>Dispute</a>}
+          <a onClick={() => console.log(record.id)}>Open</a>
+          {record.state === 'DISPUTED' && <a onClick={() => console.log('dispute')}>Dispute</a>}
         </Space>
       ),
     },
@@ -77,7 +77,7 @@ export const ReviewPage: React.FC = () => {
       <Spin spinning={taskLoading}>
         <Space size='small'>
           <Button
-            onClick={()=> console.log("add")}
+            onClick={() => console.log("add")}
             type="primary"
             style={{
               marginBottom: 16,
@@ -87,7 +87,7 @@ export const ReviewPage: React.FC = () => {
             Add a review
           </Button>
           <Button
-            onClick={()=> console.log("refresh")}
+            onClick={() => console.log("refresh")}
             style={{
               marginBottom: 16,
             }}
