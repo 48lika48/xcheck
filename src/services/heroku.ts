@@ -9,7 +9,6 @@ import {
   IReviewRequest,
   IReview,
 } from 'src/models';
-import { getGithubLogin } from './github-auth';
 
 export const getUsers = async () => {
   const res = await getData(Endpoint.users);
@@ -73,11 +72,14 @@ export const addReview = async (review: IReview) => {
 
 export const getData = async (endpoint: Endpoint) => {
   const res = await fetch(HEROKU_URL + endpoint);
-  return res;
+  if (res.status === 200) {
+    return res.json();
+  }
+  throw Error(`error fetching ${endpoint}`);
 };
 
 export const addData = async (endpoint: Endpoint, data: DataTypes) => {
-  const resolve = await fetch(HEROKU_URL + endpoint, {
+  const res = await fetch(HEROKU_URL + endpoint, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -85,28 +87,13 @@ export const addData = async (endpoint: Endpoint, data: DataTypes) => {
     },
     body: JSON.stringify(data),
   });
-  return resolve;
+  if (res.status === 200) {
+    return res.json();
+  }
+  throw Error(`error fetching ${endpoint}`);
 };
 
-export const checkUser = async () => {
-  const usersRes = await getUsers();
-  const users = await usersRes.json();
-  const githubLogin = getGithubLogin();
-  const user = users.find((user: { githubId: string }) => user.githubId === githubLogin);
-  if (!user) {
-    registerUser(githubLogin, users);
-    return true;
-  }
-
-  const role = localStorage.role || 'student';
-  if (!user.roles.includes(role)) {
-    user.roles.push(role);
-    setUserRoles(user.id, user.roles);
-  }
-  return true;
-};
-
-const registerUser = async (githubLogin: string, users: IUser[]) => {
+export const registerUser = async (githubLogin: string, users: IUser[]) => {
   const lastIdNumber = users.length
     ? +users.reduce((maxId, user) => {
         const userId = user.id.includes('user-') ? +user.id.split('user-')[1] : 0;
@@ -116,7 +103,8 @@ const registerUser = async (githubLogin: string, users: IUser[]) => {
   const user = {
     id: `user-${lastIdNumber + 1}`,
     githubId: githubLogin,
-    roles: [localStorage.role || 'student'],
+    roles: [UserRole.student],
   };
   addUser(user);
+  return user;
 };
