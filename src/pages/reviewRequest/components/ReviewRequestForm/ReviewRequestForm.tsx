@@ -1,49 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 
 import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
-import { ITask, IReviewRequest } from '../../../../models';
-import { postReviewRequest } from '../../../../services/rev-req';
+import { ITask, IReviewRequest, ReviewRequestState } from '../../../../models';
+import { addReviewRequest } from '../../../../services/heroku';
 
 type ReviewRequestFormProps = {
   reviewRequests: Array<any>,
-  user: string
+  user: string,
+  tasks: Array<ITask>,
+  isLoading: boolean
 }
 
-export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequests, user }) => {
+export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequests, user, tasks, isLoading }) => {
 
   const [form] = Form.useForm();
-  const [tasks, setTasks] = useState<ITask[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [submittedRequest, setSubmittedRequest] = useState(null as IReviewRequest | null);
   const [isSelfGradeDone, setIsSelfGradeDone] = useState(null as boolean | null);
   const [taskId, setTaskId] = useState(null as string | null);
 
-  useEffect(() => {
-    const getTasks = async () => {
-      const response = await fetch('https://xcheck-db-project.herokuapp.com/tasks');
-      const data = await response.json();
-      setTasks(data)
-      setIsLoading(false)
-    }
-    getTasks()
-  }, [])
-
-  const handleSubmit = async (values: any) => {     
+  const handleSubmit = async (values: any) => {
     if (!taskId) {
       return;
     }
     try {
       // const data = {...values, crossCheckSessionId: null, author: null, state: 'PUBLSHED', selfGrade: {}}
-      const data: any = {
+      const data: IReviewRequest = {
         author: user,
         crossCheckSessionId: "rss2020Q3react-xcheck",
         id: "rev-req-1",
         selfGrade: {},
-        state: "PUBLISHED",
+        state: ReviewRequestState.PUBLISHED,
         task: taskId,
       }
-      await postReviewRequest(data);
+      await addReviewRequest(data);
       message.success('The task solution has been submitted');
       form.resetFields();
     } catch (e) {
@@ -57,10 +47,10 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
     if (task == null) {
       return;
     }
-    const submittedRequest = reviewRequests.find((request: any) => request.task === taskId) || null
-    // const isSelfGradeDone = submittedRequest ? Object.keys(submittedRequest.selfGrade).length !== 0 : false;
+    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId) || null
+    const isSelfGradeDone = submittedRequest ? Object.keys(submittedRequest.selfGrade).length !== 0 : false;
     setSubmittedRequest(submittedRequest);
-    setIsSelfGradeDone(true); /* ToDo */
+    setIsSelfGradeDone(isSelfGradeDone);
     setTaskId(task.id)
   };
 
@@ -70,8 +60,8 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item name="taskId" label="Task" rules={[{ required: true, message: 'Please select a task' }]}>
             <Select placeholder={isLoading ? 'Loading...' : 'Select task'} onChange={handleTaskChange} >
-              {tasks.map((task) => {
-                return (                  
+              {tasks.filter((task) => task.state.toUpperCase() === 'PUBLISHED').map((task) => {
+                return (
                   <Select.Option value={task.id} key={task.id}>
                     {task.id}
                   </Select.Option>
@@ -140,7 +130,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
           type="warning"
           showIcon
         />
-        <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => console.log('Open self-check modal')}>
+        <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => setIsSelfGradeDone(true)}>
           Open self-check form
         </Button>
       </>
