@@ -1,6 +1,5 @@
 import React from 'react';
 import './Tasks.scss';
-// import { Button } from 'antd';
 
 import { Table, Tag, Space } from 'antd';
 
@@ -85,14 +84,10 @@ const data = [
   },
 ];
 
-class Tasks extends React.Component {
-  
-  render() {
-    
-    return (
+export const Tasks: React.FC= () => {
+  return (
       <Table columns={columns} dataSource={data} />
-    );
-  }
-}
+      )
+    }
   
 export default Tasks;
