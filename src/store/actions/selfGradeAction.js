@@ -7,7 +7,6 @@ export const SAVE_SELF_CHECK_SUCCESS = 'SAVE_SELF_CHECK_SUCCESS';
 export const SAVE_SELF_CHECK_ERROR = 'SAVE_SELF_CHECK_ERROR';
 
 export const loadTasks = (taskId) => {
-  console.log(taskId)
   return async dispatch => {
     dispatch({ type: LOAD_TASK });
     await getTasks()
