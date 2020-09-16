@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
 import { loadTasks } from '../../store/actions/selfGradeAction';
 import { SmileTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
 import {
@@ -39,6 +40,10 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 
   const dispatch = useDispatch();
 
+  const { task, loading } = useSelector((state: RootState) => state.selfGradeReducer);
+
+  console.log(task, loading);
+
   const [comment, setComment] = useState('');
   const [score, setScore] = useState(0);
 
@@ -52,7 +57,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
   }
 
   return (
-    props.selfGrade.loading
+    loading
       ?
       <Space>
         <Spin />
@@ -61,13 +66,13 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
       :
       <React.Fragment>
         {
-          props.selfGrade.task.items ?
-            props.selfGrade.task.items.map((item: any, i: number) => {
+          task.items ?
+            task.items.map((item: any, i: number) => {
               return <Form
                 key={i}
                 initialValues={{ remember: false }}
                 onFinish={() => {
-                  alert(`${score} | ${comment} ||| ${props.selfGrade.task.items[0].id}`);
+                  alert(`${score} | ${comment} ||| ${task.items[0].id}`);
                 }}
               >
                 <Paragraph><Text strong>{item.category}</Text></Paragraph>

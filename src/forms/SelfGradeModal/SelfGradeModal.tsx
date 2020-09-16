@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal, message } from 'antd';
-import SelfGradeContainer from './SelfGradeContainer';
+import { SelfGradeForm } from './SelfGradeForm';
 
 export type Iprops = {
   taskId?: string
@@ -47,7 +47,7 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
         okButtonProps={{ disabled: isDisabledButton }}
         width={900}
       >
-        <SelfGradeContainer
+        <SelfGradeForm
           taskId={props.taskId}
           handleConfirmClick={handleConfirmClick}
         />
