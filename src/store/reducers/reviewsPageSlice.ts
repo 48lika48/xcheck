@@ -4,6 +4,10 @@ import { IReview, IReviewRequest } from '../../models';
 import { getReviewRequests, getReviews } from '../../services/dbApi';
 import { getGithubLogin } from '../../services/github-auth';
 
+interface IReviewTableData extends IReview {
+  key: number
+}
+
 const initialState ={
   taskLoading: true,
   dataLoading: false,
@@ -35,15 +39,13 @@ const reviewsPageSlice = createSlice({
       state.reviews = state.reviews.filter((item: IReview) => item.author === name)
     },
     setData(state, action){
-      state.reviews.forEach((item: IReview) => {
+      state.reviews.forEach((item: IReviewTableData, index: number) => {
         const x = action.payload.find((x: IReviewRequest) => x.id === item.requestId)
         item.reviewedStudent = x.author
         item.task = x.task
+        item.key = index
       })
     },
-    setTask(state){
-
-    }
   },
 })
 
