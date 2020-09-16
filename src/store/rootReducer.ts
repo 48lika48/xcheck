@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit'
 import selfGradeReducer from './reducers/selfGradeReducer';
 const rootReducer = combineReducers({
-  selfGradeReducer,
+  selfGradeReducer: selfGradeReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>
