@@ -9,6 +9,6 @@ const mapStateToProps = (store: any) => {
   }
 }
 
-const SelfGradeContainer:React.FC<Iprops> = connect(mapStateToProps)(SelfGradeForm);
+const SelfGradeContainer: React.FC<Iprops> = connect(mapStateToProps)(SelfGradeForm);
 
 export default SelfGradeContainer;

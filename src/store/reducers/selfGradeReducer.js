@@ -9,7 +9,6 @@ import {
 const initialState = {
   task: [],
   loading: false,
-  error: false,
 }
 
 const selfGradeReducer = (state = initialState, action) => {
@@ -23,10 +22,11 @@ const selfGradeReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        task: action.payload.find(el => {
-          if (el.id === action.taskId) {
-            return el;
+        task: action.payload.find(task => {
+          if (task.id !== action.taskId) {
+            return null;
           }
+          return task;
         }),
       }
     default:

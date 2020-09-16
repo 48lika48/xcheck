@@ -2,21 +2,29 @@ import React, { useState } from 'react';
 import { Button, Modal, message } from 'antd';
 import SelfGradeContainer from './SelfGradeContainer';
 
-export interface Iprops {
+export type Iprops = {
   taskId?: string
+  handleConfirmClick: () => void
 }
 
-export const SelfGradeModal: React.FC<Iprops> = (props:Iprops) => {
+export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 
   const [showModal, setShowModal] = useState(false);
+  const [isDisabledButton, setIsDisabledButton] = useState(true);
 
   const cancelChanges = (): void => {
     setShowModal(false);
+    setIsDisabledButton(true);
   }
 
   const saveChanges = (): void => {
-    message.success('Self-Grade saved!');
     setShowModal(false);
+    message.success('Self-Check saved!');
+  }
+
+  const handleConfirmClick = (): void => {
+    setIsDisabledButton(false);
+    message.success('Confirmed!');
   }
 
   return (
@@ -36,9 +44,13 @@ export const SelfGradeModal: React.FC<Iprops> = (props:Iprops) => {
         okText='Save result'
         onOk={() => { saveChanges() }}
         onCancel={() => cancelChanges()}
-        width={1000}
+        okButtonProps={{ disabled: isDisabledButton }}
+        width={900}
       >
-        <SelfGradeContainer taskId={props.taskId}/>
+        <SelfGradeContainer
+          taskId={props.taskId}
+          handleConfirmClick={handleConfirmClick}
+        />
       </Modal>
     </div >
   )
