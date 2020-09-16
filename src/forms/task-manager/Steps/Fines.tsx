@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Button, Input, InputNumber } from 'antd'; 
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {formItemLayout, formItemLayoutWithOutLabel} from '../constants/constants';
-import { updateArray, updateSubtasks } from './helpers';
+import { updateArray, updateSubtasks, updateScore } from './helpers';
 
 
 
@@ -55,7 +55,13 @@ export const Fines: React.FC<{ onDataChange: any; taskData: any }> = (props) => 
                         onChange={(value: any) => {props.onDataChange('subtasks', updateSubtasks(props.taskData.subtasks, 'fines', index, value.currentTarget.value))}}
                         defaultValue={props.taskData.subtasks[3].fines[index]}  
                         autoSize/>
-                      <InputNumber placeholder="Score" max={0} style={{ width: '11%', marginLeft: '2%' }}/>
+                      <InputNumber 
+                        placeholder="Score" 
+                        max={0} 
+                        style={{ width: '11%', marginLeft: '2%' }}
+                        onChange={(value: any) => {props.onDataChange('score', updateSubtasks(props.taskData.score, 'fines', index, value)); props.onDataChange('maxScore', updateScore(props.taskData.score))}}
+                        defaultValue={props.taskData.score[3].fines[index]}  
+                        />
                     </div>
                   </Form.Item>
                   {fields.length > 1 ? (

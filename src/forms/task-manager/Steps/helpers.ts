@@ -3,7 +3,6 @@ export const updateArray = (currentArray: string[], index: number, value: string
     return currentArray;
   }
 
-
 export const updateSubtasks = (currentSubtasks: any[], category: string, index: number, value: string): object[] => {
   switch (category) {
     case 'basic':
@@ -22,4 +21,10 @@ export const updateSubtasks = (currentSubtasks: any[], category: string, index: 
       break;
   }
     return currentSubtasks;
+  }
+
+  export const updateScore = (currentSubtasks: number[]): number => {
+      const scoreArr = currentSubtasks.map(el => Object.values(el)[0]);
+      const maxScore = [].concat.apply([], scoreArr).reduce((sum, current) => sum + current, 0);
+      return maxScore;
   }
