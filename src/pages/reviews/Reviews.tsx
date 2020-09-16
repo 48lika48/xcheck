@@ -12,33 +12,28 @@ export const ReviewPage: React.FC = () => {
   const { taskLoading, reviews } = useSelector((state: RootState) => state.reviewsPage)
   useEffect(() => {
     dispatch(fetchReviewsByAuthor())
-  }, []);
-
+  }, [dispatch]);
   const columns = [
     {
       title: 'rev ID',
       dataIndex: 'id',
-      key: 'id',
       render(text: String) {
-        return <a>{text}</a>;
+        return {text};
       },
     },
     {
       title: 'Reviewed Student',
       dataIndex: 'reviewedStudent',
-      key: 'reviewedStudent',
       render(text: String) {
-        return <a>{text}</a>;
+        return {text};
       },
     },
     {
       title: 'Task',
       dataIndex: 'task',
-      key: 'task'
     },
     {
       title: 'Status',
-      key: 'state',
       dataIndex: 'state',
       render: function (state: any) {
         const getColor = (state: string) => {
@@ -55,25 +50,23 @@ export const ReviewPage: React.FC = () => {
               return 'volcano';
           }
         }
-        return (<Tag color={getColor(state)} key={state}>
+        return (<Tag color={getColor(state)}>
           {state.toUpperCase()}
         </Tag>);
       },
     },
     {
       title: 'Action',
-      key: 'action',
       render: (text: String, record: any) => (
         <Space size="middle">
-          <a onClick={() => console.log(record.id)}>Open</a>
-          {record.state === 'DISPUTED' && <a onClick={() => console.log('dispute')}>Dispute</a>}
+          <Button href='#' onClick={() => console.log(record.id)}>Open</Button>
+          {record.state === 'DISPUTED' && <Button href="#" onClick={() => console.log('dispute')}>Dispute</Button>}
         </Space>
       ),
     },
   ];
 
   return (
-    <div>
       <Spin spinning={taskLoading}>
         <Space size='small'>
           <Button
@@ -96,8 +89,7 @@ export const ReviewPage: React.FC = () => {
             Refresh
           </Button>
         </Space>
-        <Table columns={columns} dataSource={reviews} />
+        <Table columns={columns} dataSource={reviews} rowKey='id'/>
       </Spin>
-    </div>
   );
 }
