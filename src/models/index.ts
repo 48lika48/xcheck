@@ -87,11 +87,13 @@ export interface ICheckSessionAttendee {
 
 export interface IReviewRequest {
   id: string;
-  crossCheckSessionId: string;
+  crossCheckSessionId: string | null;
   author: string;
   task: string;
   state: ReviewRequestState;
   selfGrade: object;
+  url: string,
+  urlPR: string,
 }
 
 export enum ReviewRequestState {

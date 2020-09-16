@@ -19,19 +19,20 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
   const [isSelfGradeDone, setIsSelfGradeDone] = useState(null as boolean | null);
   const [taskId, setTaskId] = useState(null as string | null);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: {taskId: string, url: string, urlPR: string}) => {
     if (!taskId) {
       return;
     }
     try {
-      // const data = {...values, crossCheckSessionId: null, author: null, state: 'PUBLSHED', selfGrade: {}}
       const data: IReviewRequest = {
+        id: Date.now().toString(),
+        crossCheckSessionId: null,
         author: user,
-        crossCheckSessionId: "rss2020Q3react-xcheck",
-        id: "rev-req-1",
-        selfGrade: {},
-        state: ReviewRequestState.PUBLISHED,
         task: taskId,
+        state: ReviewRequestState.PUBLISHED,
+        url: values.url,
+        urlPR: values.urlPR,
+        selfGrade: {}
       }
       await addReviewRequest(data);
       message.success('The task solution has been submitted');
@@ -81,7 +82,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
                 <Input />
               </Form.Item>
               <Form.Item
-                name="githubPR"
+                name="urlPR"
                 label="Pull request URL"
                 rules={[{ required: true, pattern: githubPrUrl, message: 'Please provide a valid link' }]}
               >
