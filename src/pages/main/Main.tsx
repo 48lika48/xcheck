@@ -8,6 +8,8 @@ import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone, LogoutOutl
 
 import { getGithubUserName } from '../../services/github-auth';
 
+import { ReviewRequestPage } from '../reviewRequest';
+
 import './Main.scss';
 import { ReviewPage } from '../reviews';
 
@@ -40,7 +42,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
             <TaskManager />
         </TabPane>
           <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
-            Страница зопроса на ревью
+            <ReviewRequestPage />
         </TabPane>
           <TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
             <ReviewPage/>
