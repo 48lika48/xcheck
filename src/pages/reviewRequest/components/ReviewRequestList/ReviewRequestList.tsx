@@ -31,6 +31,18 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       sorter: (a: any, b: any) => a.status - b.status,
     },
     {
+      title: 'URL',
+      dataIndex: 'url',
+      key: 'url',
+      render: (text: string) => <a target="_blank" rel="noopener noreferrer" href={text}>{text}</a>,
+    },
+    {
+      title: 'Pull Request URL',
+      dataIndex: 'urlPR',
+      key: 'urlPR',
+      render: (text: string) => <a target="_blank" rel="noopener noreferrer" href={text}>{text}</a>,
+    },
+    {
       title: 'Self-check',
       dataIndex: 'sefCheck',
       key: 'sefCheck',
@@ -57,22 +69,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         <Button shape="circle" icon={<DeleteOutlined />} onClick={() => deleteHandler(record.id)}/>
       ),
     },
-
-    // ToDo
-
-    // {
-    //   url: 'URL',
-    //   dataIndex: 'url',
-    //   key: 'url',
-    // },
-    // {
-    //   url: 'Pull Request URL',
-    //   dataIndex: 'PRUrl',
-    //   key: 'PRUrl',
-    // },
   ];
-
-  console.log(reviewRequests)
 
   const data = reviewRequests
     .filter((req: any) => req.author === user || req.author === 'someauthor')  /*  ToDo: remove req.author === 'someauthor' */
@@ -83,6 +80,8 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         task: req.task,
         status: req.state,
         sefCheck: req.state,
+        url: req.url,
+        urlPR: req.urlPR,
       }
   })
 
