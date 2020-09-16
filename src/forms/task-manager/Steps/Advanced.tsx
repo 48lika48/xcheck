@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Button, Input, InputNumber } from 'antd'; 
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {formItemLayout, formItemLayoutWithOutLabel} from '../constants/constants';
-import { updateArray, updateSubtasks } from './helpers';
+import { updateArray, updateSubtasks, updateScore } from './helpers';
 
 
 const { TextArea } = Input;
@@ -54,7 +54,13 @@ const Advanced: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
                         onChange={(value: any) => {props.onDataChange('subtasks', updateSubtasks(props.taskData.subtasks, 'advanced', index, value.currentTarget.value))}}
                         defaultValue={props.taskData.subtasks[1].advanced[index]}  
                         autoSize/>
-                      <InputNumber placeholder="Score" min={0} style={{ width: '11%', marginLeft: '2%' }}/>
+                      <InputNumber 
+                        placeholder="Score" 
+                        min={0} 
+                        style={{ width: '11%', marginLeft: '2%' }}
+                        onChange={(value: any) => {props.onDataChange('score', updateSubtasks(props.taskData.score, 'advanced', index, value)); props.onDataChange('maxScore', updateScore(props.taskData.score))}}
+                        defaultValue={props.taskData.score[1].advanced[index]}  
+                        />
                     </div>
                   </Form.Item>
                   {fields.length > 1 ? (
