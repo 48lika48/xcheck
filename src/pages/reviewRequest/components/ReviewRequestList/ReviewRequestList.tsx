@@ -5,12 +5,18 @@ import { DeleteOutlined } from '@ant-design/icons';
 
 type UserRequestListProps = {
   reviewRequests: Array<Object>,
-  user: string
+  user: string,
+  deleteHandler: (requestId: string) => void
 }
 
-export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, user }) => {
+export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, user, deleteHandler }) => {
 
   const columns = [
+    {
+      title: 'Id',
+      dataIndex: 'id',
+      key: 'id',
+    },
     {
       title: 'Task',
       dataIndex: 'task',
@@ -33,7 +39,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
           Show self-check result
         </Button>
       ),
-    },  
+    },
     {
       title: 'Review',
       dataIndex: 'review',
@@ -47,8 +53,8 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
     {
       title: 'Delete',
       key: 'action',
-      render: () => (
-        <Button shape="circle" icon={<DeleteOutlined />} onClick={() => console.log('Delete')}/>
+      render: (text: string, record: any) => (
+        <Button shape="circle" icon={<DeleteOutlined />} onClick={() => deleteHandler(record.id)}/>
       ),
     },
 
@@ -65,7 +71,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
     //   key: 'PRUrl',
     // },
   ];
-  
+
   console.log(reviewRequests)
 
   const data = reviewRequests
@@ -73,6 +79,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
     .map((req: any, index: number) => {
       return {
         key: index.toString(),
+        id: req.id,
         task: req.task,
         status: req.state,
         sefCheck: req.state,

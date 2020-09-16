@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReviewRequestForm, ReviewRequestList  } from './components';
+import { IReviewRequest } from '../../models';
 import { RootState } from 'src/store/rootReducer';
-import { fetchAllData } from '../../store/reducers/reviewRequestSlice';
+import { fetchAllData, addRequest, deleteRequestItem } from '../../store/reducers/reviewRequestSlice';
 
 export const ReviewRequestPage: React.FC = () => {
 
@@ -14,10 +15,23 @@ export const ReviewRequestPage: React.FC = () => {
     dispatch(fetchAllData())
   }, [dispatch]);
 
+  const deleteHandler = (requestId: string) => {
+    dispatch(deleteRequestItem(requestId))
+  }
+
+  const submitHandler = (data: IReviewRequest) => {
+    dispatch(addRequest(data))
+  }
+
   return (
     <>
-      <ReviewRequestForm reviewRequests={reviewRequests} user={githubId} tasks={tasks} isLoading={isLoading} />
-      <ReviewRequestList reviewRequests={reviewRequests} user={githubId} />
+      <ReviewRequestForm
+        reviewRequests={reviewRequests}
+        user={githubId} tasks={tasks}
+        isLoading={isLoading}
+        submitHandler={submitHandler}
+     />
+      <ReviewRequestList reviewRequests={reviewRequests} user={githubId} deleteHandler={deleteHandler}/>
     </>
   );
 }
