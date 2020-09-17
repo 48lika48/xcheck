@@ -15,10 +15,9 @@ const task = {
   endDate: moment(),
   goals: [],
   requirements: [],
-  subtasks: [{basic: []}, {advanced: []}, {extra: []}, {fines: []}],
-  score: [{basic: []}, {advanced: []}, {extra: []}, {fines: []}],
+  subtasks: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
+  score: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
   maxScore: 0,
-  screenshot: {},
   author: '',
   state: '',
   categoriesOrder: [],
@@ -44,19 +43,19 @@ export const TaskManager: React.FC = () => {
     },
     {
       title: 'Basic Scope',
-      content: <Basic onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Basic onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Advanced scope',
-      content: <Advanced onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Advanced onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Extra scope',
-      content: <Extra onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Extra onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Fines',
-      content: <Fines onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Fines onDataChange={onDataChange} taskData={taskData} />,
     }
   ];
 
