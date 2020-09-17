@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
 import { IReview, IReviewRequest, ITask } from '../../models';
-import { getTasks, getReviewRequests, getReviews } from 'src/services/heroku';
+import { getTasks, getReviewRequests, getReviews, addReviewRequest, deleteReviewRequest } from 'src/services/heroku';
 
 interface ReviewRequest {
   tasks: Array<ITask>,
@@ -35,6 +35,9 @@ const reviewRequestSlice = createSlice({
       state.error = null
       state.reviewRequests = action.payload
     },
+    setRequest(state, action: PayloadAction<IReviewRequest>){
+      state.reviewRequests.push(action.payload)
+    },
     getDataFailure(state, action: PayloadAction<string | null>){
       state.error = action.payload
     },
@@ -43,6 +46,10 @@ const reviewRequestSlice = createSlice({
     },
     setIsLoading(state, action: PayloadAction<boolean>){
       state.isLoading = action.payload
+    },
+    deleteRequestData(state, action: PayloadAction<string>){
+      console.log('delete')
+      state.reviewRequests = state.reviewRequests.filter(request => request.id !== action.payload)
     },
   },
 })
@@ -54,6 +61,8 @@ export const {
   getDataFailure,
   setReviewRequests,
   setIsLoading,
+  setRequest,
+  deleteRequestData,
 } = reviewRequestSlice.actions
 
 export const fetchAllData = ():AppThunk => async dispatch => {
@@ -67,6 +76,24 @@ export const fetchAllData = ():AppThunk => async dispatch => {
     dispatch(getDataFailure(err.toString()))
   } finally {
     dispatch(setIsLoading(false))
+  }
+}
+
+export const addRequest = (data: IReviewRequest):AppThunk => async dispatch => {
+  try {
+    await addReviewRequest(data)
+    dispatch(setRequest(data))
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
+  }
+}
+
+export const deleteRequestItem = (requestId: string):AppThunk => async dispatch => {
+  try {
+    deleteReviewRequest(requestId)
+    dispatch(deleteRequestData(requestId))
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
   }
 }
 

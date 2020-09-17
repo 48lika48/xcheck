@@ -60,6 +60,11 @@ export const addReviewRequest = async (reviewRequest: IReviewRequest) => {
   return res;
 };
 
+export const deleteReviewRequest = async (id: string) => {
+  const res = await deleteData(Endpoint.reviewRequests, id);
+  return res;
+};
+
 export const getReviews = async () => {
   const res = await getData(Endpoint.reviews);
   return res;
@@ -87,10 +92,17 @@ export const addData = async (endpoint: Endpoint, data: DataTypes) => {
     },
     body: JSON.stringify(data),
   });
-  if (res.status === 200) {
+  if (res.status === 200 || 204) {
     return res.json();
   }
   throw Error(`error fetching ${endpoint}`);
+};
+
+export const deleteData = async (endpoint: Endpoint, id: string) => {
+  const res = await fetch(HEROKU_URL + endpoint + '/' + id, {
+    method: 'DELETE',
+  });
+  return res.json()
 };
 
 export const registerUser = async (githubLogin: string, users: IUser[]) => {

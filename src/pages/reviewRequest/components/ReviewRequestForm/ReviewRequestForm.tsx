@@ -1,39 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 
 import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
 import { ITask, IReviewRequest, ReviewRequestState } from '../../../../models';
-import { addReviewRequest } from '../../../../services/heroku';
 
 type ReviewRequestFormProps = {
   reviewRequests: Array<any>,
   user: string,
   tasks: Array<ITask>,
-  isLoading: boolean
+  isLoading: boolean,
+  submitHandler: (data: IReviewRequest) => void
 }
 
-export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequests, user, tasks, isLoading }) => {
+export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequests, user, tasks, isLoading, submitHandler }) => {
 
   const [form] = Form.useForm();
   const [submittedRequest, setSubmittedRequest] = useState(null as IReviewRequest | null);
   const [isSelfGradeDone, setIsSelfGradeDone] = useState(null as boolean | null);
   const [taskId, setTaskId] = useState(null as string | null);
 
-  const handleSubmit = async (values: any) => {
+  useEffect(() => {
+    form.resetFields();
+    setSubmittedRequest(null);
+    setIsSelfGradeDone(null)
+  }, [form, reviewRequests])
+
+  const handleSubmit = async (values: {taskId: string, url: string, urlPR: string}) => {
     if (!taskId) {
       return;
     }
     try {
-      // const data = {...values, crossCheckSessionId: null, author: null, state: 'PUBLSHED', selfGrade: {}}
       const data: IReviewRequest = {
+        id: Date.now().toString(),
+        crossCheckSessionId: null,
         author: user,
-        crossCheckSessionId: "rss2020Q3react-xcheck",
-        id: "rev-req-1",
-        selfGrade: {},
-        state: ReviewRequestState.PUBLISHED,
         task: taskId,
+        state: ReviewRequestState.PUBLISHED,
+        url: values.url,
+        urlPR: values.urlPR,
+        selfGrade: {}
       }
-      await addReviewRequest(data);
+      submitHandler(data);
       message.success('The task solution has been submitted');
       form.resetFields();
     } catch (e) {
@@ -81,7 +88,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
                 <Input />
               </Form.Item>
               <Form.Item
-                name="githubPR"
+                name="urlPR"
                 label="Pull request URL"
                 rules={[{ required: true, pattern: githubPrUrl, message: 'Please provide a valid link' }]}
               >
@@ -106,10 +113,10 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = ({ reviewRequ
       <Alert
         message={
           <>
-            Submitted {submittedRequest.task}
-            {/* <a target="_blank" href={submittedRequest.task}>
-              {submittedRequest.task}
-            </a>{' '}.   ToDo  */}
+            <span>Submitted </span>
+            <a target="_blank" rel="noopener noreferrer" href={submittedRequest.url}>
+              {submittedRequest.url}
+            </a>{' '}
           </>
         }
         type="success"
