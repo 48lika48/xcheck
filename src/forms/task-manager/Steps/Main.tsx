@@ -15,32 +15,21 @@ type MainProps = {
 }
 
 const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
-  let [fileList, setFileList] = React.useState();
+  const [fileList, setFileList] = React.useState();
+
+  const showMessage = (isUploaded: boolean) => {
+    isUploaded
+      ? message.success(`file uploaded successfully.`)
+      : message.error(`file upload failed.`);
+  }
+
   const load: any = {
     name: 'file',
     accept: '.json, .md',
-    customRequest: (options: any) => parsTask(options.file, onDataChange),
-    fileList: fileList,
+    customRequest: (options: any) => parsTask({ file: options.file, onDataChange, showMessage }),
+    fileList,
     showUploadList: false,
-    onChange: async (info: any) => {
-      setFileList([info.file] as any);
-      const { status } = info.file;
-      if (status !== 'uploading') {
-      }
-      if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    progress: {
-      strokeColor: {
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      },
-      strokeWidth: 5,
-      format: (percent: number) => `${parseFloat(percent.toFixed(2))}%`,
-    },
+    onChange: async (info: any) => setFileList([info.file] as any),
   };
 
   return (
@@ -88,8 +77,15 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
               [taskData.startDate, taskData.endDate]
             }
             showTime
-            format="YYYY/MM/DD HH:mm:ss"
-            onChange={(values: any) => { values && onDataChange('startDate', values[0]); values && onDataChange('endDate', values[1]) }}
+            format="DD.MM.YYYY HH:mm"
+            onChange={
+              (values: any) => {
+                if (values) {
+                  onDataChange('startDate', values[0]);
+                  onDataChange('endDate', values[1]);
+                }
+              }
+            }
           />
         </Space>,
       </Form.Item>
@@ -120,7 +116,11 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
                       placeholder="task goal"
                       style={{ width: '60%' }}
                       autoSize
-                      onChange={(value: any) => { onDataChange('goals', updateArray(taskData.goals, index, value.currentTarget.value)) }}
+                      onChange={
+                        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                          onDataChange('goals', updateArray(taskData.goals, index, e.currentTarget.value))
+                        }
+                      }
                       value={taskData.goals[index]}
                     />
                   </Form.Item>
