@@ -29,7 +29,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 
   const dispatch = useDispatch();
   useEffect(() => { dispatch(fetchTasks(props.taskId)) }, []);
-  const { tasks, loading, error, taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
+  const { task, loading, error, taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
 
   // const [score, setScore] = useState(0);
   // const [comment, setComment] = useState('');
@@ -40,7 +40,6 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
   // const onChangeScore = (score: any): void => {
   //   setScore(score);
   // }
-  console.log(taskScore.items);
   return (
     loading
       ?
@@ -51,8 +50,8 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
       :
       <React.Fragment>
         {
-          tasks.items ?
-            tasks.items.map((item: any, i: number) => {
+          task ?
+            task.items.map((item: any, i: number) => {
               return <Form
                 key={i}
                 initialValues={{ remember: false }}

@@ -1,14 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { getTasks } from '../../services/heroku';
 import { ITask } from 'src/models';
 
 type selfGradeType = {
-  tasks: Array<ITask>
-  loading: boolean
-  error: boolean
-  taskScore : scoreType
-}
+  task: ITask | null;
+  loading: boolean;
+  error: boolean;
+  taskScore: scoreType;
+};
 
 type ItemsType = {
   id: string
@@ -17,17 +17,17 @@ type ItemsType = {
 }
 
 type scoreType = {
-  task: string
+  taskName: string
   items: Array<ItemsType>
 }
 
 
 const initialState: selfGradeType = {
-  tasks: [],
+  task: null,
   loading: false,
   error: false,
-  taskScore : {
-    task: '',
+  taskScore: {
+    taskName: '',
     items: []
   }
 }
@@ -41,9 +41,9 @@ const selfGradeSlice = createSlice({
     },
     loadTaskSuccess(state, action) {
       state.loading = false
-      state.tasks = action.payload
-      state.taskScore .task = action.payload.id
-      state.taskScore .items = action.payload.items.map((item: any) => {
+      state.task = action.payload
+      state.taskScore.taskName = action.payload.id
+      state.taskScore.items = action.payload.items.map((item: any) => {
         return {
           id: item.id,
           score: 0,
