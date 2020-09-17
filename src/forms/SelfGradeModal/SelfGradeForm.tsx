@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { loadTasks } from '../../store/actions/selfGradeAction';
 import { SmileTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
 import {
   Spin,
@@ -15,6 +14,7 @@ import {
   Divider
 } from 'antd';
 import { Iprops } from './SelfGradeModal';
+import { fetchTasks } from 'src/store/reducers/selfGradeReducer';
 
 const { Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -25,37 +25,22 @@ const inputStyle = {
   marginTop: "10px",
 }
 
-// type ItemsProps = {
-//   id: string | null
-//   score: number | null
-//   comment: string | null
-// }
-
-// type taskCoreType = {
-//   task: string | null,
-//   items: Array<ItemsProps>
-// }
-
 export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 
   const dispatch = useDispatch();
+  useEffect(() => { dispatch(fetchTasks(props.taskId)) }, []);
+  const { tasks, loading, error, taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
 
-  const { task, loading } = useSelector((state: RootState) => state.selfGradeReducer);
+  // const [score, setScore] = useState(0);
+  // const [comment, setComment] = useState('');
 
-  console.log(task, loading);
-
-  const [comment, setComment] = useState('');
-  const [score, setScore] = useState(0);
-
-  useEffect(() => { dispatch(loadTasks(props.taskId)) }, []);
-
-  const onChangeComment = (event: React.FormEvent<HTMLTextAreaElement>): void => {
-    setComment(event.currentTarget.value);
-  }
-  const onChangeScore = (score: any): void => {
-    setScore(score);
-  }
-
+  // const onChangeComment = (event: React.FormEvent<HTMLTextAreaElement>): void => {
+  //   setComment(event.currentTarget.value);
+  // }
+  // const onChangeScore = (score: any): void => {
+  //   setScore(score);
+  // }
+  console.log(taskScore.items);
   return (
     loading
       ?
@@ -66,14 +51,14 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
       :
       <React.Fragment>
         {
-          task.items ?
-            task.items.map((item: any, i: number) => {
+          tasks.items ?
+            tasks.items.map((item: any, i: number) => {
               return <Form
                 key={i}
                 initialValues={{ remember: false }}
-                onFinish={() => {
-                  alert(`${score} | ${comment} ||| ${task.items[0].id}`);
-                }}
+                // onFinish={() => {
+                //   alert(`${score} | ${comment} ||| ${tasks.items[0].id}`);
+                // }}
               >
                 <Paragraph><Text strong>{item.category}</Text></Paragraph>
                 <Paragraph>{item.title}</Paragraph>
@@ -86,14 +71,14 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
                       min={item.minScore}
                       max={item.maxScore}
                       required={true}
-                      onChange={onChangeScore}
+                      // onChange={onChangeScore}
                     />
                   </Popover>
                   <TextArea
                     placeholder="Comment"
                     style={inputStyle}
                     autoSize
-                    onChange={onChangeComment}
+                    // onChange={onChangeComment}
                   />
                 </Form.Item>
                 <Button
