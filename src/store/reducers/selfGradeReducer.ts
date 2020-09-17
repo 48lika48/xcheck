@@ -46,7 +46,7 @@ const selfGradeSlice = createSlice({
       state.taskScore.items = action.payload.items.map((item: any) => {
         return {
           id: item.id,
-          score: 0,
+          score: '',
           comment: '',
         }
       })

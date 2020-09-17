@@ -31,15 +31,16 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
   useEffect(() => { dispatch(fetchTasks(props.taskId)) }, []);
   const { task, loading, error, taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
 
-  // const [score, setScore] = useState(0);
-  // const [comment, setComment] = useState('');
+  const [score, setScore] = useState(0);
+  const [comment, setComment] = useState('');
 
-  // const onChangeComment = (event: React.FormEvent<HTMLTextAreaElement>): void => {
-  //   setComment(event.currentTarget.value);
-  // }
-  // const onChangeScore = (score: any): void => {
-  //   setScore(score);
-  // }
+  const onChangeComment = (event: React.FormEvent<HTMLTextAreaElement>): void => {
+    setComment(event.currentTarget.value);
+  }
+  const onChangeScore = (score: any): void => {
+    setScore(score);
+  }
+
   return (
     loading
       ?
@@ -55,9 +56,9 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
               return <Form
                 key={i}
                 initialValues={{ remember: false }}
-                // onFinish={() => {
-                //   alert(`${score} | ${comment} ||| ${tasks.items[0].id}`);
-                // }}
+                onFinish={() => {
+                  alert(`${score} | ${comment} ||| ${item.id}`);
+                }}
               >
                 <Paragraph><Text strong>{item.category}</Text></Paragraph>
                 <Paragraph>{item.title}</Paragraph>
@@ -67,17 +68,18 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
                     title='Points'
                     trigger="focus">
                     <InputNumber
+                      id={item.id}
                       min={item.minScore}
                       max={item.maxScore}
                       required={true}
-                      // onChange={onChangeScore}
+                      onChange={onChangeScore}
                     />
                   </Popover>
                   <TextArea
                     placeholder="Comment"
                     style={inputStyle}
                     autoSize
-                    // onChange={onChangeComment}
+                    onChange={onChangeComment}
                   />
                 </Form.Item>
                 <Button
