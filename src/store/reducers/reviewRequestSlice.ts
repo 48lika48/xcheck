@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
-import { IReview, IReviewRequest, ITask } from '../../models';
+import { IReview, IReviewRequest, ITask, ITaskScore } from '../../models';
 import { getTasks, getReviewRequests, getReviews, addReviewRequest, deleteReviewRequest } from 'src/services/heroku';
 
 interface ReviewRequest {
@@ -9,6 +9,7 @@ interface ReviewRequest {
   reviews: Array<IReview>,
   error: string | null,
   isLoading: boolean,
+  selfGrade: ITaskScore | null,
 }
 
 const initialState: ReviewRequest = {
@@ -17,6 +18,7 @@ const initialState: ReviewRequest = {
   reviews: [],
   error: null,
   isLoading: false,
+  selfGrade: null,
 }
 
 const reviewRequestSlice = createSlice({
@@ -47,6 +49,9 @@ const reviewRequestSlice = createSlice({
     setIsLoading(state, action: PayloadAction<boolean>){
       state.isLoading = action.payload
     },
+    setSelfGrade(state, action: PayloadAction<ITaskScore | null>){
+      state.selfGrade = action.payload
+    },
     deleteRequestData(state, action: PayloadAction<string>){
       console.log('delete')
       state.reviewRequests = state.reviewRequests.filter(request => request.id !== action.payload)
@@ -63,6 +68,7 @@ export const {
   setIsLoading,
   setRequest,
   deleteRequestData,
+  setSelfGrade,
 } = reviewRequestSlice.actions
 
 export const fetchAllData = ():AppThunk => async dispatch => {
@@ -86,6 +92,10 @@ export const addRequest = (data: IReviewRequest):AppThunk => async dispatch => {
   } catch (err) {
     dispatch(getDataFailure(err.toString()))
   }
+}
+
+export const addSelfGrade = (data: ITaskScore | null):AppThunk => dispatch => {
+    dispatch(setSelfGrade(data))
 }
 
 export const deleteRequestItem = (requestId: string):AppThunk => async dispatch => {
