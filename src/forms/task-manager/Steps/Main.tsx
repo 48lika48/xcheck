@@ -19,9 +19,9 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
   const load: any = {
     name: 'file',
     accept: '.json, .md',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    disabled: false,
-    fileList: [],
+    customRequest: (options: any) => parsTask(options.file, onDataChange),
+    fileList: fileList,
+    showUploadList: false,
     onChange: async (info: any) => {
       setFileList([info.file] as any);
       const { status } = info.file;
@@ -154,7 +154,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
         label="Import"
         {...formItemLayout}
       >
-        <Upload {...load} fileList={fileList} showUploadList={false}>
+        <Upload {...load}>
           <Button icon={<UploadOutlined />}>Select file</Button>
         </Upload>
       </Form.Item>
