@@ -82,7 +82,7 @@ export enum CrossCheckSessionState {
 
 export interface ICheckSessionAttendee {
   githubId: string;
-  reviewOf: string[];
+  reviewerOf: string[];
 }
 
 export interface IReviewRequest {
