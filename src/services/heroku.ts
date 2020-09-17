@@ -75,6 +75,16 @@ export const addReview = async (review: IReview) => {
   return res;
 };
 
+export const updateReviewRequest = (data: IReviewRequest, id: string) => {
+  fetch(`${HEROKU_URL}${Endpoint.reviewRequests}/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const getData = async (endpoint: Endpoint) => {
   const res = await fetch(HEROKU_URL + endpoint);
   if (res.status === 200) {

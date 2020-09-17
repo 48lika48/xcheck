@@ -10,13 +10,14 @@ type ReviewRequestFormProps = {
   tasks: Array<ITask>,
   isLoading: boolean,
   selfGrade: ITaskScore | null,
-  submitHandler: (data: IReviewRequest) => void,
+  submitHandlerAdd: (data: IReviewRequest) => void,
+  submitHandlerUpdate: (data: IReviewRequest, id: string) => void,
   selfGradeTogle: (data: ITaskScore | null) => void,
 }
 
 export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
 
-  const { reviewRequests, user, tasks, isLoading, selfGrade, submitHandler, selfGradeTogle } = props;
+  const { reviewRequests, user, tasks, isLoading, selfGrade, submitHandlerAdd, submitHandlerUpdate, selfGradeTogle } = props;
 
   const [form] = Form.useForm();
   const [submittedRequest, setSubmittedRequest] = useState(true as IReviewRequest | undefined | boolean);
@@ -40,7 +41,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     }
     try {
       const data: IReviewRequest = {
-        id: Date.now().toString(),
+        id: submittedRequest && typeof submittedRequest !== 'boolean' ? submittedRequest.id : Date.now().toString(),
         crossCheckSessionId: null,
         author: user,
         task: taskId,
@@ -49,7 +50,11 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
         urlPR: values.urlPR,
         selfGrade: selfGrade,
       }
-      submitHandler(data);
+      if (submittedRequest && typeof submittedRequest !== 'boolean') {
+        submitHandlerUpdate(data, submittedRequest.id);
+      } else {
+        submitHandlerAdd(data);
+      }
       message.success('The task solution has been submitted');
       form.resetFields();
     } catch (e) {

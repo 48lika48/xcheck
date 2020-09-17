@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
 import { IReview, IReviewRequest, ITask, ITaskScore } from '../../models';
-import { getTasks, getReviewRequests, getReviews, addReviewRequest, deleteReviewRequest } from 'src/services/heroku';
+import { getTasks, getReviewRequests, getReviews, addReviewRequest, deleteReviewRequest, updateReviewRequest } from 'src/services/heroku';
 
 interface ReviewRequest {
   tasks: Array<ITask>,
@@ -40,6 +40,14 @@ const reviewRequestSlice = createSlice({
     setRequest(state, action: PayloadAction<IReviewRequest>){
       state.reviewRequests.push(action.payload)
     },
+    updateRequestData(state, action: PayloadAction<{data: IReviewRequest, id: string}>){
+      const { data, id } = action.payload
+      const request = state.reviewRequests.find((req: IReviewRequest) => req.id === id)
+      const index = request && state.reviewRequests.indexOf(request)
+      if (index && index !== -1) {
+        state.reviewRequests.splice(index, 1, data)
+      }
+    },
     getDataFailure(state, action: PayloadAction<string | null>){
       state.error = action.payload
     },
@@ -69,6 +77,7 @@ export const {
   setRequest,
   deleteRequestData,
   setSelfGrade,
+  updateRequestData,
 } = reviewRequestSlice.actions
 
 export const fetchAllData = ():AppThunk => async dispatch => {
@@ -87,8 +96,18 @@ export const fetchAllData = ():AppThunk => async dispatch => {
 
 export const addRequest = (data: IReviewRequest):AppThunk => async dispatch => {
   try {
-    await addReviewRequest(data)
     dispatch(setRequest(data))
+    await addReviewRequest(data)
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
+  }
+}
+
+export const updateRequest = (arg: {data: IReviewRequest, id: string}):AppThunk => async dispatch => {
+  const { data, id } = arg
+  try {
+    dispatch(updateRequestData(arg))
+    await updateReviewRequest(data, id)
   } catch (err) {
     dispatch(getDataFailure(err.toString()))
   }

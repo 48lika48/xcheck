@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ReviewRequestForm, ReviewRequestList  } from './components';
 import { IReviewRequest, ITaskScore } from '../../models';
 import { RootState } from 'src/store/rootReducer';
-import { fetchAllData, addRequest, deleteRequestItem, addSelfGrade } from '../../store/reducers/reviewRequestSlice';
+import { fetchAllData, addRequest, updateRequest, deleteRequestItem, addSelfGrade } from '../../store/reducers/reviewRequestSlice';
 
 export const ReviewRequestPage: React.FC = () => {
 
@@ -19,8 +19,12 @@ export const ReviewRequestPage: React.FC = () => {
     dispatch(deleteRequestItem(requestId))
   }
 
-  const submitHandler = (data: IReviewRequest) => {
+  const submitHandlerAdd = (data: IReviewRequest) => {
     dispatch(addRequest(data))
+  }
+
+  const submitHandlerUpdate = (data: IReviewRequest, id: string) => {
+    dispatch(updateRequest({ data, id }))
   }
 
   const selfGradeTogle = (data: ITaskScore | null) => {
@@ -34,7 +38,8 @@ export const ReviewRequestPage: React.FC = () => {
         user={githubId} tasks={tasks}
         isLoading={isLoading}
         selfGrade={selfGrade}
-        submitHandler={submitHandler}
+        submitHandlerAdd={submitHandlerAdd}
+        submitHandlerUpdate={submitHandlerUpdate}
         selfGradeTogle={selfGradeTogle}
      />
       <ReviewRequestList reviewRequests={reviewRequests} user={githubId} deleteHandler={deleteHandler}/>
