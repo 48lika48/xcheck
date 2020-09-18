@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Form, Button, Input, Space, Upload, DatePicker, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { formItemLayout, formItemLayoutWithOutLabel } from '../constants/constants';
 import { updateArray } from './helpers';
 import { parsTask } from 'src/services/taskparser';
+import { saveTask } from 'src/services/savetask';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -15,7 +16,7 @@ type MainProps = {
 }
 
 const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
-  const [fileList, setFileList] = React.useState();
+  const [fileList, setFileList] = React.useState([{ uid: null }]);
 
   const showMessage = (isUploaded: boolean) => {
     isUploaded
@@ -29,7 +30,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
     customRequest: (options: any) => parsTask({ file: options.file, onDataChange, showMessage }),
     fileList,
     showUploadList: false,
-    onChange: async (info: any) => setFileList([info.file] as any),
+    onChange: async (info: any) => setFileList([info.file]),
   };
 
   return (
@@ -132,9 +133,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => {
-                    add();
-                  }}
+                  onClick={() => add()}
                   style={{ width: '60%' }}
                 >
                   <PlusOutlined /> Add goal
@@ -145,13 +144,20 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
         }}
       </Form.List>
       <Form.Item
-        label="Import"
-        {...formItemLayout}
-      >
-        <Upload {...load}>
-          <Button icon={<UploadOutlined />}>Select file</Button>
-        </Upload>
+        label="Import/export data"
+        {...formItemLayout}>
+        <Space>
+
+          <Upload {...load}>
+            <Button icon={<UploadOutlined />}>Import data</Button>
+          </Upload>
+
+          <Button icon={<DownloadOutlined />} onClick={() => saveTask(taskData)}>
+            Export data
+        </Button>
+        </Space>
       </Form.Item>
+
     </Form>
   );
 }
