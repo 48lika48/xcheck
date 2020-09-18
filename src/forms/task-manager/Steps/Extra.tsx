@@ -35,7 +35,7 @@ const Extra: React.FC<ExtraProps> = ({ onDataChange, taskData }) => {
       </Form.Item>
       <Form.List name="advanced-tasks">
         {(fields, { add, remove }) => {
-          fields.push(...taskData.subtasks[2].extra.map((item: string, index: number) => {
+          fields.length === 0 && fields.push(...taskData.subtasks[2].extra.map((item: string, index: number) => {
             return {
               fieldKey: index,
               isListField: true,

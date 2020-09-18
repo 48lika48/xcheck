@@ -35,7 +35,7 @@ export const Fines: React.FC<FinesProps> = ({ onDataChange, taskData }) => {
       </Form.Item>
       <Form.List name="fines-tasks">
         {(fields, { add, remove }) => {
-          fields.push(...taskData.subtasks[3].fines.map((item: string, index: number) => {
+          fields.length === 0 && fields.push(...taskData.subtasks[3].fines.map((item: string, index: number) => {
             return {
               fieldKey: index,
               isListField: true,

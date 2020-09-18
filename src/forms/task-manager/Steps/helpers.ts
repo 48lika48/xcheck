@@ -28,7 +28,7 @@ export const updateSubtasks = (
   return currentSubtasks;
 };
 
-export const updateScore = (currentScore: number[]): number => {
+export const updateScore = (currentScore: object[]): number => {
   const scoreArr = currentScore.map((el) => Object.values(el)[0]);
   const maxScore = [].concat.apply([], scoreArr).reduce((sum, current) => sum + +current, 0);
   return maxScore;

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
 import { Table, Tag, Space, Spin, Button } from 'antd';
 import './Review.scss'
@@ -12,7 +13,7 @@ export const ReviewPage: React.FC = () => {
   const { taskLoading, reviews } = useSelector((state: RootState) => state.reviewsPage)
   useEffect(() => {
     dispatch(fetchReviewsByAuthor())
-  }, []);
+  }, [dispatch]);
 
   const columns = [
     {

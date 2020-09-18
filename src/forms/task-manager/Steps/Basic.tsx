@@ -35,7 +35,7 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
       </Form.Item>
       <Form.List name="basic-tasks">
         {(fields, { add, remove }) => {
-          fields.push(...taskData.subtasks[0].basic.map((item: string, index: number) => {
+          fields.length === 0 && fields.push(...taskData.subtasks[0].basic.map((item: string, index: number) => {
             return {
               fieldKey: index,
               isListField: true,
@@ -102,7 +102,7 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => { add(); console.log(fields) }}
+                  onClick={() => add()}
                   style={{ width: '60%' }}
                 >
                   <PlusOutlined /> Add subtask

@@ -4,13 +4,14 @@ import { Form, Button, Input, Space, DatePicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { formItemLayout, formItemLayoutWithOutLabel } from '../constants/constants';
 import { updateArray } from './helpers';
+import { ITask } from 'src/models';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 type MainProps = {
-  onDataChange: (field: string, value: any) => void;
-  taskData: any
+  onDataChange: (field: string, value: string | string[]) => void;
+  taskData: ITask
 }
 
 const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
@@ -20,6 +21,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
         label="Task name"
         {...formItemLayout}
         rules={[{ required: true, message: 'Please input task name!' }]}
+        initialValue={taskData.id}
       >
         <Input
           placeholder="task name"
@@ -33,6 +35,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
         label="Short description"
         {...formItemLayout}
         rules={[{ required: true, message: 'Please input short description!' }]}
+        initialValue={taskData.description}
       >
         <TextArea
           placeholder="short description"
@@ -63,10 +66,18 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
               }
             }
           />
-        </Space>,
+        </Space>
       </Form.Item>
       <Form.List name="tasks" >
         {(fields, { add, remove }) => {
+          taskData.goals && fields.length === 0 && fields.push(...taskData.goals.map((item: string, index: number) => {
+            return {
+              fieldKey: index,
+              isListField: true,
+              key: index,
+              name: index,
+            }
+          }));
           return (
             <div>
               {fields.map((field, index) => (
@@ -86,6 +97,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
                         message: "Please input task goal or delete this field.",
                       },
                     ]}
+                    initialValue={taskData.goals && taskData.goals[index]}
                     noStyle
                   >
                     <TextArea
@@ -94,10 +106,10 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
                       autoSize
                       onChange={
                         (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                          onDataChange('goals', updateArray(taskData.goals, index, e.currentTarget.value))
+                          onDataChange('goals', updateArray(taskData.goals || [], index, e.currentTarget.value))
                         }
                       }
-                      value={taskData.goals[index]}
+                      value={taskData.goals && taskData.goals[index]}
                     />
                   </Form.Item>
                   {fields.length > 1 ? (

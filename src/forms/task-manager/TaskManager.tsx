@@ -7,11 +7,12 @@ import Extra from './Steps/Extra';
 import Fines from './Steps/Fines';
 import { Form, Modal, Button, Steps, message, Space, Upload } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
-import { saveTask } from 'src/services/savetask';
-import { parsTask } from 'src/services/taskparser';
+import { saveTask } from 'src/services/save-task';
+import { parsTask } from 'src/services/parser-task';
+import { ITask, TaskState } from 'src/models';
 const { Step } = Steps;
 
-const task = {
+const task: ITask = {
   id: '',
   description: '',
   startDate: moment().format(),
@@ -22,7 +23,7 @@ const task = {
   score: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
   maxScore: 0,
   author: '',
-  state: '',
+  state: TaskState.DRAFT,
   categoriesOrder: [],
   items: [],
 }
@@ -34,9 +35,8 @@ export const TaskManager: React.FC = () => {
   const [fileList, setFileList] = React.useState([{ uid: null }]);
 
   const onDataChange = (field: string, value: any) => {
-    setTaskData((task) => {
-      return { ...task, [field]: value }
-    })
+    if (field === 'allData') { return setTaskData(value) }
+    setTaskData((task) => { return { ...task, [field]: value } })
   }
 
   const showMessage = (isUploaded: boolean) => {
@@ -48,10 +48,13 @@ export const TaskManager: React.FC = () => {
   const load: any = {
     name: 'file',
     accept: '.json, .md',
-    customRequest: (options: any) => parsTask({ file: options.file, taskData, onDataChange, showMessage }),
+    customRequest: (options: { file: File; }) => {
+      setTaskData(task);
+      parsTask({ file: options.file, taskData, setTaskData: onDataChange, showMessage })
+    },
     fileList,
     showUploadList: false,
-    onChange: async (info: any) => setFileList([info.file]),
+    onChange: async (info: { file: { uid: null; }; }) => setFileList([info.file]),
   };
 
 
