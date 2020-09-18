@@ -4,7 +4,7 @@ import './Review.scss'
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
-import { fetchReviewsByAuthor } from '../../store/reducers/reviewsPageSlice';
+import {fetchRequestsToReview, fetchReviewsByAuthor} from '../../store/reducers/reviewsPageSlice';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 
 export const ReviewPage: React.FC = () => {
@@ -12,6 +12,7 @@ export const ReviewPage: React.FC = () => {
   const { taskLoading, reviews } = useSelector((state: RootState) => state.reviewsPage)
   useEffect(() => {
     dispatch(fetchReviewsByAuthor())
+    dispatch(fetchRequestsToReview())
   }, [dispatch]);
   const columns = [
     {
