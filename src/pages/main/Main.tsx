@@ -21,41 +21,41 @@ const { TabPane } = Tabs;
 
 export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 
-  const { users } = useSelector((state: RootState) => state);
-  const userName = getGithubUserName() || users.currentUser.userData.githubId;
-  const role = localStorage.getItem('role') || 'student';
-  const taskId = 'xcheck';
+	const { users } = useSelector((state: RootState) => state);
+	const userName = getGithubUserName() || users.currentUser.userData.githubId;
+	const role = localStorage.getItem('role') || 'student';
+	const taskId = 'xcheck';
 
-  return (
-    <Layout>
-      <PageHeader
-        className="site-page-header"
-        title="RS School xCheck"
-        subTitle={`${userName} (${users.currentUser.currentRole.replace('_', ' ')})`}
-        extra={
-          <Tooltip title="logout">
-            <Button type="link" shape="circle"
-              icon={<LogoutOutlined onClick={logoutHandler} />} />
-          </Tooltip>
-        }
-      />
-      <Content>
-        <Tabs defaultActiveKey="1">
-          <TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
-            <TaskManager />
-          </TabPane>
-          <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
-            <ReviewRequestPage />
-            <SelfGradeModal taskId={taskId} />
+	return (
+		<Layout>
+			<PageHeader
+				className="site-page-header"
+				title="RS School xCheck"
+				subTitle={`${userName} (${users.currentUser.currentRole.replace('_', ' ')})`}
+				extra={
+					<Tooltip title="logout">
+						<Button type="link" shape="circle"
+							icon={<LogoutOutlined onClick={logoutHandler} />} />
+					</Tooltip>
+				}
+			/>
+			<Content>
+				<Tabs defaultActiveKey="1">
+					<TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
+						<TaskManager />
+					</TabPane>
+					<TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
+						<ReviewRequestPage />
+						<SelfGradeModal taskId={taskId} />
             Страница зопроса на ревью
         </TabPane>
-          <TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
-            <ReviewPage />
-          </TabPane>
-        </Tabs>
-      </Content>
-      <Footer>Footer</Footer>
-    </Layout>
+					<TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
+						<ReviewPage />
+					</TabPane>
+				</Tabs>
+			</Content>
+			<Footer>Footer</Footer>
+		</Layout>
 
-  )
+	)
 }
