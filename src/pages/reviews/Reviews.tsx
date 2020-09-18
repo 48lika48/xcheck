@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Table, Tag, Space, Spin, Button } from 'antd';
+import {Table, Tag, Space, Spin, Button, Badge} from 'antd';
 import './Review.scss'
-import { useEffect } from 'react';
+import {useCallback, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 import {fetchRequestsToReview, fetchReviewsByAuthor} from '../../store/reducers/reviewsPageSlice';
@@ -9,11 +9,14 @@ import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 
 export const ReviewPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { taskLoading, reviews } = useSelector((state: RootState) => state.reviewsPage)
-  useEffect(() => {
+  const { taskLoading, reviews, requests } = useSelector((state: RootState) => state.reviewsPage)
+  const getData = useCallback(() => {
     dispatch(fetchReviewsByAuthor())
     dispatch(fetchRequestsToReview())
-  }, [dispatch]);
+  }, [dispatch])
+  useEffect(() => {
+    getData();
+  }, [dispatch, getData]);
   const columns = [
     {
       title: 'rev ID',
@@ -66,26 +69,27 @@ export const ReviewPage: React.FC = () => {
       ),
     },
   ];
-
   return (
       <Spin spinning={taskLoading}>
-        <Space size='small'>
+        <Space size='middle'>
+          <Badge count={requests.length} >
+            <Button
+                onClick={() => console.log("add")}
+                type="primary"
+                style={{
+                  marginBottom: 16,
+                }}
+                icon={<PlusOutlined />}
+            >
+              Add a review
+            </Button>
+          </Badge>
           <Button
-            onClick={() => console.log("add")}
-            type="primary"
-            style={{
-              marginBottom: 16,
-            }}
-            icon={<PlusOutlined />}
-          >
-            Add a review
-          </Button>
-          <Button
-            onClick={() => console.log("refresh")}
-            style={{
-              marginBottom: 16,
-            }}
-            icon={<ReloadOutlined />}
+              onClick={() => getData()}
+              style={{
+                marginBottom: 16,
+              }}
+              icon={<ReloadOutlined />}
           >
             Refresh
           </Button>
