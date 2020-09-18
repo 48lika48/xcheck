@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 import Main from './Steps/Main';
 import Basic from './Steps/Basic';
 import Advanced from './Steps/Advanced';
 import Extra from './Steps/Extra';
 import Fines from './Steps/Fines';
-import { Modal, Button, Steps, message } from 'antd';
-import moment from 'moment';
+import { Form, Modal, Button, Steps, message, Space, Upload } from 'antd';
+import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { saveTask } from 'src/services/savetask';
+import { parsTask } from 'src/services/taskparser';
 const { Step } = Steps;
 
 const task = {
@@ -28,13 +31,29 @@ export const TaskManager: React.FC = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [step, setStep] = useState(0);
   const [taskData, setTaskData] = useState(task);
+  const [fileList, setFileList] = React.useState([{ uid: null }]);
 
   const onDataChange = (field: string, value: any) => {
     setTaskData((task) => {
       return { ...task, [field]: value }
     })
-    console.log(taskData)
   }
+
+  const showMessage = (isUploaded: boolean) => {
+    isUploaded
+      ? message.success(`file uploaded successfully.`)
+      : message.error(`file upload failed.`);
+  }
+
+  const load: any = {
+    name: 'file',
+    accept: '.json, .md',
+    customRequest: (options: any) => parsTask({ file: options.file, taskData, onDataChange, showMessage }),
+    fileList,
+    showUploadList: false,
+    onChange: async (info: any) => setFileList([info.file]),
+  };
+
 
   const steps = [
     {
@@ -88,7 +107,6 @@ export const TaskManager: React.FC = () => {
     setIsShowModal(false);
   }
 
-
   return (
     <>
       <Button type="primary" onClick={showManager}>
@@ -111,21 +129,31 @@ export const TaskManager: React.FC = () => {
         </Steps>
         <div className="steps-content">{steps[step].content}</div>
         <div className="steps-action">
-          {step < steps.length - 1 && (
-            <Button type="primary" htmlType="submit" onClick={() => next()}>
-              Next
-            </Button>
-          )}
-          {step === steps.length - 1 && (
-            <Button type="primary" onClick={createTask}>
-              Done
-            </Button>
-          )}
-          {step > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-              Previous
-            </Button>
-          )}
+          <div className="steps-action-btns">
+            {step > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
+            {step < steps.length - 1 && (
+              <Button type="primary" htmlType="submit" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {step === steps.length - 1 && (
+              <Button type="primary" onClick={createTask}>
+                Done
+              </Button>
+            )}
+          </div>
+          <Form.Item>
+            <Space>
+              <Upload {...load}>
+                <Button icon={<UploadOutlined />}>Import data</Button>
+              </Upload>
+              <Button icon={<DownloadOutlined />} onClick={() => saveTask(taskData)}>Export data</Button>
+            </Space>
+          </Form.Item>
         </div>
       </Modal>
     </>
