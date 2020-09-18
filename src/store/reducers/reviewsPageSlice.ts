@@ -54,7 +54,9 @@ const reviewsPageSlice = createSlice({
       state.sessions.push(action.payload)
     },
     setRequests(state, action){
-      state.requests.push(action.payload)
+      if (state.requests.findIndex(item => item === action.payload) === -1){
+        state.requests.push(action.payload)
+      }
     },
     setData(state, action){
       state.reviews.forEach((item: IReviewTableData, index: number) => {
