@@ -25,6 +25,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 	const userName = getGithubUserName() || users.currentUser.userData.githubId;
 	const role = localStorage.getItem('role') || 'student';
 	const taskId = 'xcheck';
+	// const taskId = 'simple-task-v1';
 
 	return (
 		<Layout>
