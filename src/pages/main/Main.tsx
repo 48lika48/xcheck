@@ -13,8 +13,8 @@ const { TabPane } = Tabs;
 
 export const Main: React.FC<{ logoutHandler: any }> = (props) => {
 	const role = localStorage.getItem('role') || 'student';
-	// const taskId = 'xcheck';
-	const taskId = 'simple-task-v1';
+	const taskId = 'xcheck';
+	// const taskId = 'simple-task-v1';
 
 	return (
 		<Layout>

@@ -42,13 +42,6 @@ const selfGradeSlice = createSlice({
 			state.loading = false;
 			state.task = action.payload;
 			state.taskScore.taskName = action.payload.id;
-			// state.taskScore.items = action.payload.items.map((item: any) => {
-			// 	return {
-			// 		id: item.id,
-			// 		score: 0,
-			// 		comment: ''
-			// 	};
-			// });
 		},
 		getTasksError(state, action) {
 			state.error = action.payload;
@@ -57,7 +50,14 @@ const selfGradeSlice = createSlice({
 		saveTaskScoreResults(state, action) {
 			if (state.taskScore.items.every((item) => item.id !== action.payload.id)) {
 				state.taskScore.items.push(action.payload);
+				return;
 			}
+			state.taskScore.items.forEach((item) => {
+				if (item.id === action.payload.id) {
+					item.score = action.payload.score;
+					item.comment = action.payload.comment;
+				}
+			});
 		}
 	}
 });

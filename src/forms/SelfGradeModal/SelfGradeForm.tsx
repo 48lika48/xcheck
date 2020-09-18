@@ -51,8 +51,6 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 							validateMessages={validateMessages}
 							onFinish={(values) => {
 								values.item.id = item.id;
-								console.log(values);
-								// Send values.item to taskScore in store
 								dispatch(saveTaskScoreResults(values.item));
 							}}
 						>
