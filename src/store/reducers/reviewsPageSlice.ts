@@ -1,17 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
-import { IReview, IReviewRequest } from '../../models';
-import { getReviewRequests, getReviews } from '../../services/dbApi';
+import {ICheckSession, IReview, IReviewRequest} from '../../models';
+import { getReviews } from '../../services/dbApi';
 import { getGithubLogin } from '../../services/github-auth';
+import {getCheckSessions, getReviewRequests} from "../../services/heroku";
 
 interface IReviewTableData extends IReview {
   key: number
 }
 
-const initialState ={
+interface IReviewPage{
+  taskLoading: boolean,
+  dataLoading: boolean,
+  reviews: IReviewTableData[],
+  sessions: ICheckSession[],
+  requests: string[],
+  error: string | null,
+}
+
+const initialState: IReviewPage ={
   taskLoading: true,
   dataLoading: false,
   reviews: [],
+  sessions: [],
+  requests: [],
   error: null,
 }
 
@@ -38,6 +50,12 @@ const reviewsPageSlice = createSlice({
       const name = getGithubLogin();
       state.reviews = state.reviews.filter((item: IReview) => item.author === name)
     },
+    setSessions(state, action){
+      state.sessions.push(action.payload)
+    },
+    setRequests(state, action){
+      state.requests.push(action.payload)
+    },
     setData(state, action){
       state.reviews.forEach((item: IReviewTableData, index: number) => {
         const x = action.payload.find((x: IReviewRequest) => x.id === item.requestId)
@@ -55,7 +73,9 @@ export const {
   getReviewsSuccess,
   getReviewsFail,
   sortReviewsByAuthor,
-  setData
+  setData,
+  setSessions,
+  setRequests
 } = reviewsPageSlice.actions
 
 export const fetchReviewsByAuthor = ():AppThunk => async dispatch => {
@@ -77,8 +97,31 @@ export const fetchReviewsRequests = ():AppThunk => async dispatch => {
     dispatch(endLoading())
 
   }catch (err) {
+    dispatch(endLoading())
     dispatch(getReviewsFail(err.toString()))
   }
+}
+
+export const fetchRequestsToReview = ():AppThunk => async dispatch => {
+  const user = getGithubLogin();
+  try{
+    dispatch(startLoading());
+    const session = await getCheckSessions();
+    let requests = await getReviewRequests();
+    session.forEach((session: ICheckSession) => {
+  if(session.state === 'CROSS_CHECK'){
+    requests = requests.filter((item: IReviewRequest) => item.crossCheckSessionId === session.id )
+    requests = requests.filter((item: IReviewRequest)=> item.state === 'PUBLISHED')
+    const attendeesStudents = session.attendees.find(item => item.githubId === user)?.reviewerOf
+    attendeesStudents?.forEach((item) => {
+      const id = requests.find((request: IReviewRequest) => request.author === item).id
+      dispatch(setRequests(id))
+    })
+  }
+    })
+  }catch(err){
+    dispatch(endLoading());
+    dispatch(getReviewsFail(err.toString()))}
 }
 
 export default reviewsPageSlice.reducer;
