@@ -85,7 +85,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 							</Form.Item>
 
 							<Button htmlType="submit" icon={<CheckCircleTwoTone twoToneColor="#52c41a" />}>
-								Save comment
+								Save this item
 							</Button>
 							<Divider />
 						</Form>
