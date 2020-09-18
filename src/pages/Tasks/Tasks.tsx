@@ -1,7 +1,24 @@
 import React from 'react';
+import role from './constants';
 import './Tasks.scss';
 
-import { Table, Tag, Space } from 'antd';
+import { Table, Tag, Space, Input } from 'antd';
+
+const Action: React.FC= () => {
+  if(role === 'student'){
+    return(
+    <Space size="middle">
+      <a>Details</a>
+    </Space>
+  )} else {
+    return(
+    <Space size="middle">
+      <a>Edit</a>
+      <a>Delete</a>
+    </Space>
+    )
+  }
+}
 
 const columns = [
   {
@@ -44,16 +61,16 @@ const columns = [
     title: 'Action',
     key: 'action',
     render: (text: any, record: any) => (
-      <Space size="middle">
-        <a>Details {record.name}</a>
-        <a>Delete</a>
-      </Space>
+      <Action />
     ),
   },
   {
     title: 'Comment',
     dataIndex: 'comment',
     key: 'comment',
+    render: (text: string) => (
+      <Input placeholder="" bordered={false} />
+    ),
   },
 ];
 
@@ -86,8 +103,8 @@ const data = [
 
 export const Tasks: React.FC= () => {
   return (
-      <Table columns={columns} dataSource={data} />
-      )
-    }
+    <Table columns={columns} dataSource={data} />
+  )
+}
   
 export default Tasks;
