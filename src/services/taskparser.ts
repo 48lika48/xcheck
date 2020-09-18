@@ -34,8 +34,8 @@ export const parsTask = ({ file, onDataChange, showMessage }: Args) => {
         );
 
         onDataChange('id', id && id[1].trim());
-        onDataChange('description', description && description[1].split('*').join(''));
-        onDataChange('endDate', moment(endTime && endTime[1], 'DD.MM.YYYY HH:mm'));
+        onDataChange('description', description && description[1].split('*').join('').trim());
+        onDataChange('endDate', moment(endTime && endTime[1], 'DD.MM.YYYY HH:mm').format());
       }
       return showMessage(true);
     } catch (e) {

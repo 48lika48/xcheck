@@ -68,21 +68,15 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
       >
         <Space direction="vertical" size={12} >
           <RangePicker
-            name="range-time"
-            ranges={{
-              Today: [moment(), moment()],
-              'This Month': [moment().startOf('month'), moment().endOf('month')],
-            }}
-            defaultValue={
-              [taskData.startDate, taskData.endDate]
-            }
+            ranges={{}}
+            value={[moment(taskData.startDate), moment(taskData.endDate)]}
             showTime
             format="DD.MM.YYYY HH:mm"
             onChange={
               (values: any) => {
                 if (values) {
-                  onDataChange('startDate', values[0]);
-                  onDataChange('endDate', values[1]);
+                  onDataChange('startDate', values[0].format());
+                  onDataChange('endDate', values[1].format());
                 }
               }
             }

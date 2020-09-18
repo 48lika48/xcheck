@@ -11,8 +11,8 @@ const { Step } = Steps;
 const task = {
   id: '',
   description: '',
-  startDate: moment(),
-  endDate: moment(),
+  startDate: moment().format(),
+  endDate: moment().format(),
   goals: [],
   requirements: [],
   subtasks: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
