@@ -24,10 +24,14 @@ export const ReviewPage: React.FC = () => {
     {
       title: 'Reviewed Student',
       dataIndex: 'reviewedStudent',
+      sorter: (a: { reviewedStudent: string | any[] }, b: { reviewedStudent: string | any[] }) =>
+        a.reviewedStudent.length - b.reviewedStudent.length,
     },
     {
       title: 'Task',
       dataIndex: 'task',
+      sorter: (a: { task: string | any[] }, b: { task: string | any[] }) =>
+        a.task.length - b.task.length,
     },
     {
       title: 'Status',
@@ -49,6 +53,30 @@ export const ReviewPage: React.FC = () => {
         };
         return <Tag color={getColor(state)}>{state.toUpperCase()}</Tag>;
       },
+      filters: [
+        {
+          text: 'DRAFT',
+          value: 'DRAFT',
+        },
+        {
+          text: 'PUBLISHED',
+          value: 'PUBLISHED',
+        },
+        {
+          text: 'DISPUTED',
+          value: 'DISPUTED',
+        },
+        {
+          text: 'ACCEPTED',
+          value: 'ACCEPTED',
+        },
+        {
+          text: 'REJECTED',
+          value: 'REJECTED',
+        },
+      ],
+      onFilter: (value: any, record: { state: string | any[] }) =>
+        record.state.indexOf(value) === 0,
     },
     {
       title: 'Action',
