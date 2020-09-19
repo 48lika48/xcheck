@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal, message } from 'antd';
 import { SelfGradeForm } from './SelfGradeForm';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
 export type Iprops = {
@@ -10,10 +10,9 @@ export type Iprops = {
 };
 
 export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
-	const [ showModal, setShowModal ] = useState(false);
-	const [ isDisabledButton, setIsDisabledButton ] = useState(true);
+	const [showModal, setShowModal] = useState(false);
+	const [isDisabledButton, setIsDisabledButton] = useState(true);
 
-	const dispatch = useDispatch();
 	const { taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
 
 	const cancelChanges = (): void => {
@@ -23,7 +22,6 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 
 	const saveChanges = (): void => {
 		setShowModal(false);
-		message.success('Self-Check saved!');
 	};
 
 	const handleConfirmClick = (): void => {
@@ -32,8 +30,8 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 			return;
 		}
 		setIsDisabledButton(false);
-		console.log(`Save ${taskScore.items} to backEnd by dispatch!`);
-		message.success('Confirmed!');
+		// todo console.log(`Save ${taskScore.items} to backEnd by dispatch!`);
+		message.success('Check Saved!');
 	};
 
 	return (
@@ -50,7 +48,7 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 				title="Check task"
 				centered
 				visible={showModal}
-				okText="Save result"
+				okText="OK"
 				onOk={() => {
 					saveChanges();
 				}}
