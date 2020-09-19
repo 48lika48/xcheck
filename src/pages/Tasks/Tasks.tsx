@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from 'react';
 import role from './constants';
 import './Tasks.scss';
@@ -41,21 +42,21 @@ const columns = [
     title: 'Status',
     key: 'tags',
     dataIndex: 'tags',
-    render: (tags: any) => (
-      <>
-        {tags.map((tag: any) => {
-          let color = tag.length > 8 ? 'geekblue' : 'green';
-          if (tag === 'DRAFT') {
-            color = 'volcano';
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
+    // render: (tags: any) => (
+    //   <>
+    //     {tags.map((tag: any) => {
+    //       let color = tag.length > 8 ? 'geekblue' : 'green';
+    //       if (tag === 'DRAFT') {
+    //         color = 'volcano';
+    //       }
+    //       return (
+    //         <Tag color={color} key={tag}>
+    //           {tag.toUpperCase()}
+    //         </Tag>
+    //       );
+    //     })}
+    //   </>
+    // ),
   },
   {
     title: 'Action',
@@ -101,22 +102,17 @@ const data = [
   },
 ];
 
-// export const Tasks: React.FC= () => {
-//   return (
-//     <Table columns={columns} dataSource={data} />
-//   )
-// }
-
 export const Tasks: React.FC= () => {
-  const [backData, getBackData] = useState([]);
+  const [backData, setBackData] = useState(data);
   useEffect(() => {
-    const value = getTasks();
-    console.log(value);
-    // getTasks().then(value =>{getBackData(value)})
-  });
-  // console.log(backData[0]);
+    const fetchData = async() => {
+      const value = await getTasks();
+      setBackData(value);
+    }
+    fetchData();
+  },[]);
   return (
-    <Table columns={columns} dataSource={data} />
+    <Table columns={columns} dataSource={backData} />
   )
 }
   
