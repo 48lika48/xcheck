@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 import { fetchRequestsToReview, fetchReviewsByAuthor } from '../../store/reducers/reviewsPageSlice';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { RequestSelector } from './components/requestSelector';
 
 export const ReviewPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -70,6 +71,7 @@ export const ReviewPage: React.FC = () => {
       <Space size="middle">
         <Badge count={requests.length}>
           <Tooltip placement="topLeft" title={`You can create ${requests.length} more reviews`}>
+            <RequestSelector />
             <Button
               onClick={() => console.log('add')}
               type="primary"
@@ -77,9 +79,7 @@ export const ReviewPage: React.FC = () => {
                 marginBottom: 16,
               }}
               icon={<PlusOutlined />}
-            >
-              Add a review
-            </Button>
+            />
           </Tooltip>
         </Badge>
         <Button
