@@ -67,8 +67,8 @@ export const { loadTasks, loadTaskSuccess, getTasksError, saveTaskScoreResults }
 export const fetchTasks = (taskName: string): AppThunk => async (dispatch) => {
 	try {
 		dispatch(loadTasks());
-		const response = await getTasks();
-		const tasks = await response.json();
+		const tasks = await getTasks();
+		console.log(`tasks:${tasks}`);
 		const taskToCheck = tasks.find((task: { id: any }) => {
 			if (task.id !== taskName) {
 				return null;

@@ -30,7 +30,7 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 			return;
 		}
 		setIsDisabledButton(false);
-		// todo console.log(`Save ${taskScore.items} to backEnd by dispatch!`);
+		// todo console.log(`Save ${taskScore} to reviewRequest by dispatch!`);
 		message.success('Check Saved!');
 	};
 
