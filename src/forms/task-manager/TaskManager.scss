@@ -1,3 +1,9 @@
-.create-button{
-    display: block;
+.create-button {
+  display: block;
+}
+
+.steps-action {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
