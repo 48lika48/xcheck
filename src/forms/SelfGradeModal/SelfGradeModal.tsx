@@ -10,11 +10,11 @@ export type Iprops = {
 };
 
 export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
-	const [showModal, setShowModal] = useState(false);
-	const [isDisabledButton, setIsDisabledButton] = useState(true);
+	const [ showModal, setShowModal ] = useState(false);
+	const [ isDisabledButton, setIsDisabledButton ] = useState(true);
 
 	const dispatch = useDispatch();
-	const { selfGrade } = useSelector((state: RootState) => state.selfGradeReducer);
+	const { taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
 
 	const cancelChanges = (): void => {
 		setShowModal(false);
@@ -23,16 +23,17 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 
 	const saveChanges = (): void => {
 		setShowModal(false);
+		message.success('Self-Check saved!');
 	};
 
 	const handleConfirmClick = (): void => {
-		if (!selfGrade.items.length) {
+		if (!taskScore.items.length) {
 			message.warning('Check carefully! Enter and save all items.');
 			return;
 		}
 		setIsDisabledButton(false);
-		console.log(`Save ${selfGrade} to backEnd by dispatch!`);
-		message.success('Check saved!');
+		console.log(`Save ${taskScore.items} to backEnd by dispatch!`);
+		message.success('Confirmed!');
 	};
 
 	return (
@@ -49,9 +50,11 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 				title="Check task"
 				centered
 				visible={showModal}
-				okText="OK"
-				onOk={saveChanges}
-				onCancel={cancelChanges}
+				okText="Save result"
+				onOk={() => {
+					saveChanges();
+				}}
+				onCancel={() => cancelChanges()}
 				okButtonProps={{ disabled: isDisabledButton }}
 				width={900}
 			>

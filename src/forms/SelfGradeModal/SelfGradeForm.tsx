@@ -31,7 +31,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 		() => {
 			dispatch(fetchTasks(props.taskId));
 		},
-		[dispatch]
+		[ dispatch ]
 	);
 	const { task, loading } = useSelector((state: RootState) => state.selfGradeReducer);
 
@@ -41,63 +41,63 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 			<p>Task Loading...</p>
 		</Space>
 	) : (
-			<React.Fragment>
-				{task ? (
-					task.items.map((item: any, i: number) => {
-						return (
-							<Form
-								key={task.items.length - i}
-								initialValues={{ remember: false }}
-								validateMessages={validateMessages}
-								onFinish={(values) => {
-									values.item.id = item.id;
-									dispatch(saveTaskScoreResults(values.item));
-								}}
+		<React.Fragment>
+			{task ? (
+				task.items.map((item: any, i: number) => {
+					return (
+						<Form
+							key={task.items.length - i}
+							initialValues={{ remember: false }}
+							validateMessages={validateMessages}
+							onFinish={(values) => {
+								values.item.id = item.id;
+								dispatch(saveTaskScoreResults(values.item));
+							}}
+						>
+							<Paragraph>
+								<Text strong>{item.category}</Text>
+							</Paragraph>
+							<Paragraph>{item.title}</Paragraph>
+							<Form.Item
+								name={[ 'item', 'score' ]}
+								label={`Score from ${item.minScore} to ${item.maxScore}`}
+								rules={[
+									{
+										type: 'number',
+										min: item.minScore,
+										max: item.maxScore,
+										required: true
+									}
+								]}
 							>
-								<Paragraph>
-									<Text strong>{item.category}</Text>
-								</Paragraph>
-								<Paragraph>{item.title}</Paragraph>
-								<Form.Item
-									name={['item', 'score']}
-									label={`Score from ${item.minScore} to ${item.maxScore}`}
-									rules={[
-										{
-											type: 'number',
-											min: item.minScore,
-											max: item.maxScore,
-											required: true
-										}
-									]}
-								>
-									<InputNumber />
-								</Form.Item>
-								<Form.Item
-									name={['item', 'comment']}
-									label="Comment"
-									rules={[
-										{
-											required: false
-										}
-									]}
-								>
-									<TextArea placeholder="Comment" style={inputStyle} autoSize />
-								</Form.Item>
+								<InputNumber />
+							</Form.Item>
+							<Form.Item
+								name={[ 'item', 'comment' ]}
+								label="Comment"
+								rules={[
+									{
+										required: false
+									}
+								]}
+							>
+								<TextArea placeholder="Comment" style={inputStyle} autoSize />
+							</Form.Item>
 
-								<Button htmlType="submit" icon={<CheckCircleTwoTone twoToneColor="#52c41a" />}>
-									Save item
+							<Button htmlType="submit" icon={<CheckCircleTwoTone twoToneColor="#52c41a" />}>
+								Save this item
 							</Button>
-								<Divider />
-							</Form>
-						);
-					})
-				) : (
-						<Paragraph>Close Modal and open later</Paragraph>
-					)}
-				<Button onClick={props.handleConfirmClick}>
-					End check and save
+							<Divider />
+						</Form>
+					);
+				})
+			) : (
+				<Paragraph>Close Modal and open later</Paragraph>
+			)}
+			<Button onClick={props.handleConfirmClick}>
+				Confirm
 				<SmileTwoTone />
-				</Button>
-			</React.Fragment>
-		);
+			</Button>
+		</React.Fragment>
+	);
 };

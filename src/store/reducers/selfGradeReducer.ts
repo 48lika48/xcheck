@@ -7,7 +7,7 @@ type selfGradeType = {
 	task: ITask | null;
 	loading: boolean;
 	error: boolean;
-	selfGrade: scoreType;
+	taskScore: scoreType;
 };
 
 export type ItemsType = {
@@ -17,7 +17,7 @@ export type ItemsType = {
 };
 
 type scoreType = {
-	task: string;
+	taskName: string;
 	items: Array<ItemsType>;
 };
 
@@ -25,8 +25,8 @@ const initialState: selfGradeType = {
 	task: null,
 	loading: false,
 	error: false,
-	selfGrade: {
-		task: '',
+	taskScore: {
+		taskName: '',
 		items: []
 	}
 };
@@ -41,18 +41,18 @@ const selfGradeSlice = createSlice({
 		loadTaskSuccess(state, action) {
 			state.loading = false;
 			state.task = action.payload;
-			state.selfGrade.task = action.payload.id;
+			state.taskScore.taskName = action.payload.id;
 		},
 		getTasksError(state, action) {
 			state.error = action.payload;
 			state.loading = false;
 		},
 		saveTaskScoreResults(state, action) {
-			if (state.selfGrade.items.every((item) => item.id !== action.payload.id)) {
-				state.selfGrade.items.push(action.payload);
+			if (state.taskScore.items.every((item) => item.id !== action.payload.id)) {
+				state.taskScore.items.push(action.payload);
 				return;
 			}
-			state.selfGrade.items.forEach((item) => {
+			state.taskScore.items.forEach((item) => {
 				if (item.id === action.payload.id) {
 					item.score = action.payload.score;
 					item.comment = action.payload.comment;
@@ -64,13 +64,13 @@ const selfGradeSlice = createSlice({
 
 export const { loadTasks, loadTaskSuccess, getTasksError, saveTaskScoreResults } = selfGradeSlice.actions;
 
-export const fetchTasks = (task: string): AppThunk => async (dispatch) => {
+export const fetchTasks = (taskName: string): AppThunk => async (dispatch) => {
 	try {
 		dispatch(loadTasks());
 		const response = await getTasks();
 		const tasks = await response.json();
 		const taskToCheck = tasks.find((task: { id: any }) => {
-			if (task.id !== task) {
+			if (task.id !== taskName) {
 				return null;
 			}
 			return task;
