@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select } from 'antd';
+import { IReviewRequest } from '../../../../models';
 const { Option } = Select;
 
 function onChange(value: any) {
@@ -18,7 +19,12 @@ function onSearch(val: String) {
   console.log('search:', val);
 }
 
-export const RequestSelector: React.FC = () => {
+interface IRequestSelectorProps {
+  requests: IReviewRequest[];
+}
+
+export const RequestSelector = (props: IRequestSelectorProps) => {
+  const { requests } = props;
   return (
     <Select
       showSearch
@@ -33,9 +39,9 @@ export const RequestSelector: React.FC = () => {
         option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
     >
-      <Option value="jack">Jack</Option>
-      <Option value="lucy">Lucy</Option>
-      <Option value="tom">Tom</Option>
+      {requests.map((item) => (
+        <Option key={item.id} value={item.id}>{`${item.task} - ${item.author}`}</Option>
+      ))}
     </Select>
   );
 };

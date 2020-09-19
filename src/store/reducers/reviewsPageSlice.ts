@@ -16,7 +16,7 @@ interface IReviewPage {
   dataLoading: boolean;
   reviews: IReviewTableData[];
   sessions: ICheckSession[];
-  requests: string[];
+  requests: IReviewRequest[];
   error: string | null;
 }
 
@@ -120,7 +120,7 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
         const attendeesStudents = session.attendees.find((item) => item.githubId === user)
           ?.reviewerOf;
         attendeesStudents?.forEach((item) => {
-          const id = requests.find((request: IReviewRequest) => request.author === item).id;
+          const id = requests.find((request: IReviewRequest) => request.author === item);
           dispatch(setRequests(id));
         });
       }

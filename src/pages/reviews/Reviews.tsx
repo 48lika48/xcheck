@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 import { fetchRequestsToReview, fetchReviewsByAuthor } from '../../store/reducers/reviewsPageSlice';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined } from '@ant-design/icons';
 import { RequestSelector } from './components/requestSelector';
 
 export const ReviewPage: React.FC = () => {
@@ -71,29 +71,21 @@ export const ReviewPage: React.FC = () => {
       <Space size="middle">
         <Badge count={requests.length}>
           <Tooltip placement="topLeft" title={`You can create ${requests.length} more reviews`}>
-            <RequestSelector />
-            <Button
-              onClick={() => console.log('add')}
-              type="primary"
-              style={{
-                marginBottom: 16,
-              }}
-              icon={<PlusOutlined />}
-            />
+            <RequestSelector requests={requests} />
           </Tooltip>
         </Badge>
-        <Button
-          onClick={() => getData()}
-          style={{
-            marginBottom: 16,
-          }}
-          icon={<ReloadOutlined />}
-        >
-          Refresh
-        </Button>
       </Space>
       {error && <h1>{`Error: ${error}`}</h1>}
       <Table columns={columns} dataSource={reviews} rowKey="id" />
+      <Button
+        onClick={() => getData()}
+        style={{
+          marginTop: 16,
+        }}
+        icon={<ReloadOutlined />}
+      >
+        Reload
+      </Button>
     </Spin>
   );
 };
