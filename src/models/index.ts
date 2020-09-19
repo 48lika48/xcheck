@@ -90,7 +90,7 @@ export enum CrossCheckSessionState {
 
 export interface ICheckSessionAttendee {
   githubId: string;
-  reviewOf: string[];
+  reviewerOf: string[];
 }
 
 export interface IReviewRequest {
@@ -102,7 +102,7 @@ export interface IReviewRequest {
   selfGrade: object;
   url: string;
   urlPR: string;
-}
+
 
 export enum ReviewRequestState {
   DRAFT = 'DRAFT',

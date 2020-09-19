@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReviewRequestForm, ReviewRequestList  } from './components';
-import { IReviewRequest } from '../../models';
+import { IReviewRequest, ITaskScore } from '../../models';
 import { RootState } from 'src/store/rootReducer';
-import { fetchAllData, addRequest, deleteRequestItem } from '../../store/reducers/reviewRequestSlice';
+import { fetchAllData, addRequest, updateRequest, deleteRequestItem, addSelfGrade } from '../../store/reducers/reviewRequestSlice';
 
 export const ReviewRequestPage: React.FC = () => {
 
   const dispatch = useDispatch();
-  const { tasks, reviewRequests, /*reviews,*/ isLoading } = useSelector((state: RootState) => state.reviewRequest)
+  const { tasks, reviewRequests, /*reviews,*/ isLoading, selfGrade } = useSelector((state: RootState) => state.reviewRequest)
   const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData)
 
   useEffect(() => {
@@ -19,8 +19,16 @@ export const ReviewRequestPage: React.FC = () => {
     dispatch(deleteRequestItem(requestId))
   }
 
-  const submitHandler = (data: IReviewRequest) => {
+  const submitHandlerAdd = (data: IReviewRequest) => {
     dispatch(addRequest(data))
+  }
+
+  const submitHandlerUpdate = (data: IReviewRequest, id: string) => {
+    dispatch(updateRequest({ data, id }))
+  }
+
+  const selfGradeTogle = (data: ITaskScore | null) => {
+    dispatch(addSelfGrade(data))
   }
 
   return (
@@ -29,7 +37,10 @@ export const ReviewRequestPage: React.FC = () => {
         reviewRequests={reviewRequests}
         user={githubId} tasks={tasks}
         isLoading={isLoading}
-        submitHandler={submitHandler}
+        selfGrade={selfGrade}
+        submitHandlerAdd={submitHandlerAdd}
+        submitHandlerUpdate={submitHandlerUpdate}
+        selfGradeTogle={selfGradeTogle}
      />
       <ReviewRequestList reviewRequests={reviewRequests} user={githubId} deleteHandler={deleteHandler}/>
     </>
