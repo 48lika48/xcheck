@@ -12,7 +12,7 @@ import { parsTask } from 'src/services/parser-task';
 import { ITask, TaskState } from 'src/models';
 const { Step } = Steps;
 
-const task: ITask = {
+const defaultTask: ITask = {
   id: '',
   description: '',
   startDate: moment().format(),
@@ -31,7 +31,7 @@ const task: ITask = {
 export const TaskManager: React.FC = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [step, setStep] = useState(0);
-  const [taskData, setTaskData] = useState(task);
+  const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
 
   const onDataChange = (field: string, value: any) => {
@@ -43,7 +43,7 @@ export const TaskManager: React.FC = () => {
     name: 'file',
     accept: '.json, .md',
     customRequest: (options: { file: File; }) => {
-      setTaskData(task);
+      setTaskData(defaultTask);
       parsTask({ file: options.file, taskData, setTaskData: onDataChange });
     },
     fileList,
