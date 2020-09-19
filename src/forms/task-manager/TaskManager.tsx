@@ -5,7 +5,7 @@ import Basic from './Steps/Basic';
 import Advanced from './Steps/Advanced';
 import Extra from './Steps/Extra';
 import Fines from './Steps/Fines';
-import { Form, Modal, Button, Steps, message, Space, Upload } from 'antd';
+import { Form, Modal, Button, Steps, Space, Upload, message } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
@@ -39,18 +39,12 @@ export const TaskManager: React.FC = () => {
     setTaskData((task) => { return { ...task, [field]: value } })
   }
 
-  const showMessage = (isUploaded: boolean) => {
-    isUploaded
-      ? message.success(`file uploaded successfully.`)
-      : message.error(`file upload failed.`);
-  }
-
   const load: any = {
     name: 'file',
     accept: '.json, .md',
     customRequest: (options: { file: File; }) => {
       setTaskData(task);
-      parsTask({ file: options.file, taskData, setTaskData: onDataChange, showMessage })
+      parsTask({ file: options.file, taskData, setTaskData: onDataChange });
     },
     fileList,
     showUploadList: false,

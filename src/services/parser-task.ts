@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { message } from 'antd';
 import { ITask } from 'src/models';
 import { updateArray, updateSubtasks, updateScore } from '../forms/task-manager/Steps/helpers';
 
@@ -6,7 +7,6 @@ type Args = {
   file: File;
   taskData: ITask;
   setTaskData: (field: string, value: any) => void;
-  showMessage: (isUploaded: boolean) => void;
 };
 
 type RSSCheckList = {
@@ -20,13 +20,17 @@ type RSSChecklistCriteria = { type: string; title?: string; text?: string; max?:
 
 const categories = ['basic', 'advanced', 'extra', 'fines'];
 
-export const parsTask = ({ file, taskData, setTaskData, showMessage }: Args) => {
+export const parsTask = ({ file, taskData, setTaskData }: Args) => {
+  if (file.size > 204800) {
+    return showMessage(false, 'The file size is very large.');
+  }
+
   const reader = new FileReader();
   reader.readAsText(file);
 
   reader.onload = () => {
     const result = `${reader.result}` || '';
-    console.log(result);
+
     try {
       if (/.json$/.test(file.name)) {
         const task = JSON.parse(result);
@@ -38,14 +42,14 @@ export const parsTask = ({ file, taskData, setTaskData, showMessage }: Args) => 
         parseMDData(result);
       }
 
-      return showMessage(true);
+      return showMessage(true, '');
     } catch (e) {
-      showMessage(false);
+      showMessage(false, 'Error parsing file.');
     }
   };
 
   reader.onerror = () => {
-    showMessage(false);
+    showMessage(false, '');
   };
 
   const setRSSChecklistData = (task: RSSCheckList): void => {
@@ -55,8 +59,6 @@ export const parsTask = ({ file, taskData, setTaskData, showMessage }: Args) => 
     const criteriaTitles = task.criteria.filter((item: RSSChecklistCriteria): boolean => {
       return item.type === 'title';
     });
-
-    console.log(criteriaTitles);
 
     criteriaTitles.forEach((criteria: RSSChecklistCriteria, index: number): void => {
       const titleIndex = task.criteria.findIndex((item: RSSChecklistCriteria): boolean => {
@@ -87,11 +89,15 @@ export const parsTask = ({ file, taskData, setTaskData, showMessage }: Args) => 
           );
           setTaskData('maxScore', updateScore(taskData.score || []));
         });
-      console.log(titleIndex, endIndex);
     });
   };
 
   const setOwnFormatData = (task: ITask): void => {
+    function instanceOfTask(object: any): object is ITask {
+      return 'id' in object && 'description' in object;
+    }
+    if(instanceOfTask(task))
+    console.log(instanceOfTask(task));
     setTaskData('allData', task);
   };
 
@@ -113,3 +119,8 @@ export const parsTask = ({ file, taskData, setTaskData, showMessage }: Args) => 
     endTime && setTaskData('endDate', moment(endTime[1], 'DD.MM.YYYY HH:mm').format());
   };
 };
+function showMessage(isUploaded: boolean, addMessage: string): void {
+  isUploaded
+    ? message.success(`File uploaded successfully.`)
+    : message.error(`File upload failed. ${addMessage}`);
+}
