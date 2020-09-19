@@ -134,12 +134,10 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
     const description = result.match(/\|\n\n\s*(.+)\n\n/im);
     const endTime = result.match(/\|\s*(\d\d\.\d\d\.\d\d\d\d *\d\d:\d\d) *\| *.*? \|/m);
     const sections = [...result.matchAll(/\s*###\s+(.+\s+\+?\d.+)[^*]/gm)];
-    const finesSection = result.match(/\n\s*###?\s+([Ш|F]{1}.+\s+)/im);
+    const finesSection = result.match(/\n\s*###?\s+([ШF]{1}.+\s+)/im);
     finesSection && sections.push(finesSection);
 
     if (!sections.length) return message.error(failedMdFormatMsg);
-
-    console.log('sections', sections);
 
     id && setTaskData('id', id[1].trim());
     description && setTaskData('description', description[1].split('*').join('').trim());
@@ -149,9 +147,23 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
         'requirements',
         updateArray(taskData.requirements || [], index, section[1].trim() || '')
       );
-      console.log(
-        result.slice(section.index, sections[index + 1] ? sections[index + 1].index : result.length)
-      );
+
+      const subtasks = [
+        ...result
+          .slice(section.index, sections[index + 1] ? sections[index + 1].index : result.length)
+          .matchAll(/-\s+[*[]+\s?[*\]]\s?(.+)([+-]\d+)/gm),
+      ];
+      subtasks.forEach((subtask: any, i: number) => {
+        setTaskData(
+          'subtasks',
+          updateSubtasks(taskData.subtasks || [], categories[index], i, subtask[1] || '')
+        );
+        setTaskData(
+          'score',
+          updateSubtasks(taskData.score || [], categories[index], i, subtask[2] || '0')
+        );
+        setTaskData('maxScore', updateScore(taskData.score || []));
+      });
     });
   };
 };
