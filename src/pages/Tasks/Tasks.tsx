@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import role from './constants';
 import './Tasks.scss';
 import { Table, Tag, Space, Input } from 'antd';
-// import { getTasks, addTask } from '../../services/heroku'; 
+import { getTasks } from '../../services/heroku'; 
 
 const Action: React.FC= () => {
   if(role === 'student'){
@@ -101,7 +101,20 @@ const data = [
   },
 ];
 
+// export const Tasks: React.FC= () => {
+//   return (
+//     <Table columns={columns} dataSource={data} />
+//   )
+// }
+
 export const Tasks: React.FC= () => {
+  const [backData, getBackData] = useState([]);
+  useEffect(() => {
+    const value = getTasks();
+    console.log(value);
+    // getTasks().then(value =>{getBackData(value)})
+  });
+  // console.log(backData[0]);
   return (
     <Table columns={columns} dataSource={data} />
   )
