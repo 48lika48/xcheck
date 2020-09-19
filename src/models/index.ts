@@ -99,10 +99,10 @@ export interface IReviewRequest {
   author: string;
   task: string;
   state: ReviewRequestState;
-  selfGrade: object;
+  selfGrade: ITaskScore | null;
   url: string;
   urlPR: string;
-
+}
 
 export enum ReviewRequestState {
   DRAFT = 'DRAFT',
