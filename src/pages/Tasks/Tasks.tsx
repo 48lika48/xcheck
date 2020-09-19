@@ -1,8 +1,8 @@
 import React from 'react';
 import role from './constants';
 import './Tasks.scss';
-
 import { Table, Tag, Space, Input } from 'antd';
+// import { getTasks, addTask } from '../../services/heroku'; 
 
 const Action: React.FC= () => {
   if(role === 'student'){
@@ -44,8 +44,8 @@ const columns = [
     render: (tags: any) => (
       <>
         {tags.map((tag: any) => {
-          let color = tag.length > 5 ? 'geekblue' : 'green';
-          if (tag === 'DISPUTED') {
+          let color = tag.length > 8 ? 'geekblue' : 'green';
+          if (tag === 'DRAFT') {
             color = 'volcano';
           }
           return (
@@ -69,7 +69,7 @@ const columns = [
     dataIndex: 'comment',
     key: 'comment',
     render: (text: string) => (
-      <Input placeholder="" bordered={false} />
+      <Input placeholder="" bordered={true} />
     ),
   },
 ];
@@ -88,7 +88,7 @@ const data = [
     name: 'X Check App',
     deadline: '22.09.2020',
     author: 'yuliahope',
-    tags: ['DISPUTED'],
+    tags: ['DRAFT'],
     comment: '',
   },
   {
@@ -96,7 +96,7 @@ const data = [
     name: 'New Task',
     deadline: '--.--.----',
     author: 'yuliahope',
-    tags: ['TO DO'],
+    tags: ['ARCHIVED'],
     comment: '',
   },
 ];
