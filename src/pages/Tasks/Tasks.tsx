@@ -1,26 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from 'react';
-import role from './constants';
-import './Tasks.scss';
-import { Table, Tag, Space, Input } from 'antd';
-import { getTasks } from '../../services/heroku'; 
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/rootReducer';
 
-const Action: React.FC= () => {
-  console.log(role);
-  if(role === 'student'){
-    return(
-    <Space size="middle">
-      <a>Details</a>
-    </Space>
-  )} else {
-    return(
-    <Space size="middle">
-      <a>Edit</a>
-      <a>Delete</a>
-    </Space>
-    )
-  }
-}
+import { Table, Space, Input } from 'antd';
+import { ITask } from 'src/models';
+import { tasksReducer } from 'src/store/reducers';
 
 const columns = [
   {
@@ -76,38 +61,38 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    name: 'Songbird',
-    deadline: '01.09.2020',
-    author: 'yuliahope',
-    tags: ['nice', 'ARCHIVED'],
-    comment: '',
-  },
-  {
-    key: '2',
-    name: 'X Check App',
-    deadline: '22.09.2020',
-    author: 'yuliahope',
-    tags: ['DRAFT'],
-    comment: '',
-  },
-];
+const Action: React.FC = () => {
+  const { currentUser } = useSelector((state: RootState) => state.users);
+  const { currentRole } = currentUser;
 
-export const Tasks: React.FC= () => {
-  const [backData, setBackData] = useState(data);
-  useEffect(() => {
-    const fetchData = async() => {
-      const value = await getTasks();
-      setBackData(value);
-      console.log(value);
-    }
-    fetchData();
-  },[]);
+  console.log(currentRole);
+
+  if (currentRole === 'student') {
+    return (
+      <Space size="middle">
+        <a>Details</a>
+      </Space>
+    )
+  }
+
   return (
-    <Table columns={columns} dataSource={backData} />
+    <Space size="middle">
+      <a>Edit</a>
+      <a>Delete</a>
+    </Space>
   )
 }
-  
+
+export const Tasks: React.FC = () => {
+  const { allTasks } = useSelector((state: RootState) => state.tasks);
+
+  const tasksWithKey = allTasks.map((task: ITask) => {
+    return { ...task, key: task.id }
+  })
+
+  return (
+    <Table columns={columns} dataSource={tasksWithKey} />
+  )
+}
+
 export default Tasks;
