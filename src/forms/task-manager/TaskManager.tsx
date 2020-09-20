@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+
 import Main from './Steps/Main';
 import Basic from './Steps/Basic';
 import Advanced from './Steps/Advanced';
@@ -10,6 +12,7 @@ import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
 import { ITask, TaskState } from 'src/models';
+import { addNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
 const { Step } = Steps;
 
 const defaultTask: ITask = {
@@ -29,10 +32,15 @@ const defaultTask: ITask = {
 }
 
 export const TaskManager: React.FC = () => {
+  const dispatch = useDispatch();
   const [isShowModal, setIsShowModal] = useState(false);
   const [step, setStep] = useState(0);
   const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
+
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
 
   const onDataChange = (field: string, value: any) => {
     if (field === 'allData') { return setTaskData(value) }
@@ -54,7 +62,7 @@ export const TaskManager: React.FC = () => {
 
   const steps = [
     {
-      title: 'Main',
+      title: "Main",
       content: <Main onDataChange={onDataChange} taskData={taskData} />
     },
     {
@@ -89,16 +97,18 @@ export const TaskManager: React.FC = () => {
 
   const prev = (): void => {
     setStep(step - 1);
-
   }
 
   const createTask = (): void => {
+    dispatch(addNewTask(taskData));
     message.success('Task created!');
+    setTaskData(defaultTask);
     setStep(0);
     setIsShowModal(false);
   }
 
   const saveChanges = (): void => {
+    dispatch(addNewTask(taskData));
     message.success('Changes saved!');
     setStep(0);
     setIsShowModal(false);
