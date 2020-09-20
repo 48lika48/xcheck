@@ -10,10 +10,11 @@ import { getGithubUserName } from '../../services/github-auth';
 
 import { ReviewRequestPage } from '../reviewRequest';
 
-import './Main.scss';
 import { ReviewPage } from '../reviews';
 
 import TaskManager from '../../forms/index'
+import { FOOTER_LINKS } from 'src/constants';
+import './Main.scss';
 
 const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
@@ -24,7 +25,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
   const userName = getGithubUserName() || users.currentUser.userData.githubId;
 
   return (
-    <Layout>
+    <Layout className="site-layout">
       <PageHeader
         className="site-page-header"
         title="RS School xCheck"
@@ -40,16 +41,21 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
         <Tabs defaultActiveKey="1">
           <TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
             <TaskManager />
-        </TabPane>
+          </TabPane>
           <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
             <ReviewRequestPage />
-        </TabPane>
+          </TabPane>
           <TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
-            <ReviewPage/>
-        </TabPane>
+            <ReviewPage />
+          </TabPane>
         </Tabs>
       </Content>
-      <Footer>Footer</Footer>
+      <Footer className="footer">
+        <div className="footer-container">
+          <a href={FOOTER_LINKS.rss.link} className="rss" target="blank">{FOOTER_LINKS.rss.title}</a>
+          <a href={FOOTER_LINKS.github.link} className="github" target="blank">{FOOTER_LINKS.github.title}</a>
+        </div>
+      </Footer>
     </Layout>
 
   )
