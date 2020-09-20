@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 
 import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
@@ -100,12 +100,12 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
   function renderRevRequestStatus(submittedRequest: IReviewRequest | undefined | boolean) {
     if (submittedRequest && typeof submittedRequest !== 'boolean') {
       switch (submittedRequest.state) {
-        case 'PUBLISHED':
+        case ReviewRequestState.PUBLISHED:
         return (
           <Alert
             message={
               <>
-                <span>Review request has been submitted</span>
+                <span>Review request has been submitted </span>
                 <a target="_blank" rel="noopener noreferrer" href={ submittedRequest.url}>
                   {submittedRequest.url}
                 </a>{' '}
@@ -114,7 +114,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             type="success"
             showIcon
           />);
-        case 'COMPLETED':
+        case ReviewRequestState.COMPLETED:
           return (
           <Alert
             message={
