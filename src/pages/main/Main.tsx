@@ -14,12 +14,12 @@ import {
 import { getGithubUserName } from '../../services/github-auth';
 
 import { ReviewRequestPage } from '../reviewRequest';
-
-import './Main.scss';
 import { ReviewPage } from '../reviews';
 
-import TaskManager from '../../forms/index';
 import { CrossSessionsPage } from '../crossSessionsPage';
+import TaskManager from '../../forms';
+import Tasks from '../Tasks';
+import './Main.scss';
 
 const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
@@ -88,6 +88,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
               <CrossSessionsPage />
             </TabPane>
           )}
+
         </Tabs>
       </Content>
       <Footer>Footer</Footer>

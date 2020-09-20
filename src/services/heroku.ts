@@ -86,7 +86,12 @@ export const updateReviewRequest = (data: IReviewRequest, id: string) => {
 };
 
 export const getData = async (endpoint: Endpoint) => {
-  const res = await fetch(HEROKU_URL + endpoint);
+  const res = await fetch(HEROKU_URL + endpoint, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH',
+    },
+  });
   if (res.status === 200) {
     return res.json();
   }
@@ -112,7 +117,7 @@ export const deleteData = async (endpoint: Endpoint, id: string) => {
   const res = await fetch(HEROKU_URL + endpoint + '/' + id, {
     method: 'DELETE',
   });
-  return res.json()
+  return res.json();
 };
 
 export const registerUser = async (githubLogin: string, users: IUser[]) => {

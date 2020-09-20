@@ -3,6 +3,7 @@ import { message } from 'antd';
 import { ITask } from 'src/models';
 import { updateArray, updateSubtasks, updateScore } from '../forms/task-manager/Steps/helpers';
 
+
 const categories = ['basic', 'advanced', 'extra', 'fines'];
 const successMsg = 'File uploaded successfully.';
 const failedMsg = 'File upload failed.';
@@ -50,7 +51,6 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
 
       return showMessage(true, '');
     } catch (e) {
-      console.log(e.message);
       showMessage(false, errorParsingMsg);
     }
   };
