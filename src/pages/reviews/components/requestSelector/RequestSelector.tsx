@@ -28,7 +28,7 @@ export const RequestSelector = (props: IRequestSelectorProps) => {
   return (
     <Select
       showSearch
-      style={{ width: 200 }}
+      style={{ width: 200, marginBottom: '1rem' }}
       placeholder="Select a person"
       optionFilterProp="children"
       onFocus={onFocus}

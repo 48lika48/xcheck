@@ -105,13 +105,7 @@ export const ReviewPage: React.FC = () => {
       </Space>
       {error && <h1>{`Error: ${error}`}</h1>}
       <Table columns={columns} dataSource={reviews} rowKey="id" />
-      <Button
-        onClick={() => getData()}
-        style={{
-          marginTop: 16,
-        }}
-        icon={<ReloadOutlined />}
-      >
+      <Button onClick={() => getData()} icon={<ReloadOutlined />}>
         Reload
       </Button>
     </Spin>
