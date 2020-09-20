@@ -6,6 +6,7 @@ import { Table, Tag, Space, Input } from 'antd';
 import { getTasks } from '../../services/heroku'; 
 
 const Action: React.FC= () => {
+  console.log(role);
   if(role === 'student'){
     return(
     <Space size="middle">
@@ -24,8 +25,8 @@ const Action: React.FC= () => {
 const columns = [
   {
     title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'id',
+    key: 'id',
     render: (text: string) => <a>{text}</a>,
   },
   {
@@ -40,8 +41,8 @@ const columns = [
   },
   {
     title: 'Status',
-    key: 'tags',
-    dataIndex: 'tags',
+    key: 'state',
+    dataIndex: 'state',
     // render: (tags: any) => (
     //   <>
     //     {tags.map((tag: any) => {
@@ -81,7 +82,7 @@ const data = [
     name: 'Songbird',
     deadline: '01.09.2020',
     author: 'yuliahope',
-    tags: ['PUBLISHED'],
+    tags: ['nice', 'ARCHIVED'],
     comment: '',
   },
   {
@@ -92,14 +93,6 @@ const data = [
     tags: ['DRAFT'],
     comment: '',
   },
-  {
-    key: '3',
-    name: 'New Task',
-    deadline: '--.--.----',
-    author: 'yuliahope',
-    tags: ['ARCHIVED'],
-    comment: '',
-  },
 ];
 
 export const Tasks: React.FC= () => {
@@ -108,6 +101,7 @@ export const Tasks: React.FC= () => {
     const fetchData = async() => {
       const value = await getTasks();
       setBackData(value);
+      console.log(value);
     }
     fetchData();
   },[]);

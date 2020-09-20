@@ -5,8 +5,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-
-
 interface CurrentDisplay {
   displayType: 'issues' | 'comments'
   issueId: number | null

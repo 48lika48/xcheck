@@ -21,7 +21,7 @@ export enum UserRole {
   author = 'author',
   student = 'student',
   supervisor = 'supervisor',
-  courseManager = 'course_manager',
+  course_manager = 'course_manager',
 }
 
 export interface IUser {
@@ -32,10 +32,18 @@ export interface IUser {
 
 export interface ITask {
   id: string;
-  author: string;
+  description: string;
+  author?: string;
   state: TaskState;
-  categoriesOrder: TaskCategory[];
-  items: ITaskItem[];
+  startDate?: string;
+  endDate?: string;
+  goals?: string[];
+  categoriesOrder?: TaskCategory[];
+  requirements?: string[];
+  items?: ITaskItem[];
+  subtasks?: object[];
+  score?: object[];
+  maxScore?: 0;
 }
 
 export enum TaskState {
@@ -82,16 +90,18 @@ export enum CrossCheckSessionState {
 
 export interface ICheckSessionAttendee {
   githubId: string;
-  reviewOf: string[];
+  reviewerOf: string[];
 }
 
 export interface IReviewRequest {
   id: string;
-  crossCheckSessionId: string;
+  crossCheckSessionId: string | null;
   author: string;
   task: string;
   state: ReviewRequestState;
-  selfGrade: object;
+  selfGrade: ITaskScore | null;
+  url: string;
+  urlPR: string;
 }
 
 export enum ReviewRequestState {
@@ -106,6 +116,8 @@ export interface IReview {
   author: string;
   state: ReviewState;
   grade: ITaskScore;
+  reviewedStudent?: String;
+  task?: String;
 }
 
 export interface ITaskScore {
