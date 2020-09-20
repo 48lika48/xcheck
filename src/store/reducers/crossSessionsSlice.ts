@@ -23,16 +23,19 @@ const crossSessionSlice = createSlice({
     endLoading(state) {
       state.loading = false;
     },
+    setSessions(state, action) {
+      state.sessions = action.payload;
+    },
   },
 });
 
-export const { startLoading, endLoading } = crossSessionSlice.actions;
+export const { startLoading, endLoading, setSessions } = crossSessionSlice.actions;
 
 export const fetchSessions = (): AppThunk => async (dispatch) => {
   try {
     dispatch(startLoading());
     const sessions = await getCheckSessions();
-    console.log(sessions);
+    dispatch(setSessions(sessions));
     dispatch(endLoading());
   } catch (err) {}
 };
