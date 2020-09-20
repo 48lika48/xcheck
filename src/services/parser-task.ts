@@ -3,6 +3,15 @@ import { message } from 'antd';
 import { ITask } from 'src/models';
 import { updateArray, updateSubtasks, updateScore } from '../forms/task-manager/Steps/helpers';
 
+
+const categories = ['basic', 'advanced', 'extra', 'fines'];
+const successMsg = 'File uploaded successfully.';
+const failedMsg = 'File upload failed.';
+const failedMdFormatMsg =
+  'Data format incompatible. Please fill in the missing information manually.';
+const failedBigFileMsg = 'The file size is very large.';
+const errorParsingMsg = 'File parsing error or invalid data format.';
+
 type Args = {
   file: File;
   taskData: ITask;
@@ -18,11 +27,9 @@ type RSSCheckList = {
 
 type RSSChecklistCriteria = { type: string; title?: string; text?: string; max?: string };
 
-const categories = ['basic', 'advanced', 'extra', 'fines'];
-
 export const parsTask = ({ file, taskData, setTaskData }: Args) => {
   if (file.size > 204800) {
-    return showMessage(false, 'The file size is very large.');
+    return showMessage(false, failedBigFileMsg);
   }
 
   const reader = new FileReader();
@@ -44,7 +51,7 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
 
       return showMessage(true, '');
     } catch (e) {
-      showMessage(false, 'Error parsing file.');
+      showMessage(false, errorParsingMsg);
     }
   };
 
@@ -94,33 +101,73 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
 
   const setOwnFormatData = (task: ITask): void => {
     function instanceOfTask(object: any): object is ITask {
-      return 'id' in object && 'description' in object;
+      return (
+        object.id &&
+        object.description !== undefined &&
+        object.startDate &&
+        object.endDate &&
+        Array.isArray(object.goals) &&
+        Array.isArray(object.requirements) &&
+        'basic' in object.subtasks[0] &&
+        'advanced' in object.subtasks[1] &&
+        'extra' in object.subtasks[2] &&
+        'fines' in object.subtasks[3] &&
+        'basic' in object.score[0] &&
+        'advanced' in object.score[1] &&
+        'extra' in object.score[2] &&
+        'fines' in object.score[3] &&
+        object.maxScore !== undefined &&
+        object.author !== undefined &&
+        object.state !== undefined &&
+        Array.isArray(object.categoriesOrder) &&
+        Array.isArray(object.items)
+      );
     }
-    if(instanceOfTask(task))
-    console.log(instanceOfTask(task));
-    setTaskData('allData', task);
+    if (instanceOfTask(task)) {
+      return setTaskData('allData', task);
+    }
+    throw Error;
   };
 
-  const parseMDData = (result: string): void => {
+  const parseMDData = (result: string): any => {
     const id = result.match(/# +(.+)\s/);
-    const description = result.match(/\n([*]?[a-zа-я*,. -]+)\n/im);
+    const description = result.match(/\|\n\n\s*(.+)\n\n/im);
     const endTime = result.match(/\|\s*(\d\d\.\d\d\.\d\d\d\d *\d\d:\d\d) *\| *.*? \|/m);
-    console.log(
-      'id=',
-      id && id[1].trim(),
-      ', description=',
-      description && description[1],
-      ', endTime=',
-      endTime && endTime[1]
-    );
+    const sections = [...result.matchAll(/\s*###\s+(.+\s+\+?\d.+)[^*]/gm)];
+    const finesSection = result.match(/\n\s*###?\s+([ШF]{1}.+\s+)/im);
+    finesSection && sections.push(finesSection);
+
+    if (!sections.length) return message.error(failedMdFormatMsg);
 
     id && setTaskData('id', id[1].trim());
     description && setTaskData('description', description[1].split('*').join('').trim());
     endTime && setTaskData('endDate', moment(endTime[1], 'DD.MM.YYYY HH:mm').format());
+    sections.forEach((section: any, index: number) => {
+      setTaskData(
+        'requirements',
+        updateArray(taskData.requirements || [], index, section[1].trim() || '')
+      );
+
+      const subtasks = [
+        ...result
+          .slice(section.index, sections[index + 1] ? sections[index + 1].index : result.length)
+          .matchAll(/-\s+[*[]+\s?[*\]]\s?(.+)([+-]\d+)/gm),
+      ];
+      subtasks.forEach((subtask: any, i: number) => {
+        setTaskData(
+          'subtasks',
+          updateSubtasks(taskData.subtasks || [], categories[index], i, subtask[1] || '')
+        );
+        setTaskData(
+          'score',
+          updateSubtasks(taskData.score || [], categories[index], i, subtask[2] || '0')
+        );
+        setTaskData('maxScore', updateScore(taskData.score || []));
+      });
+    });
   };
 };
+
 function showMessage(isUploaded: boolean, addMessage: string): void {
-  isUploaded
-    ? message.success(`File uploaded successfully.`)
-    : message.error(`File upload failed. ${addMessage}`);
+  isUploaded ? message.success(successMsg) : message.error(`${failedMsg} ${addMessage}`);
 }
