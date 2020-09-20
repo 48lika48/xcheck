@@ -3,9 +3,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Input } from 'antd';
+import { Table, Space, Input, Spin } from 'antd';
 import { ITask } from 'src/models';
-import { tasksReducer } from 'src/store/reducers';
 
 const columns = [
   {
@@ -84,14 +83,17 @@ const Action: React.FC = () => {
 }
 
 export const Tasks: React.FC = () => {
-  const { allTasks } = useSelector((state: RootState) => state.tasks);
+  const { allTasks, isLoading } = useSelector((state: RootState) => state.tasks);
 
   const tasksWithKey = allTasks.map((task: ITask) => {
     return { ...task, key: task.id }
   })
 
+
   return (
-    <Table columns={columns} dataSource={tasksWithKey} />
+    isLoading ? <div className="tasks-spiner">
+      <Spin />
+    </div> : <Table columns={columns} dataSource={tasksWithKey} />
   )
 }
 
