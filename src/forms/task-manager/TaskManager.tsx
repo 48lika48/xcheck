@@ -1,62 +1,85 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
+import { useDispatch } from 'react-redux';
+
 import Main from './Steps/Main';
 import Basic from './Steps/Basic';
 import Advanced from './Steps/Advanced';
 import Extra from './Steps/Extra';
 import Fines from './Steps/Fines';
-import { Modal, Button, Steps, message } from 'antd';
-import moment from 'moment';
+import { Form, Modal, Button, Steps, Space, Upload, message } from 'antd';
+import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { saveTask } from 'src/services/save-task';
+import { parsTask } from 'src/services/parser-task';
+import { ITask, TaskState } from 'src/models';
+import { addNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
 const { Step } = Steps;
 
-const task = {
+const defaultTask: ITask = {
   id: '',
   description: '',
-  startDate: moment(),
-  endDate: moment(),
+  startDate: moment().format(),
+  endDate: moment().format(),
   goals: [],
   requirements: [],
-  subtasks: [{basic: []}, {advanced: []}, {extra: []}, {fines: []}],
-  score: [{basic: []}, {advanced: []}, {extra: []}, {fines: []}],
+  subtasks: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
+  score: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
   maxScore: 0,
-  screenshot: {},
   author: '',
-  state: '',
+  state: TaskState.DRAFT,
   categoriesOrder: [],
   items: [],
 }
 
 export const TaskManager: React.FC = () => {
+  const dispatch = useDispatch();
   const [isShowModal, setIsShowModal] = useState(false);
   const [step, setStep] = useState(0);
-  const [taskData, setTaskData] = useState(task);
+  const [taskData, setTaskData] = useState(defaultTask);
+  const [fileList, setFileList] = React.useState([{ uid: null }]);
+
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
 
   const onDataChange = (field: string, value: any) => {
-    setTaskData((task) => {
-      return { ...task, [field]: value }
-    })
-    console.log(taskData)
+    if (field === 'allData') { return setTaskData(value) }
+    setTaskData((task) => { return { ...task, [field]: value } })
   }
+
+  const load: any = {
+    name: 'file',
+    accept: '.json, .md',
+    customRequest: (options: { file: File; }) => {
+      setTaskData(defaultTask);
+      parsTask({ file: options.file, taskData, setTaskData: onDataChange });
+    },
+    fileList,
+    showUploadList: false,
+    onChange: async (info: { file: { uid: null; }; }) => setFileList([info.file]),
+  };
+
 
   const steps = [
     {
-      title: 'Main',
+      title: "Main",
       content: <Main onDataChange={onDataChange} taskData={taskData} />
     },
     {
       title: 'Basic Scope',
-      content: <Basic onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Basic onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Advanced scope',
-      content: <Advanced onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Advanced onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Extra scope',
-      content: <Extra onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Extra onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Fines',
-      content: <Fines onDataChange={onDataChange} taskData={taskData}/>,
+      content: <Fines onDataChange={onDataChange} taskData={taskData} />,
     }
   ];
 
@@ -74,21 +97,22 @@ export const TaskManager: React.FC = () => {
 
   const prev = (): void => {
     setStep(step - 1);
-
   }
 
   const createTask = (): void => {
+    dispatch(addNewTask(taskData));
     message.success('Task created!');
+    setTaskData(defaultTask);
     setStep(0);
     setIsShowModal(false);
   }
 
   const saveChanges = (): void => {
+    dispatch(addNewTask(taskData));
     message.success('Changes saved!');
     setStep(0);
     setIsShowModal(false);
   }
-
 
   return (
     <>
@@ -112,21 +136,31 @@ export const TaskManager: React.FC = () => {
         </Steps>
         <div className="steps-content">{steps[step].content}</div>
         <div className="steps-action">
-          {step < steps.length - 1 && (
-            <Button type="primary" htmlType="submit" onClick={() => next()}>
-              Next
-            </Button>
-          )}
-          {step === steps.length - 1 && (
-            <Button type="primary" onClick={createTask}>
-              Done
-            </Button>
-          )}
-          {step > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-              Previous
-            </Button>
-          )}
+          <div className="steps-action-btns">
+            {step > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
+            {step < steps.length - 1 && (
+              <Button type="primary" htmlType="submit" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {step === steps.length - 1 && (
+              <Button type="primary" onClick={createTask}>
+                Done
+              </Button>
+            )}
+          </div>
+          <Form.Item>
+            <Space>
+              <Upload {...load}>
+                <Button icon={<UploadOutlined />}>Import data</Button>
+              </Upload>
+              <Button icon={<DownloadOutlined />} onClick={() => saveTask(taskData)}>Export data</Button>
+            </Space>
+          </Form.Item>
         </div>
       </Modal>
     </>

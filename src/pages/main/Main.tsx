@@ -9,11 +9,11 @@ import { UnorderedListOutlined, PullRequestOutlined, ScheduleTwoTone, LogoutOutl
 import { getGithubUserName } from '../../services/github-auth';
 
 import { ReviewRequestPage } from '../reviewRequest';
-
-import './Main.scss';
 import { ReviewPage } from '../reviews';
 
-import TaskManager from '../../forms/index'
+import TaskManager from '../../forms';
+import Tasks from '../Tasks';
+import './Main.scss';
 
 const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
@@ -39,14 +39,14 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
       <Content>
         <Tabs defaultActiveKey="1">
           <TabPane tab={<span><UnorderedListOutlined />Tasks</span>} key="1">
-            <TaskManager />
-        </TabPane>
+            <TaskManager /> <Tasks />
+          </TabPane>
           <TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
             <ReviewRequestPage />
-        </TabPane>
+          </TabPane>
           <TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
-            <ReviewPage/>
-        </TabPane>
+            <ReviewPage />
+          </TabPane>
         </Tabs>
       </Content>
       <Footer>Footer</Footer>

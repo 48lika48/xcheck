@@ -1,30 +1,48 @@
 import React from 'react';
-import { Form, Button, Input, InputNumber } from 'antd'; 
+import { Form, Button, Input, InputNumber } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import {formItemLayout, formItemLayoutWithOutLabel} from '../constants/constants';
+import { formItemLayout, formItemLayoutWithOutLabel } from '../constants/constants';
 import { updateArray, updateSubtasks, updateScore } from './helpers';
 
 const { TextArea } = Input;
 
-const Extra: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
- 
+type ExtraProps = {
+  onDataChange: (field: string, value: any) => void;
+  taskData: any
+}
+
+const Extra: React.FC<ExtraProps> = ({ onDataChange, taskData }) => {
+
   return (
     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
       <Form.Item
         label="Extra for:"
         {...formItemLayout}
         name="extra-description"
+        initialValue={taskData.requirements[2]}
         rules={[{ required: true, message: 'Please input short description!' }]}
       >
-        <TextArea 
-          placeholder="advanced scope short description" 
-          style={{ width: '60%' }} 
-          onChange={(value: any) => {props.onDataChange('requirements', updateArray(props.taskData.requirements, 2, value.currentTarget.value))}}
-          defaultValue={props.taskData.requirements[2]} 
-          autoSize/>
+        <TextArea
+          placeholder="advanced scope short description"
+          style={{ width: '60%' }}
+          onChange={
+            (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              onDataChange('requirements', updateArray(taskData.requirements, 2, e.currentTarget.value))
+            }
+          }
+          value={taskData.requirements[2]}
+          autoSize />
       </Form.Item>
       <Form.List name="advanced-tasks">
         {(fields, { add, remove }) => {
+          fields.length === 0 && fields.push(...taskData.subtasks[2].extra.map((item: string, index: number) => {
+            return {
+              fieldKey: index,
+              isListField: true,
+              key: index,
+              name: index,
+            }
+          }));
           return (
             <div>
               {fields.map((field, index) => (
@@ -46,29 +64,36 @@ const Extra: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
                     ]}
                     noStyle
                   >
-                    <div style={{display: 'flex'}}>
-                      <TextArea 
-                        placeholder="subtask" 
-                        style={{ width: '60%' }} 
-                        onChange={(value: any) => {props.onDataChange('subtasks', updateSubtasks(props.taskData.subtasks, 'extra', index, value.currentTarget.value))}}
-                        defaultValue={props.taskData.subtasks[2].extra[index]}  
-                        autoSize/>
-                      <InputNumber 
-                        placeholder="Score" 
-                        min={0} 
+                    <div style={{ display: 'flex' }}>
+                      <TextArea
+                        placeholder="subtask"
+                        style={{ width: '60%' }}
+                        onChange={
+                          (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                            onDataChange('subtasks', updateSubtasks(taskData.subtasks, 'extra', index, e.currentTarget.value))
+                          }
+                        }
+                        value={taskData.subtasks[2].extra[index]}
+                        autoSize />
+                      <InputNumber
+                        placeholder="Score"
+                        min={0}
                         style={{ width: '11%', marginLeft: '2%' }}
-                        onChange={(value: any) => {props.onDataChange('score', updateSubtasks(props.taskData.score, 'extra', index, value)); props.onDataChange('maxScore', updateScore(props.taskData.score))}}
-                        defaultValue={props.taskData.score[2].extra[index]}  
-                        />
+                        onChange={
+                          (value: any) => {
+                            onDataChange('score', updateSubtasks(taskData.score, 'extra', index, value));
+                            onDataChange('maxScore', updateScore(taskData.score));
+                          }
+                        }
+                        value={taskData.score[2].extra[index]}
+                      />
                     </div>
                   </Form.Item>
                   {fields.length > 1 ? (
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       style={{ margin: '0 8px' }}
-                      onClick={() => {
-                        remove(field.name);
-                      }}
+                      onClick={() => remove(field.name)}
                     />
                   ) : null}
                 </Form.Item>
@@ -76,9 +101,7 @@ const Extra: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => {
-                    add();
-                  }}
+                  onClick={() => add()}
                   style={{ width: '60%' }}
                 >
                   <PlusOutlined /> Add subtask
@@ -87,10 +110,9 @@ const Extra: React.FC<{ onDataChange: any; taskData: any }> = (props) => {
             </div>
           );
         }}
-      </Form.List>  
-      
-
+      </Form.List>
     </Form>
   );
 }
+
 export default Extra;
