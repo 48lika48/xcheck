@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
 import { Table, Tag, Space, Spin, Button, Badge, Tooltip } from 'antd';
 import './Review.scss';
