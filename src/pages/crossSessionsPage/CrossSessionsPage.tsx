@@ -4,6 +4,7 @@ import { Button, Spin } from 'antd';
 import { RootState } from '../../store/rootReducer';
 import { fetchSessions } from '../../store/reducers/crossSessionsSlice';
 import { PlusOutlined } from '@ant-design/icons';
+import { SessionsTable } from './components/sessionsTable';
 
 export const CrossSessionsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,7 +15,6 @@ export const CrossSessionsPage: React.FC = () => {
   useEffect(() => {
     getData();
   }, [dispatch, getData]);
-
   return (
     <Spin spinning={loading}>
       <Button
@@ -27,6 +27,7 @@ export const CrossSessionsPage: React.FC = () => {
       >
         Add a session
       </Button>
+      <SessionsTable sessions={sessions} />
     </Spin>
   );
 };
