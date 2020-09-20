@@ -75,7 +75,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
           >
             <ReviewPage />
           </TabPane>
-          {users.currentUser.currentRole === 'author' && (
+          {users.currentUser.currentRole !== 'student' && (
             <TabPane
               tab={
                 <span>
