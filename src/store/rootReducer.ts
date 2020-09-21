@@ -14,6 +14,7 @@ const rootReducer = combineReducers({
   reviewsPage: reviewsPageReducer,
   crossSessions: crossSessionSlice,
   reviewRequest: reviewRequestReducer,
+  selfGradeSlice: selfGradeSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

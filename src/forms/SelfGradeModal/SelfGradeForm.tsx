@@ -47,7 +47,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 		</Space>
 	) : (
 			<React.Fragment>
-				{task ? (
+				{task?.items ? (
 					task.items.map((item: any, i: number) => {
 						return (
 							<Form

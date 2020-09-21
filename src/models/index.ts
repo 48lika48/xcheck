@@ -40,7 +40,7 @@ export interface ITask {
   goals?: string[];
   categoriesOrder?: TaskCategory[];
   requirements?: string[];
-  items?: ITaskItem[];
+  items: ITaskItem[];
   subtasks?: object[];
   score?: object[];
   maxScore?: 0;
