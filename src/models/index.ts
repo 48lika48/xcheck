@@ -32,10 +32,18 @@ export interface IUser {
 
 export interface ITask {
   id: string;
-  author: string;
+  description: string;
+  author?: string;
   state: TaskState;
-  categoriesOrder: TaskCategory[];
-  items: ITaskItem[];
+  startDate?: string;
+  endDate?: string;
+  goals?: string[];
+  categoriesOrder?: TaskCategory[];
+  requirements?: string[];
+  items?: ITaskItem[];
+  subtasks?: object[];
+  score?: object[];
+  maxScore?: 0;
 }
 
 export enum TaskState {
@@ -92,8 +100,8 @@ export interface IReviewRequest {
   task: string;
   state: ReviewRequestState;
   selfGrade: ITaskScore | null;
-  url: string,
-  urlPR: string,
+  url: string;
+  urlPR: string;
 }
 
 export enum ReviewRequestState {
