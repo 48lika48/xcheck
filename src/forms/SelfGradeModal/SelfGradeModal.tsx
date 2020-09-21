@@ -6,32 +6,32 @@ import { RootState } from '../../store/rootReducer';
 import { setSelfGrade } from 'src/store/reducers/reviewRequestSlice';
 
 type SelfGradeModalProps = {
-  taskId: string | null;
-  isSelfGradeShow: boolean;
-  selfGradeHandler: () => void;
+	taskId: string | null;
+	isSelfGradeShow: boolean;
+	selfGradeHandler: () => void;
 }
 
-export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({taskId, selfGradeHandler, isSelfGradeShow }) => {
+export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGradeHandler, isSelfGradeShow }) => {
 	const [showModal, setShowModal] = useState(isSelfGradeShow);
 	const [isDisabledButton, setIsDisabledButton] = useState(true);
 
 	const dispatch = useDispatch();
-
+	const { task } = useSelector((state: RootState) => state.selfGradeSlice);
 	const { taskScore } = useSelector((state: RootState) => state.selfGradeSlice);
 
 	const cancelChanges = (): void => {
 		setShowModal(false);
-    setIsDisabledButton(true);
-    selfGradeHandler();
+		setIsDisabledButton(true);
+		selfGradeHandler();
 	};
 
 	const saveChanges = (): void => {
-    setShowModal(false);
-    selfGradeHandler();
+		setShowModal(false);
+		selfGradeHandler();
 	};
 
 	const handleEndCheck = (): void => {
-		if (!taskScore.items.length) {
+		if (taskScore.items.length !== task?.items.length) {
 			message.warning('Check carefully! Enter and save all items.');
 			return;
 		}
