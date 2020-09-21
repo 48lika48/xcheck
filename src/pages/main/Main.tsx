@@ -14,7 +14,6 @@ import './Main.scss';
 import { ReviewPage } from '../reviews';
 
 import TaskManager from '../../forms/index'
-import { SelfGradeModal } from '../../forms/SelfGradeModal/SelfGradeModal';
 
 const { Footer, Content } = Layout;
 const { TabPane } = Tabs;
@@ -23,8 +22,8 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 
 	const { users } = useSelector((state: RootState) => state);
 	const userName = getGithubUserName() || users.currentUser.userData.githubId;
-	const role = localStorage.getItem('role') || 'student';
-	const taskId = 'xcheck';
+	// const role = localStorage.getItem('role') || 'student';
+	// const taskId = 'xcheck';
 	// const taskId = 'simple-task-v1';
 
 	return (
@@ -47,8 +46,6 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 					</TabPane>
 					<TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
 						<ReviewRequestPage />
-						<SelfGradeModal taskId={taskId} />
-            Страница зопроса на ревью
         </TabPane>
 					<TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
 						<ReviewPage />

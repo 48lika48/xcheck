@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { SmileTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
 import { Spin, Space, Form, Button, Input, InputNumber, Typography, Divider } from 'antd';
-import { Iprops } from './SelfGradeModal';
 import { getData, saveTaskScoreResults } from 'src/store/reducers/selfGradeSlice';
 
 const { Paragraph, Text } = Typography;
@@ -13,6 +12,11 @@ const inputStyle = {
 	display: 'block',
 	maxWidth: '300px',
 	marginTop: '10px'
+};
+
+type Iprops = {
+  taskId?: string | null;
+  handleEndCheck: () => void;
 };
 
 const validateMessages = {

@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Button, Modal, message } from 'antd';
+import { Modal, message } from 'antd';
 import { SelfGradeForm } from './SelfGradeForm';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 import { setSelfGrade } from 'src/store/reducers/reviewRequestSlice';
 
-export type Iprops = {
-	taskId?: string;
-	handleEndCheck: () => void;
-};
+type SelfGradeModalProps = {
+  taskId: string | null;
+  isSelfGradeShow: boolean;
+  selfGradeHandler: () => void;
+}
 
-export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
-	const [showModal, setShowModal] = useState(false);
+export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({taskId, selfGradeHandler, isSelfGradeShow }) => {
+	const [showModal, setShowModal] = useState(isSelfGradeShow);
 	const [isDisabledButton, setIsDisabledButton] = useState(true);
 
 	const dispatch = useDispatch();
@@ -20,11 +21,13 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 
 	const cancelChanges = (): void => {
 		setShowModal(false);
-		setIsDisabledButton(true);
+    setIsDisabledButton(true);
+    selfGradeHandler();
 	};
 
 	const saveChanges = (): void => {
-		setShowModal(false);
+    setShowModal(false);
+    selfGradeHandler();
 	};
 
 	const handleEndCheck = (): void => {
@@ -39,14 +42,6 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 
 	return (
 		<div>
-			<Button
-				type="primary"
-				onClick={() => {
-					setShowModal(true);
-				}}
-			>
-				Do Self-Check
-			</Button>
 			<Modal
 				title="Check task"
 				centered
@@ -57,7 +52,7 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 				okButtonProps={{ disabled: isDisabledButton }}
 				width={900}
 			>
-				<SelfGradeForm taskId={props.taskId} handleEndCheck={handleEndCheck} />
+				<SelfGradeForm taskId={taskId} handleEndCheck={handleEndCheck} />
 			</Modal>
 		</div>
 	);
