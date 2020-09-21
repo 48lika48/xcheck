@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Table, Tag } from 'antd';
 import { ICheckSession } from '../../../../models';
 
 const columns = [
@@ -54,16 +54,26 @@ const columns = [
   },
   {
     title: 'Action',
-    render: (text: String, record: any) => (
-      <Space size="small">
-        <Button href="#" onClick={() => console.log(record.id)}>
-          Open
-        </Button>
-      </Space>
-    ),
+    render: (text: String, record: any) => <Button href="#">Open</Button>,
   },
 ];
-export const SessionsTable = (props: { sessions: ICheckSession[] }) => {
-  const { sessions } = props;
-  return <Table dataSource={sessions} columns={columns} rowKey="id" />;
+export const SessionsTable = (props: {
+  sessions: ICheckSession[];
+  openRow: (id: string) => void;
+}) => {
+  const { sessions, openRow } = props;
+  return (
+    <Table
+      dataSource={sessions}
+      columns={columns}
+      rowKey="id"
+      onRow={(record, rowIndex) => {
+        return {
+          onClick: (event) => {
+            openRow(record.id);
+          },
+        };
+      }}
+    />
+  );
 };
