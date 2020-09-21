@@ -1,26 +1,21 @@
 import React from 'react';
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  DatePicker,
-  InputNumber,
-  Space,
-  Checkbox,
-  Tooltip,
-} from 'antd';
-import { formItemLayout } from '../../../../forms/task-manager/constants/constants';
-import CheckBox from 'rc-checkbox';
+import { Form, Button, Select, DatePicker, InputNumber, Space, Checkbox, Tooltip } from 'antd';
+import { ITask } from '../../../../models';
 const { RangePicker } = DatePicker;
-
+const tailLayout = {
+  wrapperCol: { offset: 5, span: 16 },
+};
 interface ICrossSessionForm {
   id: string;
+  tasks: ITask[];
 }
 export const CrossSessionForm = (props: ICrossSessionForm) => {
-  const { id } = props;
+  const { id, tasks } = props;
+  let startData = '';
+  let endData = '';
   const onFinish = (values: any) => {
-    console.log(values);
+    values.startDate = startData;
+    values.endDate = endData;
   };
   return (
     <Form
@@ -32,37 +27,40 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
       onFinish={onFinish}
     >
       <Form.Item
-        label="Session name"
-        name="id"
-        rules={[{ required: true, message: 'Please input session name!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
         label="Task name"
         name="taskId"
-        rules={[{ required: true, message: 'Please select task' }]}
+        //rules={[{ required: true, message: 'Please select task' }]}
       >
-        <Select>
-          <Select.Option value="demo">Demo</Select.Option>
+        <Select placeholder={'Select task first...'}>
+          {tasks.length > 0 &&
+            tasks.map((item) => <Select.Option value={item.id}>{item.id}</Select.Option>)}
         </Select>
       </Form.Item>
+
       <Form.Item label="Score coefficient" name="coefficient" initialValue={1}>
         <InputNumber min={0.1} max={1} step={0.1} />
       </Form.Item>
+
       <Form.Item label="Reviewers amount:" name="desiredReviewersAmount" initialValue={1}>
         <InputNumber min={1} max={5} />
       </Form.Item>
-      <Form.Item
-        label="Date range:"
-        {...formItemLayout}
-        rules={[{ required: true, message: 'Please input dates!' }]}
-      >
+
+      <Form.Item label="Date range:" rules={[{ required: true, message: 'Please input dates!' }]}>
         <Space direction="vertical" size={12}>
-          <RangePicker />
+          <RangePicker
+            onChange={(values: any) => {
+              if (values) {
+                console.log('startDate', values[0].format());
+                console.log('endDate', values[1].format());
+                startData = values[0].format();
+                endData = values[1].format();
+              }
+            }}
+          />
         </Space>
       </Form.Item>
-      <Form.Item>
+
+      <Form.Item {...tailLayout}>
         <Tooltip
           title="Ignore the review with minimal score when calculating average"
           placement="topLeft"
@@ -72,10 +70,9 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
             valuePropName="checked"
             style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
           >
-            <Checkbox> Min score</Checkbox>
+            <Checkbox>Discard min score</Checkbox>
           </Form.Item>
         </Tooltip>
-
         <Tooltip
           title="Ignore the review with maximal score when calculating average"
           placement="topLeft"
@@ -85,7 +82,7 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
             valuePropName="checked"
             style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
           >
-            <Checkbox> Max score</Checkbox>
+            <Checkbox>Discard max score</Checkbox>
           </Form.Item>
         </Tooltip>
       </Form.Item>
