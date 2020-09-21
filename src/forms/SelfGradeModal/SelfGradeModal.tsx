@@ -7,7 +7,7 @@ import { setSelfGrade } from 'src/store/reducers/reviewRequestSlice';
 
 export type Iprops = {
 	taskId?: string;
-	handleConfirmClick: () => void;
+	handleEndCheck: () => void;
 };
 
 export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
@@ -27,7 +27,7 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 		setShowModal(false);
 	};
 
-	const handleConfirmClick = (): void => {
+	const handleEndCheck = (): void => {
 		if (!taskScore.items.length) {
 			message.warning('Check carefully! Enter and save all items.');
 			return;
@@ -52,14 +52,12 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 				centered
 				visible={showModal}
 				okText="OK"
-				onOk={() => {
-					saveChanges();
-				}}
-				onCancel={() => cancelChanges()}
+				onOk={saveChanges}
+				onCancel={cancelChanges}
 				okButtonProps={{ disabled: isDisabledButton }}
 				width={900}
 			>
-				<SelfGradeForm taskId={props.taskId} handleConfirmClick={handleConfirmClick} />
+				<SelfGradeForm taskId={props.taskId} handleEndCheck={handleEndCheck} />
 			</Modal>
 		</div>
 	);

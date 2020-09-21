@@ -95,7 +95,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 				) : (
 						<Paragraph>Close Modal and open later</Paragraph>
 					)}
-				<Button onClick={props.handleConfirmClick}>
+				<Button onClick={props.handleEndCheck}>
 					End and Save Check
 				<SmileTwoTone />
 				</Button>
