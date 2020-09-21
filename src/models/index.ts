@@ -122,7 +122,7 @@ export interface IReview {
 
 export interface ITaskScore {
   task: string;
-  items: ITaskScoreItem;
+  items: Array<ITaskScoreItem>;
 }
 
 export interface ITaskScoreItem {

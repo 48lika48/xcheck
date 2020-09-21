@@ -68,7 +68,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     if (task == null) {
       return;
     }
-    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId);
+    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId && request.author === user);
     setSubmittedRequest(submittedRequest);
     selfGradeTogle(submittedRequest ? submittedRequest.selfGrade : null)
     setTaskId(task.id)
@@ -184,7 +184,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             type="warning"
             showIcon
           />
-          <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => selfGradeTogle({task: "simple-task-v1", items: {basic_p1: {score: 20, comment: "Well done!"}}})}>
+          <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => selfGradeTogle({task: "simple-task-v1", items: [{basic_p1: {score: 20, comment: "Well done!"}}]})}>
             Open self-check form
           </Button>
         </>
