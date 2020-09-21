@@ -101,28 +101,28 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     if (submittedRequest && typeof submittedRequest !== 'boolean') {
       switch (submittedRequest.state) {
         case 'PUBLISHED':
-        return (
-          <Alert
-            message={
-              <>
-                <span>Review request has been submitted</span>
-                <a target="_blank" rel="noopener noreferrer" href={ submittedRequest.url}>
-                  {submittedRequest.url}
-                </a>{' '}
-              </>
-            }
-            type="success"
-            showIcon
-          />);
+          return (
+            <Alert
+              message={
+                <>
+                  <span>Review request has been submitted</span>
+                  <a target="_blank" rel="noopener noreferrer" href={submittedRequest.url}>
+                    {submittedRequest.url}
+                  </a>{' '}
+                </>
+              }
+              type="success"
+              showIcon
+            />);
         case 'COMPLETED':
           return (
-          <Alert
-            message={
-              <span>Review request has been completed</span>
-            }
-            type="info"
-            showIcon
-          />);
+            <Alert
+              message={
+                <span>Review request has been completed</span>
+              }
+              type="info"
+              showIcon
+            />);
         default:
           return null
       }
@@ -184,7 +184,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             type="warning"
             showIcon
           />
-          <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => selfGradeTogle({task: "simple-task-v1", items: {basic_p1: {score: 20, comment: "Well done!"}}})}>
+          <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => selfGradeTogle(null)}>
             Open self-check form
           </Button>
         </>
