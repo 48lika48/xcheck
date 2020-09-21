@@ -5,16 +5,25 @@ import { ITask } from '../../models';
 
 interface ICrossSessionForm {
   isShowModal: boolean;
+  closeManager: () => void;
+  tasks: ITask[];
+  isEdit: boolean;
+  editData: any;
 }
-const saveChanges = () => {};
-const closeManager = () => {};
-const tasks: ITask[] = [];
 
 export const CrossSessionCreate = (props: ICrossSessionForm) => {
-  const { isShowModal } = props;
+  const { isShowModal, closeManager, tasks, isEdit } = props;
+  const saveChanges = () => {};
   return (
-    <Modal title="Create cross check session" width={1000} visible={isShowModal} footer={null}>
-      <CrossSessionForm id={'crossSessionForm'} tasks={tasks} />
+    <Modal
+      title="Create cross check session"
+      width={1000}
+      visible={isShowModal}
+      footer={null}
+      destroyOnClose={true}
+      onCancel={() => closeManager()}
+    >
+      <CrossSessionForm id={'crossSessionForm'} tasks={tasks} isEdit={isEdit} />
     </Modal>
   );
 };
