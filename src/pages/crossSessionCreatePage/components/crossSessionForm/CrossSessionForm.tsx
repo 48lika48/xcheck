@@ -8,6 +8,7 @@ const tailLayout = {
 interface ICrossSessionForm {
   id: string;
   tasks: ITask[];
+  isEdit: boolean;
 }
 export const CrossSessionForm = (props: ICrossSessionForm) => {
   const { id, tasks } = props;
@@ -29,7 +30,7 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
       <Form.Item
         label="Task name"
         name="taskId"
-        //rules={[{ required: true, message: 'Please select task' }]}
+        rules={[{ required: true, message: 'Please select task' }]}
       >
         <Select placeholder={'Select task first...'}>
           {tasks.length > 0 &&
