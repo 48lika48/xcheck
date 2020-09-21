@@ -41,8 +41,13 @@ export interface ITask {
   categoriesOrder?: TaskCategory[];
   requirements?: string[];
   items?: ITaskItem[];
-  subtasks?: object[];
-  score?: object[];
+  subtasks?: {
+    basic: Array<string | undefined>;
+    advanced: Array<string | undefined>;
+    extra: Array<string | undefined>;
+    fines: Array<string | undefined>;
+  };
+  score?: { basic: number[]; advanced: number[]; extra: number[]; fines: number[] };
   maxScore?: 0;
 }
 

@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
-import Main from './Steps/Main';
-import Basic from './Steps/Basic';
-import Advanced from './Steps/Advanced';
-import Extra from './Steps/Extra';
-import Fines from './Steps/Fines';
+import { Main, Basic, Advanced, Extra, Fines } from './steps';
+
 import { Form, Modal, Button, Steps, Space, Upload, message } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
-import { ITask, TaskState } from 'src/models';
+import { ITask, TaskState } from '../../models';
 import { addNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
 const { Step } = Steps;
+
+export const defaultSubtask = { basic: [], advanced: [], extra: [], fines: [] };
+export const defaultScore = { basic: [0], advanced: [0], extra: [0], fines: [0] };
 
 const defaultTask: ITask = {
   id: '',
@@ -22,8 +22,8 @@ const defaultTask: ITask = {
   endDate: moment().format(),
   goals: [],
   requirements: [],
-  subtasks: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
-  score: [{ basic: [] }, { advanced: [] }, { extra: [] }, { fines: [] }],
+  subtasks: defaultSubtask,
+  score: defaultScore,
   maxScore: 0,
   author: '',
   state: TaskState.DRAFT,

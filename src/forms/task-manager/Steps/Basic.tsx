@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Button, Input, InputNumber } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { formItemLayout, formItemLayoutWithOutLabel } from '../constants/constants';
-import { updateArray, updateSubtasks, updateScore } from './helpers';
+import { updateArray, updateSubtasks, updateMaxScore, updateScores } from './helpers';
 
 const { TextArea } = Input;
 
@@ -35,7 +35,7 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
       </Form.Item>
       <Form.List name="basic-tasks">
         {(fields, { add, remove }) => {
-          fields.length === 0 && fields.push(...taskData.subtasks[0].basic.map((item: string, index: number) => {
+          fields.length === 0 && fields.push(...taskData.subtasks.basic.map((item: string, index: number) => {
             return {
               fieldKey: index,
               isListField: true,
@@ -73,7 +73,7 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
                             onDataChange('subtasks', updateSubtasks(taskData.subtasks, 'basic', index, e.currentTarget.value))
                           }
                         }
-                        value={taskData.subtasks[0].basic[index]}
+                        value={taskData.subtasks.basic[index]}
                         autoSize
                       />
                       <InputNumber
@@ -82,11 +82,11 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
                         style={{ width: '11%', marginLeft: '2%' }}
                         onChange={
                           (value: any) => {
-                            onDataChange('score', updateSubtasks(taskData.score, 'basic', index, value));
-                            onDataChange('maxScore', updateScore(taskData.score));
+                            onDataChange('score', updateScores(taskData.score, 'basic', index, +value));
+                            onDataChange('maxScore', updateMaxScore(taskData.score));
                           }
                         }
-                        value={taskData.score[0].basic[index]}
+                        value={taskData.score.basic[index]}
                       />
                     </div>
                   </Form.Item>
