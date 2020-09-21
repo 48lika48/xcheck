@@ -1,24 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import { getTasks } from '../../services/heroku';
-import { ITask } from 'src/models';
+import { ITask, ITaskScore } from 'src/models';
 
 type selfGradeType = {
 	task: ITask | null;
 	loading: boolean;
 	error: boolean;
-	taskScore: scoreType;
-};
-
-export type ItemsType = {
-	id: string;
-	score: number;
-	comment: string;
-};
-
-type scoreType = {
-	taskName: string;
-	items: Array<ItemsType>;
+	taskScore: ITaskScore;
 };
 
 const initialState: selfGradeType = {
@@ -26,7 +14,7 @@ const initialState: selfGradeType = {
 	loading: false,
 	error: false,
 	taskScore: {
-		taskName: '',
+		task: '',
 		items: []
 	}
 };
@@ -41,7 +29,8 @@ const selfGradeSlice = createSlice({
 		loadTaskSuccess(state, action) {
 			state.loading = false;
 			state.task = action.payload;
-			state.taskScore.taskName = action.payload.id;
+			state.taskScore.task = action.payload.id
+
 		},
 		getTasksError(state, action) {
 			state.error = action.payload;
@@ -64,11 +53,9 @@ const selfGradeSlice = createSlice({
 
 export const { loadTasks, loadTaskSuccess, getTasksError, saveTaskScoreResults } = selfGradeSlice.actions;
 
-export const fetchTasks = (taskName: string): AppThunk => async (dispatch) => {
+export const getData = (tasks: ITask[], taskName: string): AppThunk => async (dispatch) => {
 	try {
 		dispatch(loadTasks());
-		const tasks = await getTasks();
-		console.log(`tasks:${tasks}`);
 		const taskToCheck = tasks.find((task: { id: any }) => {
 			if (task.id !== taskName) {
 				return null;

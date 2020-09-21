@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Modal, message } from 'antd';
 import { SelfGradeForm } from './SelfGradeForm';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
+import { setSelfGrade } from 'src/store/reducers/reviewRequestSlice';
 
 export type Iprops = {
 	taskId?: string;
@@ -13,7 +14,9 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 	const [showModal, setShowModal] = useState(false);
 	const [isDisabledButton, setIsDisabledButton] = useState(true);
 
-	const { taskScore } = useSelector((state: RootState) => state.selfGradeReducer);
+	const dispatch = useDispatch();
+
+	const { taskScore } = useSelector((state: RootState) => state.selfGradeSlice);
 
 	const cancelChanges = (): void => {
 		setShowModal(false);
@@ -29,8 +32,8 @@ export const SelfGradeModal: React.FC<{ taskId: string }> = (props: any) => {
 			message.warning('Check carefully! Enter and save all items.');
 			return;
 		}
+		dispatch(setSelfGrade(taskScore));
 		setIsDisabledButton(false);
-		// todo console.log(`Save ${taskScore} to reviewRequest by dispatch!`);
 		message.success('Check Saved!');
 	};
 

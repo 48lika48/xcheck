@@ -4,7 +4,7 @@ import { RootState } from 'src/store/rootReducer';
 import { SmileTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
 import { Spin, Space, Form, Button, Input, InputNumber, Typography, Divider } from 'antd';
 import { Iprops } from './SelfGradeModal';
-import { fetchTasks, saveTaskScoreResults } from 'src/store/reducers/selfGradeReducer';
+import { getData, saveTaskScoreResults } from 'src/store/reducers/selfGradeSlice';
 
 const { Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -27,13 +27,14 @@ const validateMessages = {
 
 export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 	const dispatch = useDispatch();
+	const { tasks } = useSelector((state: RootState) => state.reviewRequest);
+	const { task, loading } = useSelector((state: RootState) => state.selfGradeSlice);
 	useEffect(
 		() => {
-			dispatch(fetchTasks(props.taskId));
+			dispatch(getData(tasks, props.taskId));
 		},
-		[dispatch]
+		[dispatch, props.taskId, tasks]
 	);
-	const { task, loading } = useSelector((state: RootState) => state.selfGradeReducer);
 
 	return loading ? (
 		<Space>
