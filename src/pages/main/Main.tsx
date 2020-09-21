@@ -19,6 +19,8 @@ import { ReviewPage } from '../reviews';
 import { CrossSessionsPage } from '../crossSessionsPage';
 import TaskManager from '../../forms';
 import Tasks from '../Tasks';
+import { FOOTER_LINKS } from 'src/constants';
+
 import './Main.scss';
 
 const { Footer, Content } = Layout;
@@ -29,7 +31,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
   const userName = getGithubUserName() || users.currentUser.userData.githubId;
 
   return (
-    <Layout>
+    <Layout className="site-layout">
       <PageHeader
         className="site-page-header"
         title="RS School xCheck"
@@ -91,7 +93,13 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 
         </Tabs>
       </Content>
-      <Footer>Footer</Footer>
+      <Footer className="footer">
+        <div className="footer-container">
+          <a href={FOOTER_LINKS.rss.link} className="rss" target="blank">{FOOTER_LINKS.rss.title}</a>
+          <a href={FOOTER_LINKS.github.link} className="github" target="blank">{FOOTER_LINKS.github.title}</a>
+        </div>
+      </Footer>
     </Layout>
-  );
-};
+
+  )
+}
