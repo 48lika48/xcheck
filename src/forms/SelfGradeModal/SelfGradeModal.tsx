@@ -4,6 +4,7 @@ import { SelfGradeForm } from './SelfGradeForm';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 import { setSelfGrade } from 'src/store/reducers/reviewRequestSlice';
+const WARNING_MESSAGE = 'Check carefully! Enter and save all items.';
 
 type SelfGradeModalProps = {
 	taskId: string | null;
@@ -32,7 +33,7 @@ export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGrad
 
 	const handleEndCheck = (): void => {
 		if (taskScore.items.length !== task?.items.length) {
-			message.warning('Check carefully! Enter and save all items.');
+			message.warning(WARNING_MESSAGE);
 			return;
 		}
 		dispatch(setSelfGrade(taskScore));

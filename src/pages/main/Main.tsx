@@ -22,9 +22,6 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 
 	const { users } = useSelector((state: RootState) => state);
 	const userName = getGithubUserName() || users.currentUser.userData.githubId;
-	// const role = localStorage.getItem('role') || 'student';
-	// const taskId = 'xcheck';
-	// const taskId = 'simple-task-v1';
 
 	return (
 		<Layout>
@@ -46,7 +43,7 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 					</TabPane>
 					<TabPane tab={<span><PullRequestOutlined />Review requests</span>} key="2">
 						<ReviewRequestPage />
-        </TabPane>
+					</TabPane>
 					<TabPane tab={<span><ScheduleTwoTone />Reviews</span>} key="3">
 						<ReviewPage />
 					</TabPane>
@@ -54,6 +51,5 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
 			</Content>
 			<Footer>Footer</Footer>
 		</Layout>
-
 	)
 }

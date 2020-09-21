@@ -15,8 +15,8 @@ const inputStyle = {
 };
 
 type Iprops = {
-  taskId?: string | null;
-  handleEndCheck: () => void;
+	taskId?: string | null;
+	handleEndCheck: () => void;
 };
 
 const validateMessages = {
