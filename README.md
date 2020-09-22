@@ -36,7 +36,17 @@
 - Set in the file `auth-server.js` a redirect to the address of the deployed site instead of the address `http://localhost:3000` and [deploy](https://devcenter.heroku.com/articles/deploying-nodejs) this file as a server for authorization
 - Create `OAuth App` in your Github account (Developer settings, set `Homepage URL`: http://`your-auth-server`/ and `Authorization callback URL`: http://`your-auth-server`/auth/user)
 
-### Code Contributors
+### App features
 
-This project exists thanks to all the people who contribute.
-<a href="https://github.com/MaksimDiubo/xcheck/graphs/contributors">
+#### User roles
+
+- student (create request to check, review the work of other students, open a dispute)
+- author (create tasks, edit tasks, etc ...)
+- supervisor (all application features are available, etc ...)
+- course manager (starting a crosscheck session, etc ...)
+
+#### Import/export tasks
+
+- import [RSS Checklist](https://github.com/rolling-scopes-school/checklist) .json format tasks
+- import markdown tasks (format [english-puzzle.md](https://raw.githubusercontent.com/rolling-scopes-school/tasks/master/tasks/rslang/english-puzzle.md), [speakit.md](https://raw.githubusercontent.com/rolling-scopes-school/tasks/master/tasks/rslang/speakit.md), [rslang.md](https://raw.githubusercontent.com/rolling-scopes-school/tasks/master/tasks/rslang/rslang.md))
+- export and import own .json tasks format
