@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Input, Spin } from 'antd';
+import { Table, Space, Tag, Input, Spin } from 'antd';
 import { ITask } from 'src/models';
 
 const columns = [
@@ -15,8 +15,8 @@ const columns = [
   },
   {
     title: 'Deadline',
-    dataIndex: 'deadline',
-    key: 'deadline',
+    dataIndex: 'endDate',
+    key: 'endDate',
   },
   {
     title: 'Author',
@@ -27,6 +27,11 @@ const columns = [
     title: 'Status',
     key: 'state',
     dataIndex: 'state',
+    render: (state: string) => (
+      <Tag color="geekblue">
+        {state.toUpperCase()}
+      </Tag>
+    ),
     // render: (tags: any) => (
     //   <>
     //     {tags.map((tag: any) => {
@@ -69,7 +74,7 @@ const Action: React.FC = () => {
   if (currentRole === 'student') {
     return (
       <Space size="middle">
-        <a>Details</a>
+        <a>Open</a>
       </Space>
     )
   }
