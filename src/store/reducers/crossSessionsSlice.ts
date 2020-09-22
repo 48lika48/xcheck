@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ICheckSession } from '../../models';
 import { AppThunk } from '../store';
-import { getCheckSessions } from '../../services/heroku';
+import { addCheckSession, getCheckSessions, updateCheckSession } from '../../services/heroku';
 
 interface ICrossSessionsSlice {
   loading: boolean;
@@ -68,6 +68,26 @@ export const fetchSessions = (): AppThunk => async (dispatch) => {
     dispatch(setSessions(sessions));
     dispatch(endLoading());
   } catch (err) {}
+};
+export const setSession = (data: ICheckSession): AppThunk => async (dispatch) => {
+  try {
+    dispatch(startLoading());
+    await addCheckSession(data);
+    dispatch(endLoading());
+  } catch (err) {
+    dispatch(endLoading());
+  }
+};
+export const editSession = (data: ICheckSession, sessionId: string): AppThunk => async (
+  dispatch
+) => {
+  try {
+    dispatch(startLoading());
+    await updateCheckSession(data, sessionId);
+    dispatch(endLoading());
+  } catch (err) {
+    dispatch(endLoading());
+  }
 };
 
 export default crossSessionSlice.reducer;

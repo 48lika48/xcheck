@@ -8,10 +8,13 @@ import {
   hideModal,
   startEdit,
   endEdit,
+  editSession,
+  setSession,
 } from '../../store/reducers/crossSessionsSlice';
 import { PlusOutlined } from '@ant-design/icons';
 import { SessionsTable } from './components/sessionsTable';
 import { CrossSessionCreate } from '../crossSessionCreatePage';
+import { ICheckSession } from '../../models';
 
 export const CrossSessionsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -32,6 +35,7 @@ export const CrossSessionsPage: React.FC = () => {
 
   function closeHandler() {
     dispatch(hideModal());
+    dispatch(fetchSessions());
     if (isEdit) {
       dispatch(endEdit());
     }
@@ -42,6 +46,9 @@ export const CrossSessionsPage: React.FC = () => {
     dispatch(startEdit(id));
   }
 
+  function formSave(values: ICheckSession) {
+    isEdit ? dispatch(editSession(values, values.id)) : dispatch(setSession(values));
+  }
   return (
     <Spin spinning={loading}>
       <Button
@@ -60,6 +67,7 @@ export const CrossSessionsPage: React.FC = () => {
         tasks={allTasks}
         isEdit={isEdit}
         editData={editData}
+        onSave={formSave}
       />
       <SessionsTable sessions={sessions} openRow={openHandler} />
     </Spin>
