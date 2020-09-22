@@ -10,6 +10,7 @@ import {
   endEdit,
   editSession,
   setSession,
+  deleteSession,
 } from '../../store/reducers/crossSessionsSlice';
 import { PlusOutlined } from '@ant-design/icons';
 import { SessionsTable } from './components/sessionsTable';
@@ -48,7 +49,13 @@ export const CrossSessionsPage: React.FC = () => {
 
   function formSave(values: ICheckSession) {
     isEdit ? dispatch(editSession(values, values.id)) : dispatch(setSession(values));
+    closeHandler();
   }
+
+  function handleDelete(id: string) {
+    dispatch(deleteSession(id));
+  }
+
   return (
     <Spin spinning={loading}>
       <Button
@@ -69,7 +76,7 @@ export const CrossSessionsPage: React.FC = () => {
         editData={editData}
         onSave={formSave}
       />
-      <SessionsTable sessions={sessions} openRow={openHandler} />
+      <SessionsTable sessions={sessions} openRow={openHandler} handleDelete={handleDelete} />
     </Spin>
   );
 };
