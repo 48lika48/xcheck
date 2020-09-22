@@ -48,6 +48,7 @@ export interface ITask {
     fines: Array<string | undefined>;
   };
   score?: { basic: number[]; advanced: number[]; extra: number[]; fines: number[] };
+
   maxScore?: 0;
 }
 
@@ -127,14 +128,13 @@ export interface IReview {
 
 export interface ITaskScore {
   task: string;
-  items: ITaskScoreItem;
+  items: Array<ITaskScoreItem>;
 }
 
 export interface ITaskScoreItem {
-  [index: string]: {
-    score: number;
-    comment: string;
-  };
+  id: string;
+  score: number;
+  comment: string;
 }
 
 export enum ReviewState {
