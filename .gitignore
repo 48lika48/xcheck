@@ -27,3 +27,6 @@ debug.log
 
 #webstorm idea
 .idea/
+
+#keys
+config.js
