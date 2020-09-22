@@ -1,11 +1,20 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import { usersReducer, tasksReducer, reviewRequestReducer, reviewsPageReducer } from './reducers';
+import {
+  usersReducer,
+  tasksReducer,
+  reviewRequestReducer,
+  reviewsPageReducer,
+  crossSessionSlice,
+  selfGradeSlice,
+} from './reducers';
 
 const rootReducer = combineReducers({
   users: usersReducer,
   tasks: tasksReducer,
   reviewsPage: reviewsPageReducer,
+  crossSessions: crossSessionSlice,
   reviewRequest: reviewRequestReducer,
+  selfGradeSlice: selfGradeSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
