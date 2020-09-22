@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Main, Basic, Advanced, Extra, Fines } from './steps';
 
@@ -9,7 +9,8 @@ import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
 import { ITask, TaskState } from '../../models';
-import { addNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
+import { fetchNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
+import { RootState } from 'src/store/rootReducer';
 const { Step } = Steps;
 
 export const defaultSubtask = { basic: [], advanced: [], extra: [], fines: [] };
@@ -37,10 +38,11 @@ export const TaskManager: React.FC = () => {
   const [step, setStep] = useState(0);
   const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
+  const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData);
 
   useEffect(() => {
     dispatch(fetchTasks());
-  }, [dispatch]);
+  }, [githubId, dispatch]);
 
   const onDataChange = (field: string, value: any) => {
     if (field === 'allData') { return setTaskData(value) }
@@ -52,6 +54,7 @@ export const TaskManager: React.FC = () => {
     accept: '.json, .md',
     customRequest: (options: { file: File; }) => {
       setTaskData(defaultTask);
+      onDataChange('author', githubId);
       parsTask({ file: options.file, taskData, setTaskData: onDataChange });
     },
     fileList,
@@ -100,7 +103,7 @@ export const TaskManager: React.FC = () => {
   }
 
   const createTask = (): void => {
-    dispatch(addNewTask(taskData));
+    dispatch(fetchNewTask(taskData));
     message.success('Task created!');
     setTaskData(defaultTask);
     setStep(0);
@@ -108,7 +111,7 @@ export const TaskManager: React.FC = () => {
   }
 
   const saveChanges = (): void => {
-    dispatch(addNewTask(taskData));
+    dispatch(fetchNewTask(taskData));
     message.success('Changes saved!');
     setStep(0);
     setIsShowModal(false);
