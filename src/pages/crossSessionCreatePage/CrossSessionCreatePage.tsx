@@ -16,7 +16,7 @@ export const CrossSessionCreate = (props: ICrossSessionForm) => {
   const { isShowModal, closeManager, tasks, isEdit, editData, onSave } = props;
   return (
     <Modal
-      title="Create cross check session"
+      title={isEdit ? 'Edit cross check session' : 'Create new cross check session'}
       width={1000}
       visible={isShowModal}
       footer={null}
@@ -29,6 +29,7 @@ export const CrossSessionCreate = (props: ICrossSessionForm) => {
         isEdit={isEdit}
         editData={editData}
         onSave={onSave}
+        onCancel={closeManager}
       />
     </Modal>
   );
