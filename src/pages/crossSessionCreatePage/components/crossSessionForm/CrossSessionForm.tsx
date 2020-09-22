@@ -14,15 +14,17 @@ interface ICrossSessionForm {
   onSave: (value: ICheckSession) => void;
   onCancel: () => void;
 }
+
+const state: string[] = ['DRAFT', 'REQUESTS_GATHERING', 'CROSS_CHECK', 'COMPLETED'];
 export const CrossSessionForm = (props: ICrossSessionForm) => {
   const { id, tasks, isEdit, editData, onSave, onCancel } = props;
   let startData = '';
   let endData = '';
   const onFinish = (values: any) => {
-    values.startDate = startData;
-    values.endDate = endData;
+    values.startDate = isEdit ? editData.startDate : startData;
+    values.endDate = isEdit ? editData.endData : endData;
     values.id = isEdit ? editData.id : `${values.taskId}-crossCheck`;
-    values.state = isEdit ? editData.state : `DRAFT`;
+    values.state = isEdit ? values.state : `DRAFT`;
     onSave(values);
   };
   return (
@@ -45,7 +47,17 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
             tasks.map((item) => <Select.Option value={item.id}>{item.id}</Select.Option>)}
         </Select>
       </Form.Item>
-
+      <Form.Item
+        label="State"
+        name="state"
+        rules={[{ required: !isEdit, message: 'Please select task' }]}
+        initialValue={isEdit ? editData.state : ''}
+      >
+        <Select placeholder={'Select state'}>
+          {state.length > 0 &&
+            state.map((state: string) => <Select.Option value={state}>{state}</Select.Option>)}
+        </Select>
+      </Form.Item>
       <Form.Item
         label="Score coefficient"
         name="coefficient"
@@ -115,9 +127,7 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
           <Button type="primary" htmlType="submit">
             Save
           </Button>
-          {isEdit && editData.state === 'DRAFT' && <Button>Request gathering</Button>}
-          {isEdit && editData.state === 'REQUESTS_GATHERING' && <Button>Start crosscheck!</Button>}
-          {isEdit && editData.state === 'CROSS_CHECK' && <Button>Complete session</Button>}
+
           <Button onClick={() => onCancel()}>Cancel</Button>
         </Space>
       </Form.Item>
