@@ -47,17 +47,19 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
             tasks.map((item) => <Select.Option value={item.id}>{item.id}</Select.Option>)}
         </Select>
       </Form.Item>
-      <Form.Item
-        label="State"
-        name="state"
-        rules={[{ required: !isEdit, message: 'Please select task' }]}
-        initialValue={isEdit ? editData.state : ''}
-      >
-        <Select placeholder={'Select state'}>
-          {state.length > 0 &&
-            state.map((state: string) => <Select.Option value={state}>{state}</Select.Option>)}
-        </Select>
-      </Form.Item>
+      {isEdit && (
+        <Form.Item
+          label="State"
+          name="state"
+          rules={[{ required: !isEdit, message: 'Please select task' }]}
+          initialValue={isEdit ? editData.state : ''}
+        >
+          <Select placeholder={'Select state'}>
+            {state.length > 0 &&
+              state.map((state: string) => <Select.Option value={state}>{state}</Select.Option>)}
+          </Select>
+        </Form.Item>
+      )}
       <Form.Item
         label="Score coefficient"
         name="coefficient"
