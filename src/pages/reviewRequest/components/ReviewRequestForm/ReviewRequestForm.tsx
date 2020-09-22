@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 import { SelfGradeModal } from '../../../../forms/SelfGradeModal/SelfGradeModal';
 
@@ -107,21 +107,22 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
   function renderRevRequestStatus(submittedRequest: IReviewRequest | undefined | boolean) {
     if (submittedRequest && typeof submittedRequest !== 'boolean') {
       switch (submittedRequest.state) {
-        case 'PUBLISHED':
-          return (
-            <Alert
-              message={
-                <>
-                  <span>Review request has been submitted</span>
-                  <a target="_blank" rel="noopener noreferrer" href={submittedRequest.url}>
-                    {submittedRequest.url}
-                  </a>{' '}
-                </>
-              }
-              type="success"
-              showIcon
-            />);
-        case 'COMPLETED':
+        case ReviewRequestState.PUBLISHED:
+        return (
+          <Alert
+            message={
+              <>
+                <span>Review request has been submitted </span>
+                <a target="_blank" rel="noopener noreferrer" href={ submittedRequest.url}>
+                  {submittedRequest.url}
+                </a>{' '}
+              </>
+            }
+            type="success"
+            showIcon
+          />);
+        case ReviewRequestState.COMPLETED:
+
           return (
             <Alert
               message={
