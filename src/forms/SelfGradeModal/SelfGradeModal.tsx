@@ -32,7 +32,7 @@ export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGrad
 	};
 
 	const handleEndCheck = (): void => {
-		if (taskScore.items.length !== task?.items.length) {
+		if (task?.items && taskScore.items.length !== task?.items.length) {
 			message.warning(WARNING_MESSAGE);
 			return;
 		}

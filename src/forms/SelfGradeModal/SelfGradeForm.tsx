@@ -47,11 +47,11 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 		</Space>
 	) : (
 			<React.Fragment>
-				{task?.items ? (
+				{task && task.items ? (
 					task.items.map((item: any, i: number) => {
 						return (
 							<Form
-								key={task.items.length - i}
+								key={task.items && task.items.length - i}
 								initialValues={{ remember: false }}
 								validateMessages={validateMessages}
 								onFinish={(values) => {
