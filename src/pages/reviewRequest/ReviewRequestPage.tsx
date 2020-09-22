@@ -8,7 +8,7 @@ import { fetchAllData, addRequest, updateRequest, deleteRequestItem, addSelfGrad
 export const ReviewRequestPage: React.FC = () => {
 
   const dispatch = useDispatch();
-  const { tasks, reviewRequests, /*reviews,*/ isLoading, selfGrade } = useSelector((state: RootState) => state.reviewRequest)
+  const { tasks, reviewRequests, reviews, isLoading, selfGrade } = useSelector((state: RootState) => state.reviewRequest)
   const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData)
 
   useEffect(() => {
@@ -42,7 +42,13 @@ export const ReviewRequestPage: React.FC = () => {
         submitHandlerUpdate={submitHandlerUpdate}
         selfGradeTogle={selfGradeTogle}
      />
-      <ReviewRequestList reviewRequests={reviewRequests} user={githubId} deleteHandler={deleteHandler}/>
+      <ReviewRequestList
+        reviewRequests={reviewRequests}
+        reviews={reviews}
+        user={githubId}
+        deleteHandler={deleteHandler}
+        isLoading={isLoading}
+      />
     </>
   );
 }

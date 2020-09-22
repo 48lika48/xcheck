@@ -1,5 +1,6 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
+import { SelfGradeModal } from '../../../../forms/SelfGradeModal/SelfGradeModal';
 
 import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
 import { ITask, IReviewRequest, ReviewRequestState, ITaskScore } from '../../../../models';
@@ -22,6 +23,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
   const [form] = Form.useForm();
   const [submittedRequest, setSubmittedRequest] = useState(true as IReviewRequest | undefined | boolean);
   const [taskId, setTaskId] = useState(null as string | null);
+  const [isSelfGradeShow, setIsSelfGradeShow] = useState(false as boolean);
 
   useEffect(() => {
     form.resetFields();
@@ -68,44 +70,49 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     if (task == null) {
       return;
     }
-    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId);
+    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId && request.author === user);
     setSubmittedRequest(submittedRequest);
     selfGradeTogle(submittedRequest ? submittedRequest.selfGrade : null)
     setTaskId(task.id)
   };
 
-  return (
-    <Row gutter={24}>
-      <Col>
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="taskId" label="Task" rules={[{ required: true, message: 'Please select a task' }]}>
-            <Select placeholder={isLoading ? 'Loading...' : 'Select task'} onChange={handleTaskChange} >
-              {tasks.filter((task) => task.state.toUpperCase() === 'PUBLISHED').map((task) => {
-                return (
-                  <Select.Option value={task.id} key={task.id}>
-                    {task.id}
-                  </Select.Option>
-                )
-              })}
-            </Select>
-          </Form.Item>
-          {renderRevRequestStatus(submittedRequest)}
-          {renderSelfGradeStatus(submittedRequest)}
-          {renderInputs(submittedRequest)}
-        </Form>
-      </Col>
-    </Row>
-  );
+  const selfGradeHandler = () => {
+    setIsSelfGradeShow(!isSelfGradeShow)
+  }
+
+  return !isSelfGradeShow ? (
+      <Row gutter={24}>
+        <Col>
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            <Form.Item name="taskId" label="Task" rules={[{ required: true, message: 'Please select a task' }]}>
+              <Select placeholder={isLoading ? 'Loading...' : 'Select task'} onChange={handleTaskChange} >
+                {tasks.filter((task) => task.state.toUpperCase() === 'PUBLISHED').map((task) => {
+                  return (
+                    <Select.Option value={task.id} key={task.id}>
+                      {task.id}
+                    </Select.Option>
+                  )
+                })}
+              </Select>
+            </Form.Item>
+            {renderRevRequestStatus(submittedRequest)}
+            {renderSelfGradeStatus(submittedRequest)}
+            {renderInputs(submittedRequest)}
+          </Form>
+        </Col>
+      </Row>
+  ) : <SelfGradeModal taskId={taskId} selfGradeHandler={selfGradeHandler} isSelfGradeShow={isSelfGradeShow} />
+
 
   function renderRevRequestStatus(submittedRequest: IReviewRequest | undefined | boolean) {
     if (submittedRequest && typeof submittedRequest !== 'boolean') {
       switch (submittedRequest.state) {
-        case 'PUBLISHED':
+        case ReviewRequestState.PUBLISHED:
         return (
           <Alert
             message={
               <>
-                <span>Review request has been submitted</span>
+                <span>Review request has been submitted </span>
                 <a target="_blank" rel="noopener noreferrer" href={ submittedRequest.url}>
                   {submittedRequest.url}
                 </a>{' '}
@@ -114,15 +121,16 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             type="success"
             showIcon
           />);
-        case 'COMPLETED':
+        case ReviewRequestState.COMPLETED:
+
           return (
-          <Alert
-            message={
-              <span>Review request has been completed</span>
-            }
-            type="info"
-            showIcon
-          />);
+            <Alert
+              message={
+                <span>Review request has been completed</span>
+              }
+              type="info"
+              showIcon
+            />);
         default:
           return null
       }
@@ -184,7 +192,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             type="warning"
             showIcon
           />
-          <Button style={{ marginTop: 16 }} htmlType="button" onClick={() => selfGradeTogle({task: "simple-task-v1", items: {basic_p1: {score: 20, comment: "Well done!"}}})}>
+          <Button style={{ marginTop: 16 }} htmlType="button" onClick={ selfGradeHandler }>
             Open self-check form
           </Button>
         </>
