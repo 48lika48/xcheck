@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, Button, Tag } from 'antd';
-import { FileDoneOutlined } from '@ant-design/icons';
-import { IReview, IReviewRequest } from '../../../../models';
-
-import { DeleteOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, DeleteOutlined } from '@ant-design/icons';
+import { IReview, IReviewRequest, ITaskScore, ITaskScoreItem } from '../../../../models';
+import { ReviewDetails } from '../ReviewDetails';
 
 type UserRequestListProps = {
   reviewRequests: Array<IReviewRequest>,
@@ -13,7 +12,30 @@ type UserRequestListProps = {
   isLoading: boolean,
 }
 
+type detailsModal = {
+  visible: boolean,
+  data: ITaskScore | null,
+  isReviewMode: boolean,
+}
+
 export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, reviews, user, deleteHandler, isLoading }) => {
+
+  const [detailsModal, setDetailsModal] = useState({ visible: false, data: null, isReviewMode: true } as detailsModal)
+
+  const hideDetailsModal = (): void => {
+    setDetailsModal((prev: detailsModal) => {
+      return { ...prev, visible: false}
+    })
+  }
+
+  const detailsModalHandler = (data: ITaskScore | null, record: any): void => {
+    if ('selfCheck' in record) {
+      setDetailsModal({ visible: true, data, isReviewMode: false })
+    } else if ('reviewDetails' in record) {
+      setDetailsModal({ visible: true, data, isReviewMode: true })
+    }
+
+  }
 
   const expandedRowRender = (record: any) => {
     const columns = [
@@ -60,8 +82,8 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         dataIndex: 'reviewDetails',
         align: 'center' as 'center',
         key: 'reviewDetails',
-        render: () => (
-          <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => console.log('Show review details')} />
+        render: (value: ITaskScore | null, record: any) => (
+          <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => detailsModalHandler(value, record)} />
         )
       },
     ];
@@ -73,7 +95,8 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
           key: index.toString(),
           reviewer: review.author,
           reviewState: review.state,
-          grade: 600, //ToDO total grade
+          grade: review.grade.items.reduce((previous: number, current: ITaskScoreItem) => previous + current.score, 0),
+          reviewDetails: review.grade,
         }
       })
     return <Table columns={columns} dataSource={expandedData} pagination={false} />;
@@ -119,8 +142,8 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       dataIndex: 'selfCheck',
       align: 'center' as 'center',
       key: 'selfCheck',
-      render: () => (
-        <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => console.log('Show review details')} />
+      render: (value: ITaskScore | null, record: any) => (
+        <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => detailsModalHandler(value, record)} />
       ),
     },
     {
@@ -141,18 +164,26 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       id: req.id,
       task: req.task,
       status: req.state,
-      selfCheck: req.state,
+      selfCheck: req.selfGrade,
       url: req.url,
       urlPR: req.urlPR,
     }
   })
 
-  return <Table
-    loading={isLoading}
-    columns={columns}
-    dataSource={data}
-    style={{marginTop: '20px'}}
-    expandable={{ expandedRowRender }}
-    pagination={false}
-  />
+  return (
+    <>
+      <Table
+        loading={isLoading}
+        columns={columns}
+        dataSource={data}
+        style={{marginTop: '20px'}}
+        expandable={{ expandedRowRender }}
+        pagination={false} />
+      <ReviewDetails
+        visible={detailsModal.visible}
+        hideDetailsModal={hideDetailsModal}
+        data={detailsModal.data}
+        isReviewMode={detailsModal.isReviewMode}/>
+    </>
+  )
 }
