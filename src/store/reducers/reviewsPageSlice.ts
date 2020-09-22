@@ -56,7 +56,7 @@ const reviewsPageSlice = createSlice({
       state.sessions.push(action.payload);
     },
     setRequests(state, action) {
-      if (state.requests.findIndex((item) => item === action.payload) === -1) {
+      if (state.requests.findIndex((item) => item.id === action.payload.id) === -1) {
         state.requests.push(action.payload);
       }
     },
@@ -121,7 +121,9 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
           ?.reviewerOf;
         attendeesStudents?.forEach((item) => {
           const id = requests.find((request: IReviewRequest) => request.author === item);
-          dispatch(setRequests(id));
+          if (id) {
+            dispatch(setRequests(id));
+          }
         });
       }
     });
