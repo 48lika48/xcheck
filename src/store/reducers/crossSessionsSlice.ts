@@ -7,6 +7,19 @@ import {
   getCheckSessions,
   updateCheckSession,
 } from '../../services/heroku';
+import { message } from 'antd';
+
+const successUpdate = () => {
+  message.success('Session updated');
+};
+
+const successSave = () => {
+  message.success('Session saved!');
+};
+
+const successDeleted = () => {
+  message.warning('Session deleted!!!');
+};
 
 interface ICrossSessionsSlice {
   loading: boolean;
@@ -79,6 +92,7 @@ export const setSession = (data: ICheckSession): AppThunk => async (dispatch) =>
     dispatch(startLoading());
     await addCheckSession(data);
     dispatch(endLoading());
+    successSave();
   } catch (err) {
     dispatch(endLoading());
   }
@@ -90,6 +104,7 @@ export const editSession = (data: ICheckSession, sessionId: string): AppThunk =>
     dispatch(startLoading());
     await updateCheckSession(data, sessionId);
     dispatch(endLoading());
+    successUpdate();
   } catch (err) {
     dispatch(endLoading());
   }
@@ -100,6 +115,7 @@ export const deleteSession = (id: string): AppThunk => async (dispatch) => {
     await deleteCheckSession(id);
     dispatch(fetchSessions());
     dispatch(endLoading());
+    successDeleted();
   } catch (err) {
     dispatch(endLoading());
     console.log(err);
