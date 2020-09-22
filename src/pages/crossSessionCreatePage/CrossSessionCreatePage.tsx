@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { CrossSessionForm } from './components/crossSessionForm';
-import { ITask } from '../../models';
+import { ICheckSession, ITask } from '../../models';
 
 interface ICrossSessionForm {
   isShowModal: boolean;
@@ -9,11 +9,11 @@ interface ICrossSessionForm {
   tasks: ITask[];
   isEdit: boolean;
   editData: any;
+  onSave: (data: ICheckSession) => void;
 }
 
 export const CrossSessionCreate = (props: ICrossSessionForm) => {
-  const { isShowModal, closeManager, tasks, isEdit } = props;
-  const saveChanges = () => {};
+  const { isShowModal, closeManager, tasks, isEdit, editData, onSave } = props;
   return (
     <Modal
       title="Create cross check session"
@@ -23,7 +23,13 @@ export const CrossSessionCreate = (props: ICrossSessionForm) => {
       destroyOnClose={true}
       onCancel={() => closeManager()}
     >
-      <CrossSessionForm id={'crossSessionForm'} tasks={tasks} isEdit={isEdit} />
+      <CrossSessionForm
+        id={'crossSessionForm'}
+        tasks={tasks}
+        isEdit={isEdit}
+        editData={editData}
+        onSave={onSave}
+      />
     </Modal>
   );
 };
