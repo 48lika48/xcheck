@@ -12,9 +12,10 @@ interface ICrossSessionForm {
   isEdit: boolean;
   editData: any;
   onSave: (value: ICheckSession) => void;
+  onCancel: () => void;
 }
 export const CrossSessionForm = (props: ICrossSessionForm) => {
-  const { id, tasks, isEdit, editData, onSave } = props;
+  const { id, tasks, isEdit, editData, onSave, onCancel } = props;
   let startData = '';
   let endData = '';
   const onFinish = (values: any) => {
@@ -110,9 +111,15 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Save
-        </Button>
+        <Space size={'small'}>
+          <Button type="primary" htmlType="submit">
+            Save
+          </Button>
+          {isEdit && editData.state === 'DRAFT' && <Button>Request gathering</Button>}
+          {isEdit && editData.state === 'REQUESTS_GATHERING' && <Button>Start crosscheck!</Button>}
+          {isEdit && editData.state === 'CROSS_CHECK' && <Button>Complete session</Button>}
+          <Button onClick={() => onCancel()}>Cancel</Button>
+        </Space>
       </Form.Item>
     </Form>
   );
