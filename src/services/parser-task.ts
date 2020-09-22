@@ -1,8 +1,13 @@
 import moment from 'moment';
 import { message } from 'antd';
 import { ITask } from 'src/models';
-import { updateArray, updateSubtasks, updateScore } from '../forms/task-manager/Steps/helpers';
-
+import {
+  updateArray,
+  updateSubtasks,
+  updateMaxScore,
+  updateScores,
+} from '../forms/task-manager/steps/helpers';
+import { defaultScore, defaultSubtask } from 'src/forms/task-manager/TaskManager';
 
 const categories = ['basic', 'advanced', 'extra', 'fines'];
 const successMsg = 'File uploaded successfully.';
@@ -25,7 +30,7 @@ type RSSCheckList = {
   criteria: RSSChecklistCriteria[];
 };
 
-type RSSChecklistCriteria = { type: string; title?: string; text?: string; max?: string };
+type RSSChecklistCriteria = { type: string; title?: string; text?: string; max?: number };
 
 export const parsTask = ({ file, taskData, setTaskData }: Args) => {
   if (file.size > 204800) {
@@ -88,13 +93,18 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
         .forEach((item: RSSChecklistCriteria, i: number) => {
           setTaskData(
             'subtasks',
-            updateSubtasks(taskData.subtasks || [], categories[index], i, item.text || '')
+            updateSubtasks(
+              taskData.subtasks || { basic: [], advanced: [], extra: [], fines: [] },
+              categories[index],
+              i,
+              item.text || ''
+            )
           );
           setTaskData(
             'score',
-            updateSubtasks(taskData.score || [], categories[index], i, item.max || '0')
+            updateScores(taskData.score || defaultScore, categories[index], i, item.max || 0)
           );
-          setTaskData('maxScore', updateScore(taskData.score || []));
+          setTaskData('maxScore', updateMaxScore(taskData.score));
         });
     });
   };
@@ -156,13 +166,18 @@ export const parsTask = ({ file, taskData, setTaskData }: Args) => {
       subtasks.forEach((subtask: any, i: number) => {
         setTaskData(
           'subtasks',
-          updateSubtasks(taskData.subtasks || [], categories[index], i, subtask[1] || '')
+          updateSubtasks(
+            taskData.subtasks || defaultSubtask,
+            categories[index],
+            i,
+            subtask[1] || ''
+          )
         );
         setTaskData(
           'score',
-          updateSubtasks(taskData.score || [], categories[index], i, subtask[2] || '0')
+          updateScores(taskData.score || defaultScore, categories[index], i, +subtask[2] || 0)
         );
-        setTaskData('maxScore', updateScore(taskData.score || []));
+        setTaskData('maxScore', updateMaxScore(taskData.score || defaultScore));
       });
     });
   };
