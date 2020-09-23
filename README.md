@@ -1,15 +1,11 @@
 # X Check App / RS Assessment Tool
-
 ---
-
 ## Technology stack
 
 - Typescript
 - React
 - Node.js
-
 ---
-
 ## Getting Started
 
 ### Prerequisites
@@ -33,8 +29,10 @@
 - Run `npm run build` (creating build directory with a production build of app)
 - Deploy app to `gh-pages`, or `heroku`, or `netlify`, or any other service
 - [Deploy the full fake REST API json-server ](https://github.com/jesperorb/json-server-heroku)
-- Set in the file `auth-server.js` a redirect to the address of the deployed site instead of the address `http://localhost:3000` and [deploy](https://devcenter.heroku.com/articles/deploying-nodejs) this file as a server for authorization
+- Set a redirect address (of the deployed site) in the file `auth-server.js` instead of the address `http://localhost:3000` and [deploy](https://devcenter.heroku.com/articles/deploying-nodejs) this file as a server for authorization
 - Create `OAuth App` in your Github account (Developer settings, set `Homepage URL`: http://`your-auth-server`/ and `Authorization callback URL`: http://`your-auth-server`/auth/user)
+
+---
 
 ### App features
 
