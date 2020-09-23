@@ -28,29 +28,29 @@ type selfCheckModal = {
 export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, reviews, user, deleteHandler, isLoading, submitDisputeHandler }) => {
 
   const [detailsModal, setDetailsModal] = useState({ visible: false, data: null } as detailsModal)
-  const [selfGradeModal, setSelfGradeModal] = useState({visible: false, taskId: null } as selfCheckModal)
+  const [selfGradeModal, setSelfGradeModal] = useState({ visible: false, taskId: null } as selfCheckModal)
 
   const hideDetailsModal = (): void => {
     setDetailsModal((prev: detailsModal) => {
-      return { ...prev, visible: false}
+      return { ...prev, visible: false }
     })
   }
 
   const hideSelfGradeModal = () => {
     setSelfGradeModal((prev: selfCheckModal) => {
-      return { ...prev, visible: false}
+      return { ...prev, visible: false }
     })
   }
 
-  const reviewDetailsHandler = (data: ITaskScore | null, record: any, review?: IReview ): void => {
+  const reviewDetailsHandler = (data: ITaskScore | null, record: any, review?: IReview): void => {
     if ('selfCheck' in record) {
       setDetailsModal({ visible: true, data })
     } else if ('reviewDetails' in record) {
       setDetailsModal({ visible: true, data, review: review })
     }
   }
-  const selfCheckDetailsHandler = (record: any ): void => {
-    setSelfGradeModal({ visible: true, taskId:  record.task})
+  const selfCheckDetailsHandler = (record: any): void => {
+    setSelfGradeModal({ visible: true, taskId: record.task })
     console.log(selfGradeModal)
   }
 
@@ -61,6 +61,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         dataIndex: 'reviewer',
         align: 'center' as 'center',
         key: 'reviewer',
+        sorter: (a: any, b: any) => a.status.length - b.status.length,
       },
       {
         title: 'Review status',
@@ -69,7 +70,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         key: 'reviewState',
         render: (reviewState: string) => {
           const getStatus = () => {
-            switch(reviewState.toUpperCase()) {
+            switch (reviewState.toUpperCase()) {
               case 'DRAFT':
                 return 'magenta';
               case 'PUBLISHED':
@@ -84,9 +85,10 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
                 return
             }
           }
-        return (
-          <Tag color={getStatus()}>{reviewState}</Tag>
-        )}
+          return (
+            <Tag color={getStatus()}>{reviewState}</Tag>
+          )
+        }
       },
       {
         title: 'Grade',
@@ -100,7 +102,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         align: 'center' as 'center',
         key: 'reviewDetails',
         render: (value: IReview, record: any) => (
-          <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => reviewDetailsHandler(value.grade, record, value )} />
+          <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => reviewDetailsHandler(value.grade, record, value)} />
         )
       },
     ];
@@ -116,7 +118,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
           reviewDetails: review,
         }
       })
-    return <Table columns={columns} dataSource={expandedData} pagination={false} />;
+    return <Table columns={columns} dataSource={expandedData} pagination={false} size='small' tableLayout='fixed' />;
   };
 
   const columns = [
@@ -131,20 +133,36 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       dataIndex: 'task',
       align: 'center' as 'center',
       key: 'task',
-      sorter: (a: any, b: any) => a.task - b.task,
+      sorter: (a: any, b: any) => a.status.length - b.status.length,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       align: 'center' as 'center',
       key: 'status',
-      sorter: (a: any, b: any) => a.status - b.status,
+      filters: [
+        {
+          text: ReviewRequestState.COMPLETED,
+          value: ReviewRequestState.COMPLETED,
+        },
+        {
+          text: ReviewRequestState.DRAFT,
+          value: ReviewRequestState.DRAFT,
+        },
+        {
+          text: ReviewRequestState.PUBLISHED,
+          value: ReviewRequestState.PUBLISHED,
+        }
+      ],
+      onFilter: (value: any, record: any) => record.status.indexOf(value) === 0,
+      sorter: (a: any, b: any) => a.status.length - b.status.length,
     },
     {
       title: 'URL',
       dataIndex: 'url',
       align: 'center' as 'center',
       key: 'url',
+      ellipsis: true,
       render: (text: string) => <a target="_blank" rel="noopener noreferrer" href={text}>{text}</a>,
     },
     {
@@ -152,6 +170,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       dataIndex: 'urlPR',
       align: 'center' as 'center',
       key: 'urlPR',
+      ellipsis: true,
       render: (text: string) => <a target="_blank" rel="noopener noreferrer" href={text}>{text}</a>,
     },
     {
@@ -166,7 +185,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
           )
         } else {
           return (
-          <Tag color='green'>{ReviewRequestState.COMPLETED}</Tag>
+            <Tag color='green'>{ReviewRequestState.COMPLETED}</Tag>
           )
         }
 
@@ -185,18 +204,18 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
   ];
 
   const data = reviewRequests
-  .filter((req: IReviewRequest) => req.author === user)
-  .map((req: IReviewRequest, index: number) => {
-    return {
-      key: index.toString(),
-      id: req.id,
-      task: req.task,
-      status: req.state,
-      selfCheck: req.selfGrade,
-      url: req.url,
-      urlPR: req.urlPR,
-    }
-  })
+    .filter((req: IReviewRequest) => req.author === user)
+    .map((req: IReviewRequest, index: number) => {
+      return {
+        key: index.toString(),
+        id: req.id,
+        task: req.task,
+        status: req.state,
+        selfCheck: req.selfGrade,
+        url: req.url,
+        urlPR: req.urlPR,
+      }
+    })
 
   return (
     <>
@@ -204,16 +223,18 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         loading={isLoading}
         columns={columns}
         dataSource={data}
-        style={{marginTop: '20px'}}
+        style={{ marginTop: '20px' }}
         expandable={{ expandedRowRender }}
-        pagination={false} />
+        pagination={false}
+        size='small'
+        tableLayout='fixed' />
       <ReviewDetails
         visible={detailsModal.visible}
         hideDetailsModal={hideDetailsModal}
         data={detailsModal.data}
         onSubmit={submitDisputeHandler}
         review={detailsModal.review} />
-      <SelfGradeModal taskId={selfGradeModal.taskId} selfGradeHandler={hideSelfGradeModal} isSelfGradeShow={selfGradeModal.visible}/>
+      <SelfGradeModal taskId={selfGradeModal.taskId} selfGradeHandler={hideSelfGradeModal} isSelfGradeShow={selfGradeModal.visible} />
     </>
 
   )
