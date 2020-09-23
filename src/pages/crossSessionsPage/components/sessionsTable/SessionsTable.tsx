@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Popconfirm, Space, Table, Tag } from 'antd';
 import { ICheckSession } from '../../../../models';
+import moment from 'moment';
 
 export const SessionsTable = (props: {
   sessions: ICheckSession[];
@@ -57,6 +58,7 @@ export const SessionsTable = (props: {
     {
       title: 'Ends',
       dataIndex: 'endDate',
+      render: (text: string) => <>{moment(text).format('Do MMM YY')}</>,
       sorter: (a: any, b: any) => a.endDate - b.endDate,
     },
     {
@@ -64,14 +66,15 @@ export const SessionsTable = (props: {
       render: (text: String, record: any) => (
         <Space>
           <Button
+            type="link"
             onClick={() => {
               openRow(record.id);
             }}
           >
-            Open
+            Edit
           </Button>
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-            <Button>Delete</Button>
+            <Button type="link">Delete</Button>
           </Popconfirm>
         </Space>
       ),
