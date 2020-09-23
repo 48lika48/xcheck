@@ -13,9 +13,10 @@ export enum Endpoint {
   checkSessions = 'checkSessions',
   reviewRequests = 'reviewRequests',
   reviews = 'reviews',
+  disputes = 'disputes',
 }
 
-export type DataTypes = IUser | ITask | ICheckSession | IReviewRequest | IReview;
+export type DataTypes = IUser | ITask | ICheckSession | IReviewRequest | IReview | IDispute;
 
 export enum UserRole {
   author = 'author',
@@ -82,7 +83,7 @@ export interface ICheckSession {
   endDate: Date;
   discardMinScore: true;
   discardMaxScore: false;
-  minReiewsAmount: number;
+  minReviewsAmount: number;
   desiredReviewersAmount: number;
   attendees: ICheckSessionAttendee[];
 }
@@ -146,9 +147,9 @@ export enum ReviewState {
 }
 
 export interface IDispute {
-  reviewId: string;
+  reviewId: string | undefined;
   state: DisputeState;
-  idem: string;
+  item: string;
   comment: string;
   suggestedScore: number;
 }

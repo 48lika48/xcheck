@@ -17,6 +17,7 @@ const columns = [
     title: 'Deadline',
     dataIndex: 'endDate',
     key: 'endDate',
+    render: (text: string) => text.slice(0, 10) + ' ' + text.slice(11, text.length - 6),
   },
   {
     title: 'Author',
@@ -28,25 +29,11 @@ const columns = [
     key: 'state',
     dataIndex: 'state',
     render: (state: string) => (
-      <Tag color="geekblue">
+      <Tag color = {state === 'DRAFT' ? 'volcano' : 'green'}>
         {state.toUpperCase()}
       </Tag>
     ),
-    // render: (tags: any) => (
-    //   <>
-    //     {tags.map((tag: any) => {
-    //       let color = tag.length > 8 ? 'geekblue' : 'green';
-    //       if (tag === 'DRAFT') {
-    //         color = 'volcano';
-    //       }
-    //       return (
-    //         <Tag color={color} key={tag}>
-    //           {tag.toUpperCase()}
-    //         </Tag>
-    //       );
-    //     })}
-    //   </>
-    // ),
+
   },
   {
     title: 'Action',
