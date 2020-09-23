@@ -91,6 +91,7 @@ export const setSession = (data: ICheckSession): AppThunk => async (dispatch) =>
   try {
     dispatch(startLoading());
     await addCheckSession(data);
+    await dispatch(fetchSessions());
     dispatch(endLoading());
     successSave();
   } catch (err) {
@@ -103,6 +104,7 @@ export const editSession = (data: ICheckSession, sessionId: string): AppThunk =>
   try {
     dispatch(startLoading());
     await updateCheckSession(data, sessionId);
+    await dispatch(fetchSessions());
     dispatch(endLoading());
     successUpdate();
   } catch (err) {
@@ -113,7 +115,7 @@ export const deleteSession = (id: string): AppThunk => async (dispatch) => {
   try {
     dispatch(startLoading());
     await deleteCheckSession(id);
-    dispatch(fetchSessions());
+    await dispatch(fetchSessions());
     dispatch(endLoading());
     successDeleted();
   } catch (err) {
