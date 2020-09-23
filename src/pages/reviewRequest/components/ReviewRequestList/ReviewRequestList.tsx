@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { deleteRequestItem } from '../../../../store/reducers/reviewRequestSlice';
 import { Table, Button, Tag, Popconfirm } from 'antd';
 import { FileDoneOutlined, DeleteOutlined } from '@ant-design/icons';
-import { IDispute, IReview, IReviewRequest, ITaskScore, ITaskScoreItem, ReviewRequestState } from '../../../../models';
+import { IReview, IReviewRequest, ITaskScore, ITaskScoreItem, ReviewRequestState } from '../../../../models';
 import { ReviewDetails } from '../ReviewDetails';
 import { SelfGradeModal } from '../../../../forms/SelfGradeModal/SelfGradeModal';
-
-type UserRequestListProps = {
-  reviewRequests: Array<IReviewRequest>,
-  reviews: Array<IReview>,
-  user: string,
-  deleteHandler: (requestId: string) => void,
-  submitDisputeHandler: (data: IDispute, review: IReview) => void,
-  isLoading: boolean,
-}
 
 type detailsModal = {
   visible: boolean,
@@ -25,7 +19,11 @@ type selfCheckModal = {
   taskId: string | null,
 }
 
-export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, reviews, user, deleteHandler, isLoading, submitDisputeHandler }) => {
+export const ReviewRequestList: React.FC = () => {
+
+  const dispatch = useDispatch();
+  const { reviewRequests, reviews, isLoading } = useSelector((state: RootState) => state.reviewRequest)
+  const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData)
 
   const [detailsModal, setDetailsModal] = useState({ visible: false, data: null } as detailsModal)
   const [selfGradeModal, setSelfGradeModal] = useState({ visible: false, taskId: null } as selfCheckModal)
@@ -196,7 +194,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       key: 'action',
       align: 'center' as 'center',
       render: (text: string, record: any) => (
-        <Popconfirm title="Sure to delete?" onConfirm={() => deleteHandler(record.id)}>
+        <Popconfirm title="Sure to delete?" onConfirm={() => dispatch(deleteRequestItem(record.id))}>
           <Button shape="circle" icon={<DeleteOutlined />} />
         </Popconfirm>
       ),
@@ -204,7 +202,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
   ];
 
   const data = reviewRequests
-    .filter((req: IReviewRequest) => req.author === user)
+    .filter((req: IReviewRequest) => req.author === githubId)
     .map((req: IReviewRequest, index: number) => {
       return {
         key: index.toString(),
@@ -232,7 +230,6 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         visible={detailsModal.visible}
         hideDetailsModal={hideDetailsModal}
         data={detailsModal.data}
-        onSubmit={submitDisputeHandler}
         review={detailsModal.review} />
       <SelfGradeModal taskId={selfGradeModal.taskId} selfGradeHandler={hideSelfGradeModal} isSelfGradeShow={selfGradeModal.visible} />
     </>

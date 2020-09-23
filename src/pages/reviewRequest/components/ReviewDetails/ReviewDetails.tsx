@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { addDisputeData, updateReviewState  } from '../../../../store/reducers/reviewRequestSlice';
 import { Modal, Space, Typography, Form, Button, InputNumber, Result, Input } from 'antd';
 import { IDispute, ITaskScore, ITaskScoreItem, DisputeState, IReview } from '../../../../models';
 
@@ -10,12 +12,13 @@ type ReviewDetailsProps = {
   visible: boolean;
   hideDetailsModal: () => void;
   review: IReview | undefined,
-  onSubmit: (data: IDispute, review: IReview) => void,
 }
 
 export const ReviewDetails: React.FC<ReviewDetailsProps> = (props) => {
 
-  const { visible, hideDetailsModal, data, onSubmit, review } = props
+  const dispatch = useDispatch();
+
+  const { visible, hideDetailsModal, data, review } = props
 
   const [form] = Form.useForm();
 
@@ -41,7 +44,8 @@ export const ReviewDetails: React.FC<ReviewDetailsProps> = (props) => {
         comment: value.comment,
         suggestedScore: value.suggestedScore,
       }
-      onSubmit(disputeDetails, review)
+      dispatch(addDisputeData(disputeDetails))
+      dispatch(updateReviewState(review))
     }
   }
 
