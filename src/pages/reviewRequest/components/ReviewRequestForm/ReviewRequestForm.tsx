@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { addRequest, updateRequest, addSelfGrade } from '../../../../store/reducers/reviewRequestSlice';
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 import { SelfGradeModal } from '../../../../forms/SelfGradeModal/SelfGradeModal';
-
 import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
-import { ITask, IReviewRequest, ReviewRequestState, ITaskScore } from '../../../../models';
+import { IReviewRequest, ReviewRequestState } from '../../../../models';
 
-type ReviewRequestFormProps = {
-  reviewRequests: Array<any>,
-  user: string,
-  tasks: Array<ITask>,
-  isLoading: boolean,
-  selfGrade: ITaskScore | null,
-  submitHandlerAdd: (data: IReviewRequest) => void,
-  submitHandlerUpdate: (data: IReviewRequest, id: string) => void,
-  selfGradeTogle: (data: ITaskScore | null) => void,
-}
 
-export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
 
-  const { reviewRequests, user, tasks, isLoading, selfGrade, submitHandlerAdd, submitHandlerUpdate, selfGradeTogle } = props;
+export const ReviewRequestForm: React.FC = () => {
+
+  const dispatch = useDispatch();
+  const { tasks, reviewRequests, isLoading, selfGrade } = useSelector((state: RootState) => state.reviewRequest)
+  const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData)
 
   const [form] = Form.useForm();
   const [submittedRequest, setSubmittedRequest] = useState(true as IReviewRequest | undefined | boolean);
@@ -45,7 +40,7 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
       const data: IReviewRequest = {
         id: submittedRequest && typeof submittedRequest !== 'boolean' ? submittedRequest.id : Date.now().toString(),
         crossCheckSessionId: null,
-        author: user,
+        author: githubId,
         task: taskId,
         state: values.status,
         url: values.url,
@@ -53,9 +48,10 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
         selfGrade: selfGrade,
       }
       if (submittedRequest && typeof submittedRequest !== 'boolean') {
-        submitHandlerUpdate(data, submittedRequest.id);
+        const id = submittedRequest.id
+        dispatch(updateRequest({ data, id }))
       } else {
-        submitHandlerAdd(data);
+        dispatch(addRequest(data))
       }
       message.success('The task solution has been submitted');
       form.resetFields();
@@ -70,9 +66,10 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     if (task == null) {
       return;
     }
-    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId && request.author === user);
+    const submittedRequest = reviewRequests.find((request: IReviewRequest) => request.task === taskId && request.author === githubId);
     setSubmittedRequest(submittedRequest);
-    selfGradeTogle(submittedRequest ? submittedRequest.selfGrade : null)
+    const selfGradeData = submittedRequest ? submittedRequest.selfGrade : null
+    dispatch(addSelfGrade(selfGradeData))
     setTaskId(task.id)
   };
 
@@ -80,7 +77,8 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     setIsSelfGradeShow(!isSelfGradeShow)
   }
 
-  return !isSelfGradeShow ? (
+  return (
+    <>
       <Row gutter={24}>
         <Col>
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -101,7 +99,9 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
           </Form>
         </Col>
       </Row>
-  ) : <SelfGradeModal taskId={taskId} selfGradeHandler={selfGradeHandler} isSelfGradeShow={isSelfGradeShow} />
+      <SelfGradeModal taskId={taskId} selfGradeHandler={selfGradeHandler} isSelfGradeShow={isSelfGradeShow} />
+    </>
+  )
 
 
   function renderRevRequestStatus(submittedRequest: IReviewRequest | undefined | boolean) {
@@ -146,14 +146,14 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             label="Solution URL"
             rules={[{ required: true, pattern: urlWithIpPattern, message: 'Please provide a valid link' }]}
           >
-            <Input />
+            <Input defaultValue={submittedRequest && submittedRequest.url} />
           </Form.Item>
           <Form.Item
             name="urlPR"
             label="Pull request URL"
             rules={[{ required: true, pattern: githubPrUrl, message: 'Please provide a valid link' }]}
           >
-            <Input />
+            <Input defaultValue={submittedRequest && submittedRequest.urlPR} />
           </Form.Item >
           <Form.Item name="status" label="Request status" rules={[{ required: true, message: 'Please select request status' }]}>
             <Select placeholder={'Select request status'}  >
