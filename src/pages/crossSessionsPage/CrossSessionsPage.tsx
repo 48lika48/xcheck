@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Spin } from 'antd';
+import { Alert, Button, Spin } from 'antd';
 import { RootState } from '../../store/rootReducer';
 import {
   fetchSessions,
@@ -15,7 +15,7 @@ import {
 import { PlusOutlined } from '@ant-design/icons';
 import { SessionsTable } from './components/sessionsTable';
 import { CrossSessionCreate } from '../crossSessionCreatePage';
-import { ICheckSession } from '../../models';
+import { ICheckSession, ITask } from '../../models';
 
 export const CrossSessionsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -56,9 +56,16 @@ export const CrossSessionsPage: React.FC = () => {
     dispatch(deleteSession(id));
   }
 
+  function sortTasks(taskArray: ITask[], sessionsArray: ICheckSession[]) {
+    return taskArray.filter(
+      (element) => !sessionsArray.find((session) => session.taskId === element.id)
+    );
+  }
+
   return (
     <Spin spinning={loading}>
       <Button
+        disabled={sortTasks(allTasks, sessions).length === 0}
         onClick={() => handleClick()}
         type="primary"
         style={{
@@ -68,10 +75,13 @@ export const CrossSessionsPage: React.FC = () => {
       >
         Add a session
       </Button>
+      {sortTasks(allTasks, sessions).length === 0 && (
+        <Alert message={'Sessions for all tasks was created'} type="success" banner />
+      )}
       <CrossSessionCreate
         isShowModal={isShowModal}
         closeManager={closeHandler}
-        tasks={allTasks}
+        tasks={sortTasks(allTasks, sessions)}
         isEdit={isEdit}
         editData={editData}
         onSave={formSave}
