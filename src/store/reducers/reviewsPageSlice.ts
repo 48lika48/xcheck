@@ -112,7 +112,7 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
     const session = await getCheckSessions();
     let requests = await getReviewRequests();
     session.forEach((session: ICheckSession) => {
-      if (session.state === 'CROSS_CHECK') {
+      if (session.state === 'CROSS_CHECK' && session.attendees) {
         requests = requests.filter(
           (item: IReviewRequest) => item.crossCheckSessionId === session.id
         );
