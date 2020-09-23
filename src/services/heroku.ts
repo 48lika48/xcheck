@@ -8,6 +8,7 @@ import {
   UserRole,
   IReviewRequest,
   IReview,
+  IDispute
 } from 'src/models';
 
 export const getUsers = async () => {
@@ -72,6 +73,26 @@ export const getReviews = async () => {
 
 export const addReview = async (review: IReview) => {
   const res = await addData(Endpoint.reviews, review);
+  return res;
+};
+
+export const updateReview = (data: IReview) => {
+  fetch(`${HEROKU_URL}${Endpoint.reviewRequests}/${data.id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const getDispute = async () => {
+  const res = await getData(Endpoint.disputes);
+  return res;
+};
+
+export const addDispute = async (dispute: IDispute) => {
+  const res = await addData(Endpoint.disputes, dispute);
   return res;
 };
 

@@ -1,17 +1,21 @@
 import React from 'react';
-import { Modal, Space, Typography, Form, Button, Input, Result } from 'antd';
-import { ITaskScore, ITaskScoreItem } from '../../../../models';
+import { Modal, Space, Typography, Form, Button, InputNumber, Result, Input } from 'antd';
+import { IDispute, ITaskScore, ITaskScoreItem, DisputeState, IReview } from '../../../../models';
 
 const { Title, Text } = Typography
+const { TextArea } = Input
 
 type ReviewDetailsProps = {
   data: ITaskScore | null;
   visible: boolean;
   hideDetailsModal: () => void;
-  isReviewMode: boolean,
+  review: IReview | undefined,
+  onSubmit: (data: IDispute, review: IReview) => void,
 }
 
-export const ReviewDetails: React.FC<ReviewDetailsProps> = ({ visible, hideDetailsModal, data, isReviewMode }) => {
+export const ReviewDetails: React.FC<ReviewDetailsProps> = (props) => {
+
+  const { visible, hideDetailsModal, data, onSubmit, review } = props
 
   const [form] = Form.useForm();
 
@@ -23,39 +27,81 @@ export const ReviewDetails: React.FC<ReviewDetailsProps> = ({ visible, hideDetai
     hideDetailsModal()
   };
 
+  type DisputFormValue = {
+    suggestedScore: number,
+    comment: string,
+  }
+
+  const submitHandler = (value: DisputFormValue, itemId: string) => {
+    if (review) {
+      const disputeDetails: IDispute = {
+        reviewId: review.id,
+        state: DisputeState.ONGOING,
+        item: itemId,
+        comment: value.comment,
+        suggestedScore: value.suggestedScore,
+      }
+      onSubmit(disputeDetails, review)
+    }
+  }
+
+  const formStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '5px',
+    marginBottom: '5px',
+    background: '#fbfbfb',
+    border: '1px solid #d9d9d9',
+    borderRadius: '2px',
+  }
+
   return (
     <Modal
-      title={isReviewMode ? `Review details` : `Self-check details`}
+      title={'Review details'}
       visible={visible}
       centered
       onOk={handleOk}
       onCancel={handleCancel}
-      width={1000}
+      width={800}
     >
-      {data?.items ? data?.items.map((item: ITaskScoreItem) => {
-        const description = (
-          <>
-            <Title level={4}>{item.id}</Title>
-            <Text>{item.score}</Text>
-            <Text type="secondary">{item.comment}</Text>
-          </>
-        )
-        return isReviewMode ? {description} : (
-          <Space direction="vertical">
-            {description}
-            <Form form={form} layout="vertical" onFinish={() => console.log('Disput')}>
-              <Form.Item name="taskId" label="Disput">
-                <Input placeholder="Write your comments" />
+      {data?.items ? data?.items.map((item: ITaskScoreItem, index: number) => {
+        return (
+          <Space direction="vertical" key={item.id} style={formStyle}>
+            <Title level={5}>{item.id}</Title>
+            <Text>{`Score: ${item.score}`}</Text>
+            <Text type="secondary">{`Comment ${item.comment}`}</Text>
+            <Form form={form} layout="inline" onFinish={(value) => submitHandler(value, item.id)}>
+              <Form.Item
+                name={`suggestedScore${index.toString()}`}
+                label={'Suggested score'}
+                rules={[
+                  {
+                    type: 'number',
+                  }
+                ]}
+              >
+                <InputNumber />
+              </Form.Item>
+              <Form.Item
+                name={`comment: ${index.toString()}`}
+                label="Comment"
+                rules={[
+                  {
+                    required: false
+                  }
+                ]}
+              >
+                <TextArea placeholder="Comment" autoSize />
               </Form.Item>
               <Form.Item>
-                <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
-                  Disput
+                <Button type="primary" htmlType="submit">
+                  Set disput
                 </Button>
               </Form.Item>
             </Form>
-            </Space>
-          )
-        }) : <Result title="No review data" />
+          </Space>
+        )
+      }) : <Result title={review ? "No review data" : "No self-check data"} />
       }
     </Modal>
   );

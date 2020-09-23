@@ -1,26 +1,34 @@
 import React, { useState } from 'react';
-import { Table, Button, Tag } from 'antd';
+import { Table, Button, Tag, Popconfirm } from 'antd';
 import { FileDoneOutlined, DeleteOutlined } from '@ant-design/icons';
-import { IReview, IReviewRequest, ITaskScore, ITaskScoreItem } from '../../../../models';
+import { IDispute, IReview, IReviewRequest, ITaskScore, ITaskScoreItem, ReviewRequestState } from '../../../../models';
 import { ReviewDetails } from '../ReviewDetails';
+import { SelfGradeModal } from '../../../../forms/SelfGradeModal/SelfGradeModal';
 
 type UserRequestListProps = {
   reviewRequests: Array<IReviewRequest>,
   reviews: Array<IReview>,
   user: string,
   deleteHandler: (requestId: string) => void,
+  submitDisputeHandler: (data: IDispute, review: IReview) => void,
   isLoading: boolean,
 }
 
 type detailsModal = {
   visible: boolean,
   data: ITaskScore | null,
-  isReviewMode: boolean,
+  review?: IReview,
 }
 
-export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, reviews, user, deleteHandler, isLoading }) => {
+type selfCheckModal = {
+  visible: boolean,
+  taskId: string | null,
+}
 
-  const [detailsModal, setDetailsModal] = useState({ visible: false, data: null, isReviewMode: true } as detailsModal)
+export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewRequests, reviews, user, deleteHandler, isLoading, submitDisputeHandler }) => {
+
+  const [detailsModal, setDetailsModal] = useState({ visible: false, data: null } as detailsModal)
+  const [selfGradeModal, setSelfGradeModal] = useState({visible: false, taskId: null } as selfCheckModal)
 
   const hideDetailsModal = (): void => {
     setDetailsModal((prev: detailsModal) => {
@@ -28,13 +36,22 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
     })
   }
 
-  const detailsModalHandler = (data: ITaskScore | null, record: any): void => {
-    if ('selfCheck' in record) {
-      setDetailsModal({ visible: true, data, isReviewMode: false })
-    } else if ('reviewDetails' in record) {
-      setDetailsModal({ visible: true, data, isReviewMode: true })
-    }
+  const hideSelfGradeModal = () => {
+    setSelfGradeModal((prev: selfCheckModal) => {
+      return { ...prev, visible: false}
+    })
+  }
 
+  const reviewDetailsHandler = (data: ITaskScore | null, record: any, review?: IReview ): void => {
+    if ('selfCheck' in record) {
+      setDetailsModal({ visible: true, data })
+    } else if ('reviewDetails' in record) {
+      setDetailsModal({ visible: true, data, review: review })
+    }
+  }
+  const selfCheckDetailsHandler = (record: any ): void => {
+    setSelfGradeModal({ visible: true, taskId:  record.task})
+    console.log(selfGradeModal)
   }
 
   const expandedRowRender = (record: any) => {
@@ -82,8 +99,8 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         dataIndex: 'reviewDetails',
         align: 'center' as 'center',
         key: 'reviewDetails',
-        render: (value: ITaskScore | null, record: any) => (
-          <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => detailsModalHandler(value, record)} />
+        render: (value: IReview, record: any) => (
+          <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => reviewDetailsHandler(value.grade, record, value )} />
         )
       },
     ];
@@ -96,7 +113,7 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
           reviewer: review.author,
           reviewState: review.state,
           grade: review.grade.items.reduce((previous: number, current: ITaskScoreItem) => previous + current.score, 0),
-          reviewDetails: review.grade,
+          reviewDetails: review,
         }
       })
     return <Table columns={columns} dataSource={expandedData} pagination={false} />;
@@ -142,16 +159,27 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
       dataIndex: 'selfCheck',
       align: 'center' as 'center',
       key: 'selfCheck',
-      render: (value: ITaskScore | null, record: any) => (
-        <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => detailsModalHandler(value, record)} />
-      ),
+      render: (value: ITaskScore | null, record: any) => {
+        if (record.status.toUpperCase() === ReviewRequestState.DRAFT) {
+          return (
+            <Button shape="circle" icon={<FileDoneOutlined />} onClick={() => selfCheckDetailsHandler(record)} />
+          )
+        } else {
+          return (
+          <Tag color='green'>{ReviewRequestState.COMPLETED}</Tag>
+          )
+        }
+
+      }
     },
     {
       title: 'Delete',
       key: 'action',
       align: 'center' as 'center',
       render: (text: string, record: any) => (
-        <Button shape="circle" icon={<DeleteOutlined />} onClick={() => deleteHandler(record.id)}/>
+        <Popconfirm title="Sure to delete?" onConfirm={() => deleteHandler(record.id)}>
+          <Button shape="circle" icon={<DeleteOutlined />} />
+        </Popconfirm>
       ),
     },
   ];
@@ -183,7 +211,10 @@ export const ReviewRequestList: React.FC<UserRequestListProps> = ({ reviewReques
         visible={detailsModal.visible}
         hideDetailsModal={hideDetailsModal}
         data={detailsModal.data}
-        isReviewMode={detailsModal.isReviewMode}/>
+        onSubmit={submitDisputeHandler}
+        review={detailsModal.review} />
+      <SelfGradeModal taskId={selfGradeModal.taskId} selfGradeHandler={hideSelfGradeModal} isSelfGradeShow={selfGradeModal.visible}/>
     </>
+
   )
 }

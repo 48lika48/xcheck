@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReviewRequestForm, ReviewRequestList  } from './components';
-import { IReviewRequest, ITaskScore } from '../../models';
+import { IDispute, IReviewRequest, ITaskScore, IReview } from '../../models';
 import { RootState } from 'src/store/rootReducer';
-import { fetchAllData, addRequest, updateRequest, deleteRequestItem, addSelfGrade } from '../../store/reducers/reviewRequestSlice';
+import { fetchAllData, addRequest, updateRequest, deleteRequestItem, addSelfGrade, addDisputeData, updateReviewState } from '../../store/reducers/reviewRequestSlice';
 
 export const ReviewRequestPage: React.FC = () => {
 
@@ -26,6 +26,10 @@ export const ReviewRequestPage: React.FC = () => {
   const submitHandlerUpdate = (data: IReviewRequest, id: string) => {
     dispatch(updateRequest({ data, id }))
   }
+  const submitDisputeHandler = (data: IDispute, review: IReview) => {
+    dispatch(addDisputeData(data))
+    dispatch(updateReviewState(review))
+  }
 
   const selfGradeTogle = (data: ITaskScore | null) => {
     dispatch(addSelfGrade(data))
@@ -47,6 +51,7 @@ export const ReviewRequestPage: React.FC = () => {
         reviews={reviews}
         user={githubId}
         deleteHandler={deleteHandler}
+        submitDisputeHandler={submitDisputeHandler}
         isLoading={isLoading}
       />
     </>

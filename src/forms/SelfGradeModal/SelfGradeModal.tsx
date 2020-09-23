@@ -13,40 +13,35 @@ type SelfGradeModalProps = {
 }
 
 export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGradeHandler, isSelfGradeShow }) => {
-  const [showModal, setShowModal] = useState(isSelfGradeShow);
   const [isDisabledButton, setIsDisabledButton] = useState(true);
-
   const dispatch = useDispatch();
-  const { task } = useSelector((state: RootState) => state.selfGradeSlice);
   const { taskScore } = useSelector((state: RootState) => state.selfGradeSlice);
 
   const cancelChanges = (): void => {
-    setShowModal(false);
     setIsDisabledButton(true);
     selfGradeHandler();
   };
 
   const saveChanges = (): void => {
-    setShowModal(false);
     selfGradeHandler();
   };
 
   const handleEndCheck = (): void => {
-    if (task?.items && taskScore.items.length !== task?.items.length) {
+    if (!taskScore.items.length) {
       message.warning(WARNING_MESSAGE);
       return;
     }
-    dispatch(setSelfGrade(taskScore));
-    setIsDisabledButton(false);
-    message.success('Check Saved!');
-  };
+      dispatch(setSelfGrade(taskScore));
+      setIsDisabledButton(false);
+      message.success('Check Saved!');
+    };
 
   return (
     <div>
       <Modal
         title="Check task"
         centered
-        visible={showModal}
+        visible={isSelfGradeShow}
         okText="OK"
         onOk={saveChanges}
         onCancel={cancelChanges}

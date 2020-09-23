@@ -80,7 +80,8 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
     setIsSelfGradeShow(!isSelfGradeShow)
   }
 
-  return !isSelfGradeShow ? (
+  return (
+    <>
       <Row gutter={24}>
         <Col>
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -101,7 +102,9 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
           </Form>
         </Col>
       </Row>
-  ) : <SelfGradeModal taskId={taskId} selfGradeHandler={selfGradeHandler} isSelfGradeShow={isSelfGradeShow} />
+      <SelfGradeModal taskId={taskId} selfGradeHandler={selfGradeHandler} isSelfGradeShow={isSelfGradeShow} />
+    </>
+  )
 
 
   function renderRevRequestStatus(submittedRequest: IReviewRequest | undefined | boolean) {
