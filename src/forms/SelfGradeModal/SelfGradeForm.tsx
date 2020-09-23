@@ -20,12 +20,12 @@ type Iprops = {
 };
 
 const validateMessages = {
-  required: '${label} is required!',
+  required: 'Field is required!',
   types: {
-    number: '${label} is not a validate number!'
+    number: 'Score is not a validate number!'
   },
   number: {
-    range: '${label} must be between ${min} and ${max}'
+    range: 'Score must be between min and max'
   }
 };
 
@@ -49,7 +49,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
       <React.Fragment>
         {task && task.items ? (
           task.items.map((item: any, i: number) => {
-             return (
+            return (
               <Form
                 key={task.items && task.items.length - i}
                 initialValues={{ remember: false }}
@@ -75,7 +75,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
                     }
                   ]}
                 >
-                  <InputNumber />
+                  <InputNumber id={`${item.id}_score_${i}`} />
                 </Form.Item>
                 <Form.Item
                   name={['item', 'comment']}
@@ -86,7 +86,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
                     }
                   ]}
                 >
-                  <TextArea placeholder="Comment" style={inputStyle} autoSize />
+                  <TextArea placeholder="Comment" style={inputStyle} autoSize id={`${item.id}_comment_${i}`} />
                 </Form.Item>
 
                 <Button htmlType="submit" icon={<CheckCircleTwoTone twoToneColor="#52c41a" />}>
