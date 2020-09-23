@@ -51,6 +51,21 @@ export const addCheckSession = async (checkSession: ICheckSession) => {
   return res;
 };
 
+export const deleteCheckSession = async (sessionId: string) => {
+  const res = deleteData(Endpoint.checkSessions, sessionId);
+  return res;
+};
+
+export const updateCheckSession = async (data: ICheckSession, sessionId: string) => {
+  await fetch(`${HEROKU_URL}checkSessions/${sessionId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const getReviewRequests = async () => {
   const res = await getData(Endpoint.reviewRequests);
   return res;
