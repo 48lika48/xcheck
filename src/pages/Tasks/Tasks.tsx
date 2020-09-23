@@ -33,6 +33,7 @@ const columns = [
         {state.toUpperCase()}
       </Tag>
     ),
+
   },
   {
     title: 'Action',
