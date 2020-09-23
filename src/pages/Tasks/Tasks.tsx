@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Input, Spin } from 'antd';
+import { Table, Space, Tag, Input, Spin } from 'antd';
 import { ITask } from 'src/models';
 
 const columns = [
@@ -15,8 +15,9 @@ const columns = [
   },
   {
     title: 'Deadline',
-    dataIndex: 'deadline',
-    key: 'deadline',
+    dataIndex: 'endDate',
+    key: 'endDate',
+    render: (text: string) => text.slice(0, 10) + ' ' + text.slice(11, text.length - 6),
   },
   {
     title: 'Author',
@@ -27,21 +28,11 @@ const columns = [
     title: 'Status',
     key: 'state',
     dataIndex: 'state',
-    // render: (tags: any) => (
-    //   <>
-    //     {tags.map((tag: any) => {
-    //       let color = tag.length > 8 ? 'geekblue' : 'green';
-    //       if (tag === 'DRAFT') {
-    //         color = 'volcano';
-    //       }
-    //       return (
-    //         <Tag color={color} key={tag}>
-    //           {tag.toUpperCase()}
-    //         </Tag>
-    //       );
-    //     })}
-    //   </>
-    // ),
+    render: (state: string) => (
+      <Tag color = {state === 'DRAFT' ? 'volcano' : 'green'}>
+        {state.toUpperCase()}
+      </Tag>
+    ),
   },
   {
     title: 'Action',
@@ -69,7 +60,7 @@ const Action: React.FC = () => {
   if (currentRole === 'student') {
     return (
       <Space size="middle">
-        <a>Details</a>
+        <a>Open</a>
       </Space>
     )
   }
