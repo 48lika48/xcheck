@@ -44,7 +44,11 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
       >
         <Select placeholder={'Select task first...'} disabled={isEdit}>
           {tasks.length > 0 &&
-            tasks.map((item) => <Select.Option value={item.id}>{item.id}</Select.Option>)}
+            tasks.map((item) => (
+              <Select.Option key={item.id} value={item.id}>
+                {item.id}
+              </Select.Option>
+            ))}
         </Select>
       </Form.Item>
       {isEdit && (
@@ -56,7 +60,11 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
         >
           <Select placeholder={'Select state'}>
             {state.length > 0 &&
-              state.map((state: string) => <Select.Option value={state}>{state}</Select.Option>)}
+              state.map((state: string) => (
+                <Select.Option key={state} value={state}>
+                  {state}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
       )}
