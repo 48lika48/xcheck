@@ -149,14 +149,14 @@ export const ReviewRequestForm: React.FC<ReviewRequestFormProps> = (props) => {
             label="Solution URL"
             rules={[{ required: true, pattern: urlWithIpPattern, message: 'Please provide a valid link' }]}
           >
-            <Input />
+            <Input defaultValue={submittedRequest && submittedRequest.url} />
           </Form.Item>
           <Form.Item
             name="urlPR"
             label="Pull request URL"
             rules={[{ required: true, pattern: githubPrUrl, message: 'Please provide a valid link' }]}
           >
-            <Input />
+            <Input defaultValue={submittedRequest && submittedRequest.urlPR} />
           </Form.Item >
           <Form.Item name="status" label="Request status" rules={[{ required: true, message: 'Please select request status' }]}>
             <Select placeholder={'Select request status'}  >
