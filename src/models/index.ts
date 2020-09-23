@@ -82,7 +82,7 @@ export interface ICheckSession {
   endDate: Date;
   discardMinScore: true;
   discardMaxScore: false;
-  minReiewsAmount: number;
+  minReviewsAmount: number;
   desiredReviewersAmount: number;
   attendees: ICheckSessionAttendee[];
 }
