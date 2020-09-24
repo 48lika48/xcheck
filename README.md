@@ -1,44 +1,50 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# X Check App / RS Assessment Tool
+---
+## Technology stack
 
-## Available Scripts
+- Typescript
+- React
+- Node.js
+---
+## Getting Started
 
-In the project directory, you can run:
+### Prerequisites
 
-### `yarn start`
+- [Git 2.10+](https://git-scm.com/downloads)
+- [NodeJS LTS](https://nodejs.org/en/)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Steps to develop
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- Clone [repository](https://github.com/MaksimDiubo/xcheck)
+- Run `npm install` (installs dependencies in the root folder.)
+- Make a copy of `./src/config.example.js` and rename it to `config.js`
+- Create `OAuth App` in your Github account (Developer settings, set `Homepage URL`: http://localhost:4000/ and `Authorization callback URL`: http://localhost:4000/auth/user)
+- Write CLIENT_ID and CLIENT_SECRET from your `OAuth App` to `config.js` file and save.
+- Run `node ./src/server/auth-server.js` (start auth-server)
+- Run `npm start` (start application)
+- Open `https://localhost:3000` in a browser
 
-### `yarn test`
+### Steps to deploy
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Run `npm run build` (creating build directory with a production build of app)
+- Deploy app to `gh-pages`, or `heroku`, or `netlify`, or any other service
+- [Deploy the full fake REST API json-server ](https://github.com/jesperorb/json-server-heroku)
+- Set a redirect address (of the deployed site) in the file `auth-server.js` instead of the address `http://localhost:3000` and [deploy](https://devcenter.heroku.com/articles/deploying-nodejs) this file as a server for authorization
+- Create `OAuth App` in your Github account (Developer settings, set `Homepage URL`: http://`your-auth-server`/ and `Authorization callback URL`: http://`your-auth-server`/auth/user)
 
-### `yarn build`
+---
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### App features
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+#### User roles
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- student (create request to check, review the work of other students, open a dispute)
+- author (create tasks, edit tasks, etc ...)
+- supervisor (all application features are available, etc ...)
+- course manager (starting a crosscheck session, etc ...)
 
-### `yarn eject`
+#### Import/export tasks
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- import [RSS Checklist](https://github.com/rolling-scopes-school/checklist) .json format tasks
+- import markdown tasks (format [english-puzzle.md](https://raw.githubusercontent.com/rolling-scopes-school/tasks/master/tasks/rslang/english-puzzle.md), [speakit.md](https://raw.githubusercontent.com/rolling-scopes-school/tasks/master/tasks/rslang/speakit.md), [rslang.md](https://raw.githubusercontent.com/rolling-scopes-school/tasks/master/tasks/rslang/rslang.md))
+- export and import own .json tasks format

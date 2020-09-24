@@ -1,5 +1,6 @@
-export const GITHUB_AUTH_PAGE =
-  'https://github.com/login/oauth/authorize?client_id=8fa44ce53ae4904183bf'; //dev
+import { CLIENT_ID } from '../config';
+
+export const GITHUB_AUTH_PAGE = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}`; //dev
 
 // export const GITHUB_AUTH_PAGE =
 //   'https://github.com/login/oauth/authorize?client_id=683a47f05469cfcadd68'; //prod
