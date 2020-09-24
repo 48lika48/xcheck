@@ -10,6 +10,7 @@ import {
   updateReviewRequest,
   addDispute,
   updateReview,
+  deleteDispute
 } from 'src/services/heroku';
 
 interface ReviewRequest {
@@ -81,6 +82,9 @@ const reviewRequestSlice = createSlice({
     deleteRequestData(state, action: PayloadAction<string>){
       state.reviewRequests = state.reviewRequests.filter(request => request.id !== action.payload)
     },
+    deleteDisputeData(state, action: PayloadAction<string>){
+      state.disputes = state.disputes.filter(dispute => dispute.id !== action.payload)
+    },
     setDisputeData(state, action: PayloadAction<IDispute>){
       state.disputes.push(action.payload)
     }
@@ -100,6 +104,7 @@ export const {
   updateRequestData,
   setDisputeData,
   updateReviewData,
+  deleteDisputeData
 } = reviewRequestSlice.actions
 
 export const fetchAllData = ():AppThunk => async dispatch => {
@@ -149,18 +154,31 @@ export const addSelfGrade = (data: ITaskScore | null):AppThunk => dispatch => {
 }
 
 export const addDisputeData = (data: IDispute):AppThunk => async dispatch => {
+  dispatch(setIsLoading(true))
   try {
     dispatch(setDisputeData(data))
     await addDispute(data)
   } catch (err) {
     dispatch(getDataFailure(err.toString()))
+  } finally {
+    dispatch(setIsLoading(false))
   }
+
 }
 
 export const deleteRequestItem = (requestId: string):AppThunk => async dispatch => {
   try {
     deleteReviewRequest(requestId)
     dispatch(deleteRequestData(requestId))
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
+  }
+}
+
+export const deleteDisputeItem = (disputeId: string):AppThunk => async dispatch => {
+  try {
+    dispatch(deleteDisputeData(disputeId))
+    await deleteDispute(disputeId)
   } catch (err) {
     dispatch(getDataFailure(err.toString()))
   }

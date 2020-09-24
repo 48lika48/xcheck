@@ -1,11 +1,10 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { addDisputeData, updateReviewState  } from '../../../../store/reducers/reviewRequestSlice';
-import { Modal, Space, Typography, Form, Button, InputNumber, Result, Input } from 'antd';
-import { IDispute, ITaskScore, ITaskScoreItem, DisputeState, IReview } from '../../../../models';
-
-const { Title, Text } = Typography
-const { TextArea } = Input
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { addDisputeData, updateReviewState, deleteDisputeItem } from '../../../../store/reducers/reviewRequestSlice';
+import { Modal, Button, Result, message } from 'antd';
+import { IDispute, ITaskScore, ITaskScoreItem, DisputeState, IReview, ReviewState } from '../../../../models';
+import { DisputeForm } from '../DisputeForm'
 
 type ReviewDetailsProps = {
   data: ITaskScore | null;
@@ -16,48 +15,56 @@ type ReviewDetailsProps = {
 
 export const ReviewDetails: React.FC<ReviewDetailsProps> = (props) => {
 
-  const dispatch = useDispatch();
-
   const { visible, hideDetailsModal, data, review } = props
 
-  const [form] = Form.useForm();
+  const dispatch = useDispatch();
+  const { isLoading, disputes } = useSelector((state: RootState) => state.reviewRequest)
 
   const handleOk = () => {
     hideDetailsModal()
+    const currentReviewDisputes = review && disputes.filter((dispute: IDispute) => dispute.reviewId === review.id)
+    if (currentReviewDisputes && !currentReviewDisputes.length) {
+      review && dispatch(updateReviewState({ ...review, state: ReviewState.ACCEPTED }))
+    }
   };
 
   const handleCancel = () => {
     hideDetailsModal()
   };
 
-  type DisputFormValue = {
-    suggestedScore: number,
-    comment: string,
-  }
-
-  const submitHandler = (value: DisputFormValue, itemId: string) => {
+  const onAddDispute = (value: any, itemId: string, disputId: string) => {
+    if (!value[`comment${itemId}`] || !value[`suggestedScore${itemId}`]) {
+      return
+    }
     if (review) {
-      const disputeDetails: IDispute = {
-        reviewId: review.id,
-        state: DisputeState.ONGOING,
-        item: itemId,
-        comment: value.comment,
-        suggestedScore: value.suggestedScore,
+      try {
+        console.log(disputId)
+        const disputeDetails: IDispute = {
+          id: disputId,
+          reviewId: review.id,
+          state: DisputeState.ONGOING,
+          item: itemId,
+          comment: value[`comment${itemId}`],
+          suggestedScore: value[`suggestedScore${itemId}`],
+        }
+        dispatch(addDisputeData(disputeDetails))
+        dispatch(updateReviewState({ ...review, state: ReviewState.DISPUTED }))
+        message.success('The disput has been submitted');
+      } catch(e) {
+        message.error('An error occured. Please try later.');
       }
-      dispatch(addDisputeData(disputeDetails))
-      dispatch(updateReviewState(review))
+
     }
   }
 
-  const formStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '5px',
-    marginBottom: '5px',
-    background: '#fbfbfb',
-    border: '1px solid #d9d9d9',
-    borderRadius: '2px',
-  }
+  const onDeleteDispute = (disputId: string) => {
+    try {
+      dispatch(deleteDisputeItem(disputId))
+      message.success('The disput has been deleted');
+    } catch(e) {
+      message.error('An error occured. Please try later.');
+    }
+      }
 
   return (
     <Modal
@@ -67,43 +74,18 @@ export const ReviewDetails: React.FC<ReviewDetailsProps> = (props) => {
       onOk={handleOk}
       onCancel={handleCancel}
       width={800}
+      footer={[
+        <Button key="back" onClick={handleCancel}>
+          Cancel
+        </Button>,
+        <Button key="submit" type="primary" onClick={handleOk} loading={isLoading}>
+          {review && disputes.filter((dispute: IDispute) => dispute.reviewId === review.id).length ? 'OK' : 'ACCEPT'}
+        </Button>,
+      ]}
     >
-      {data?.items ? data?.items.map((item: ITaskScoreItem, index: number) => {
+      {data?.items ? data?.items.map((item: ITaskScoreItem) => {
         return (
-          <Space direction="vertical" key={item.id} style={formStyle}>
-            <Title level={5}>{item.id}</Title>
-            <Text>{`Score: ${item.score}`}</Text>
-            <Text type="secondary">{`Comment ${item.comment}`}</Text>
-            <Form form={form} layout="inline" onFinish={(value) => submitHandler(value, item.id)}>
-              <Form.Item
-                name={`suggestedScore${index.toString()}`}
-                label={'Suggested score'}
-                rules={[
-                  {
-                    type: 'number',
-                  }
-                ]}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item
-                name={`comment: ${index.toString()}`}
-                label="Comment"
-                rules={[
-                  {
-                    required: false
-                  }
-                ]}
-              >
-                <TextArea placeholder="Comment" autoSize />
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Set disput
-                </Button>
-              </Form.Item>
-            </Form>
-          </Space>
+          <DisputeForm item={item} key={item.id}  onAddDispute={onAddDispute} onDeleteDispute={onDeleteDispute} />
         )
       }) : <Result title={review ? "No review data" : "No self-check data"} />
       }
