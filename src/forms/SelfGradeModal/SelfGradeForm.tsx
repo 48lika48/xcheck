@@ -32,7 +32,7 @@ const validateMessages = {
 export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
   const dispatch = useDispatch();
   const { tasks } = useSelector((state: RootState) => state.reviewRequest);
-  const { task, loading } = useSelector((state: RootState) => state.selfGradeSlice);
+  const { loading, taskScore } = useSelector((state: RootState) => state.selfGradeSlice);
   useEffect(
     () => {
       dispatch(getData(tasks, props.taskId));
@@ -47,24 +47,36 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
     </Space>
   ) : (
       <React.Fragment>
-        {task && task.items ? (
-          task.items.map((item: any, i: number) => {
+        {taskScore && taskScore.items ? (
+          taskScore.items.map((item: any, i: number) => {
             return (
               <Form
-                key={task.items && task.items.length - i}
-                initialValues={{ remember: false }}
+                key={taskScore.items && taskScore.items.length - i}
+                id={i.toString()}
+                initialValues={{ remember: false, score: item.score }}
                 validateMessages={validateMessages}
                 onFinish={(values) => {
-                  values.item.id = item.id;
-                  dispatch(saveTaskScoreResults(values.item));
+                  values.id = item.id;
+                  console.log(values);
+                  dispatch(saveTaskScoreResults(values));
                 }}
+              // onValuesChange={}
               >
-                <Paragraph>
-                  <Text strong>{item.category}</Text>
-                </Paragraph>
+                <Paragraph><Text strong>{item.category}</Text></Paragraph>
                 <Paragraph>{item.title}</Paragraph>
+                <Space>
+                  <Button type='dashed' onClick={() => {
+                    dispatch(saveTaskScoreResults({ ...item, score: item.minScore }))
+                  }}>0%</Button>
+                  <Button type='default' onClick={() => {
+                    dispatch(saveTaskScoreResults({ ...item, score: (item.minScore + item.maxScore) / 2 }))
+                  }}>50%</Button>
+                  <Button type='primary' onClick={() => {
+                    dispatch(saveTaskScoreResults({ ...item, score: item.maxScore }))
+                  }}>100%</Button>
+                </Space>
                 <Form.Item
-                  name={['item', 'score']}
+                  name='score'
                   label={`Score from ${item.minScore} to ${item.maxScore}`}
                   rules={[
                     {
@@ -74,11 +86,17 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
                       required: true
                     }
                   ]}
+                  style={{ margin: '5px 0' }}
                 >
-                  <InputNumber id={`${item.id}_score_${i}`} />
+                  <InputNumber
+                    id={`${item.id}_score_${i}`}
+                    onChange={(scoreValue) => {
+                      dispatch(saveTaskScoreResults({ ...item, score: scoreValue }))
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item
-                  name={['item', 'comment']}
+                  name='comment'
                   label="Comment"
                   rules={[
                     {
@@ -91,7 +109,7 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
 
                 <Button htmlType="submit" icon={<CheckCircleTwoTone twoToneColor="#52c41a" />}>
                   Save this item
-              </Button>
+                </Button>
                 <Divider />
               </Form>
             );

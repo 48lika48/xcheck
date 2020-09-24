@@ -30,6 +30,13 @@ const selfGradeSlice = createSlice({
       state.loading = false;
       state.task = action.payload;
       state.taskScore.task = action.payload.id;
+      state.taskScore.items = action.payload.items.map((item: any, i: any) => {
+        return {
+          ...item,
+          score: 0,
+          comment: '',
+        };
+      });
     },
     getTasksError(state, action) {
       state.error = action.payload;
