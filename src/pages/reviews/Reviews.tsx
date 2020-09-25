@@ -5,17 +5,22 @@ import './Review.scss';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
-import { fetchRequestsToReview, fetchReviewsByAuthor } from '../../store/reducers/reviewsPageSlice';
+import {
+  fetchRequestsToReview,
+  fetchReviewsByAuthor,
+  fetchReviewsRequests,
+} from '../../store/reducers/reviewsPageSlice';
 import { ReloadOutlined } from '@ant-design/icons';
 import { RequestSelector } from './components/requestSelector';
 
 export const ReviewPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { taskLoading, reviews, requests, error } = useSelector(
+  const { taskLoading, reviews, requests, error, requestsForReview } = useSelector(
     (state: RootState) => state.reviewsPage
   );
   const getData = useCallback(() => {
     dispatch(fetchReviewsByAuthor());
+    dispatch(fetchReviewsRequests());
     dispatch(fetchRequestsToReview());
   }, [dispatch]);
   useEffect(() => {
@@ -100,7 +105,7 @@ export const ReviewPage: React.FC = () => {
       <Space size="middle">
         <Badge count={requests.length}>
           <Tooltip placement="topLeft" title={`You can create ${requests.length} more reviews`}>
-            <RequestSelector requests={requests} />
+            <RequestSelector requests={requestsForReview} />
           </Tooltip>
         </Badge>
       </Space>
