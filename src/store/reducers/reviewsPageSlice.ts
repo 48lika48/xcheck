@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import { ICheckSession, IReview, IReviewRequest } from '../../models';
+import { CrossCheckSessionState, ICheckSession, IReview, IReviewRequest } from '../../models';
 import { getReviews } from '../../services/dbApi';
 import { getGithubLogin } from '../../services/github-auth';
-import { getCheckSessions, getReviewRequests } from '../../services/heroku';
+import { getCheckSessionsByState, getReviewRequests } from '../../services/heroku';
 
 interface IReviewTableData extends IReview {
   key: number;
@@ -17,6 +17,7 @@ interface IReviewPage {
   reviews: IReviewTableData[];
   sessions: ICheckSession[];
   requests: IReviewRequest[];
+  requestsForReview: IReviewRequest[];
   error: string | null;
 }
 
@@ -26,6 +27,7 @@ const initialState: IReviewPage = {
   reviews: [],
   sessions: [],
   requests: [],
+  requestsForReview: [],
   error: null,
 };
 
@@ -53,12 +55,19 @@ const reviewsPageSlice = createSlice({
       state.reviews = state.reviews.filter((item: IReview) => item.author === name);
     },
     setSessions(state, action) {
-      state.sessions.push(action.payload);
+      state.sessions = action.payload;
     },
     setRequests(state, action) {
       if (state.requests.findIndex((item) => item.id === action.payload.id) === -1) {
         state.requests.push(action.payload);
       }
+    },
+    setRqForReviews(state, action) {
+      let reviewsId: string[] = [];
+      state.reviews.forEach((review) => reviewsId.push(review.requestId));
+      state.requestsForReview = action.payload.filter(
+        (item: IReviewRequest) => !reviewsId.includes(item.id)
+      );
     },
     setData(state, action) {
       state.reviews.forEach((item: IReviewTableData, index: number) => {
@@ -80,6 +89,7 @@ export const {
   setData,
   setSessions,
   setRequests,
+  setRqForReviews,
 } = reviewsPageSlice.actions;
 
 export const fetchReviewsByAuthor = (): AppThunk => async (dispatch) => {
@@ -87,7 +97,6 @@ export const fetchReviewsByAuthor = (): AppThunk => async (dispatch) => {
     const reviews = await getReviews();
     dispatch(getReviewsSuccess(reviews));
     dispatch(sortReviewsByAuthor());
-    dispatch(fetchReviewsRequests());
   } catch (err) {
     dispatch(getReviewsFail(err.toString()));
   }
@@ -98,6 +107,7 @@ export const fetchReviewsRequests = (): AppThunk => async (dispatch) => {
     dispatch(startLoading());
     const reviewRequests = await getReviewRequests();
     dispatch(setData(reviewRequests));
+    await dispatch(setRequests(reviewRequests));
     dispatch(endLoading());
   } catch (err) {
     dispatch(endLoading());
@@ -109,23 +119,13 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
   const user = getGithubLogin();
   try {
     dispatch(startLoading());
-    const session = await getCheckSessions();
-    let requests = await getReviewRequests();
-    session.forEach((session: ICheckSession) => {
-      if (session.state === 'CROSS_CHECK' && session.attendees) {
-        requests = requests.filter(
-          (item: IReviewRequest) => item.crossCheckSessionId === session.id
-        );
-        requests = requests.filter((item: IReviewRequest) => item.state === 'PUBLISHED');
-        const attendeesStudents = session.attendees.find((item) => item.githubId === user)
-          ?.reviewerOf;
-        attendeesStudents?.forEach((item) => {
-          const id = requests.find((request: IReviewRequest) => request.author === item);
-          if (id) {
-            dispatch(setRequests(id));
-          }
-        });
-      }
+    const sessions = await getCheckSessionsByState(CrossCheckSessionState.CROSS_CHECK);
+    const requests: IReviewRequest[] = await getReviewRequests();
+    sessions.forEach((item) => {
+      const sessionAttendees = item.attendees.filter((attendee) => attendee.githubId === user)[0];
+      let sortedReq = requests.filter((request) => request.crossCheckSessionId === item.id);
+      sortedReq = sortedReq.filter((req) => sessionAttendees.reviewerOf.includes(req.author));
+      dispatch(setRqForReviews(sortedReq));
     });
   } catch (err) {
     dispatch(endLoading());
