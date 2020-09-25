@@ -26,6 +26,7 @@ export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGrad
 
   const saveChanges = (): void => {
     selfGradeHandler();
+    setIsDisabledButton(true);
   };
 
   const handleEndCheck = (): void => {
@@ -44,7 +45,7 @@ export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGrad
         title="Check task"
         centered
         visible={isSelfGradeShow}
-        okText="OK"
+        okText="Close"
         onOk={saveChanges}
         onCancel={cancelChanges}
         okButtonProps={{ disabled: isDisabledButton }}
