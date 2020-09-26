@@ -32,6 +32,9 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
   }
 
+  console.log(process.env.REACT_APP_CLIENT_ID)
+  console.log(process.env.REACT_APP_CLIENT_SECRET)
+
   return (
     <main>
       <div className="login-form">
