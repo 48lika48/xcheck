@@ -133,6 +133,7 @@ export interface ITaskScoreItem {
   id: string;
   score: number;
   comment: string;
+  subtask: string;
 }
 
 export enum ReviewState {

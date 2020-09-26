@@ -43,19 +43,19 @@ export const CheckForm: React.FC<any> = ({ subtask, score, category, index }) =>
       <Paragraph>{subtask}</Paragraph>
       <Space>
         <Button type='dashed' onClick={() => {
-          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: minScore }));
+          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: minScore, subtask: subtask }));
           form.setFieldsValue({
             score: minScore
           });
         }}>0%</Button>
         <Button type='default' onClick={() => {
-          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: averageScore }));
+          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: averageScore, subtask: subtask }));
           form.setFieldsValue({
             score: averageScore
           });
         }}>50%</Button>
         <Button type='primary' onClick={() => {
-          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: maxScore }));
+          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: maxScore, subtask: subtask }));
           form.setFieldsValue({
             score: maxScore
           });
@@ -79,7 +79,12 @@ export const CheckForm: React.FC<any> = ({ subtask, score, category, index }) =>
         <InputNumber
           id={`${category}_score_${index}`}
           onChange={(scoreValue) => {
-            dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: scoreValue }))
+            dispatch(saveTaskScoreResults(
+              {
+                id: `${category}_item_${index}`,
+                score: scoreValue,
+                subtask: subtask
+              }))
           }}
         />
       </Form.Item>
@@ -95,7 +100,12 @@ export const CheckForm: React.FC<any> = ({ subtask, score, category, index }) =>
           id={`${category}_comment_${index}`}
           onBlur={(event) => {
             if (event.currentTarget.value.trim().length) {
-              dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, comment: event.currentTarget.value }))
+              dispatch(saveTaskScoreResults(
+                {
+                  id: `${category}_item_${index}`,
+                  comment: event.currentTarget.value,
+                  subtask: subtask
+                }))
             }
           }}
         />
