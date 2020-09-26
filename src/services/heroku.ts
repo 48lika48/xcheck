@@ -92,7 +92,7 @@ export const addReview = async (review: IReview) => {
 };
 
 export const updateReview = (data: IReview) => {
-  fetch(`${HEROKU_URL}${Endpoint.reviewRequests}/${data.id}`, {
+  fetch(`${HEROKU_URL}${Endpoint.reviews}/${data.id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -108,6 +108,11 @@ export const getDispute = async () => {
 
 export const addDispute = async (dispute: IDispute) => {
   const res = await addData(Endpoint.disputes, dispute);
+  return res;
+};
+
+export const deleteDispute = async (id: string) => {
+  const res = await deleteData(Endpoint.disputes, id);
   return res;
 };
 
