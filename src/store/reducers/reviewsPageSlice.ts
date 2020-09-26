@@ -77,6 +77,9 @@ const reviewsPageSlice = createSlice({
         item.key = index;
       });
     },
+    resetRequests(state) {
+      state.requestsForReview = [];
+    },
   },
 });
 
@@ -89,6 +92,7 @@ export const {
   setData,
   setSessions,
   setRequests,
+  resetRequests,
   setRqForReviews,
 } = reviewsPageSlice.actions;
 
