@@ -1,9 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Tag, Input, Spin } from 'antd';
+import { Table, Space, Button, Tag, Input, Spin } from 'antd';
 import { ITask } from 'src/models';
 
 const columns = [
@@ -11,13 +10,13 @@ const columns = [
     title: 'Name',
     dataIndex: 'id',
     key: 'id',
-    render: (text: string) => <a>{text}</a>,
+    render: (text: string) => <Button type="link">{text}</Button>,
   },
   {
     title: 'Deadline',
     dataIndex: 'endDate',
     key: 'endDate',
-    render: (text: string) => text.slice(0, 10) + ' ' + text.slice(11, text.length - 6),
+    render: (text: string) => `${text.slice(0, 10)} ${text.slice(11, text.length - 6)}`
   },
   {
     title: 'Author',
@@ -39,7 +38,7 @@ const columns = [
     title: 'Action',
     key: 'action',
     render: (text: any, record: any) => (
-      <Action />
+      <Action/>
     ),
   },
   {
@@ -55,21 +54,18 @@ const columns = [
 const Action: React.FC = () => {
   const { currentUser } = useSelector((state: RootState) => state.users);
   const { currentRole } = currentUser;
-
-  console.log(currentRole);
-
   if (currentRole === 'student') {
     return (
       <Space size="middle">
-        <a>Open</a>
+        <Button type="link">Open</Button>
       </Space>
     )
   }
 
   return (
     <Space size="middle">
-      <a>Edit</a>
-      <a>Delete</a>
+      <Button type="link">Edit</Button>
+      <Button type="link">Delete</Button>
     </Space>
   )
 }
