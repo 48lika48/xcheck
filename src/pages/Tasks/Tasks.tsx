@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Tag, Button, Input, Spin } from 'antd';
+import { Table, Space, Tag, Button, Popconfirm, Input, Spin } from 'antd';
 import { ITask } from 'src/models';
 
 const columns = [
@@ -65,7 +65,9 @@ const Action: React.FC = () => {
   return (
     <Space size="middle">
       <Button type="link">Edit</Button>
+      <Popconfirm title="Are you sure delete this task?" okText="Yes" cancelText="No">
       <Button type="link">Delete</Button>
+      </Popconfirm>
     </Space>
   )
 }
