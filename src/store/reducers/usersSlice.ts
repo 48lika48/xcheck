@@ -83,7 +83,12 @@ export const fetchUsers = (currentRole: UserRole): AppThunk => async (dispatch) 
     if (currentUser.roles.includes(currentRole) || currentRole === UserRole.student) {
       return dispatch(setCurrentUser(currentUser));
     }
-    throw Error('no acces');
+
+    // only for cross-check
+    const newUser = await registerUser(githubLogin, users, currentRole);
+    return dispatch(setCurrentUser(newUser));
+
+    // throw Error('no acces');
   } catch (err) {
     dispatch(getUsersFailure(err.toString()));
   }
