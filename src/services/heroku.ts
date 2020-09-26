@@ -41,6 +41,11 @@ export const addTask = async (task: ITask) => {
   return res;
 };
 
+export const deleteTask = async (taskId: string) => {
+  const res = deleteData(Endpoint.tasks, taskId);
+  return res;
+};
+
 export const getCheckSessions = async () => {
   const res = await getData(Endpoint.checkSessions);
   return res;

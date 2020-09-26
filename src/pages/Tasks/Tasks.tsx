@@ -1,10 +1,11 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Button, Tag, Input, Spin } from 'antd';
+import { Table, Space, Button, Tag, Input, Spin, Popconfirm } from 'antd';
 
 import { ITask } from 'src/models';
+import { fetchDeleteTask } from 'src/store/reducers/tasksSlice';
 
 const columns = [
   {
@@ -29,7 +30,7 @@ const columns = [
     key: 'state',
     dataIndex: 'state',
     render: (state: string) => (
-      <Tag color = {state === 'DRAFT' ? 'volcano' : 'green'}>
+      <Tag color={state === 'DRAFT' ? 'volcano' : 'green'}>
         {state.toUpperCase()}
       </Tag>
     ),
@@ -39,7 +40,7 @@ const columns = [
     title: 'Action',
     key: 'action',
     render: (text: any, record: any) => (
-      <Action/>
+      <Action taskId={text.id} />
     ),
   },
   {
@@ -52,9 +53,14 @@ const columns = [
   },
 ];
 
-const Action: React.FC = () => {
+const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
   const { currentUser } = useSelector((state: RootState) => state.users);
+  const dispatch = useDispatch();
   const { currentRole } = currentUser;
+
+  const handleDelete = (taskId: string) => {
+    dispatch(fetchDeleteTask(taskId));
+  }
 
   if (currentRole === 'student') {
     return (
@@ -67,7 +73,9 @@ const Action: React.FC = () => {
   return (
     <Space size="middle">
       <Button type="link">Edit</Button>
-      <Button type="link">Delete</Button>
+      <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(taskId)}>
+        <Button type="link">Delete</Button>
+      </Popconfirm>
     </Space>
   )
 }
@@ -80,9 +88,11 @@ export const Tasks: React.FC = () => {
   })
 
   return (
-    isLoading ? <div className="tasks-spiner">
-      <Spin />
-    </div> : <Table columns={columns} dataSource={tasksWithKey} />
+    isLoading ?
+      <div className="tasks-spiner">
+        <Spin />
+      </div> :
+      <Table columns={columns} dataSource={tasksWithKey} />
   )
 }
 

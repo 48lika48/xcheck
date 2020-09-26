@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ITask } from 'src/models';
-import { getTasks, addTask } from 'src/services/heroku';
+import { getTasks, addTask, deleteTask } from 'src/services/heroku';
 import { AppThunk } from '../store';
 
 interface ITasksState {
@@ -36,6 +36,7 @@ const usersSlice = createSlice({
     },
     addNewTask(state, action: PayloadAction<ITask>) {
       state.allTasks = [...state.allTasks, action.payload];
+      state.isLoading = false;
     },
     fetchTaskFailure: loadingFailed,
   },
@@ -61,6 +62,15 @@ export const fetchNewTask = (task: ITask): AppThunk => async (dispatch) => {
     const response = await addTask(task);
     console.log(response);
     dispatch(addNewTask(task));
+  } catch (err) {
+    dispatch(fetchTaskFailure(err.toString()));
+  }
+};
+
+export const fetchDeleteTask = (taskId: string): AppThunk => async (dispatch) => {
+  try {
+    await deleteTask(taskId);
+    dispatch(fetchTasks());
   } catch (err) {
     dispatch(fetchTaskFailure(err.toString()));
   }
