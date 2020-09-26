@@ -8,7 +8,7 @@ import {
   UserRole,
   IReviewRequest,
   IReview,
-  IDispute
+  IDispute,
 } from 'src/models';
 
 export const getUsers = async () => {
@@ -161,7 +161,7 @@ export const deleteData = async (endpoint: Endpoint, id: string) => {
   return res.json();
 };
 
-export const registerUser = async (githubLogin: string, users: IUser[]) => {
+export const registerUser = async (githubLogin: string, users: IUser[], role?: UserRole) => {
   const lastIdNumber = users.length
     ? +users.reduce((maxId, user) => {
         const userId = user.id.includes('user-') ? +user.id.split('user-')[1] : 0;
@@ -171,7 +171,7 @@ export const registerUser = async (githubLogin: string, users: IUser[]) => {
   const user = {
     id: `user-${lastIdNumber + 1}`,
     githubId: githubLogin,
-    roles: [UserRole.student],
+    roles: [role || UserRole.student],
   };
   addUser(user);
   return user;
