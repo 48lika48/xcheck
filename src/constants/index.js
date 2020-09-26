@@ -1,5 +1,9 @@
+import { CLIENT_ID } from '../config';
 
-export const GITHUB_AUTH_PAGE = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}`;
+export const GITHUB_AUTH_PAGE = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}`; //dev
+
+// export const GITHUB_AUTH_PAGE =
+//   'https://github.com/login/oauth/authorize?client_id=683a47f05469cfcadd68'; //prod
 
 export const GITHUB_AUTH_URL = 'https://api.github.com/user';
 

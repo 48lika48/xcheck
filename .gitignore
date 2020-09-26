@@ -30,5 +30,3 @@ debug.log
 
 #keys
 config.js
-
-.env*.local

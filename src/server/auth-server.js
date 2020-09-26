@@ -2,9 +2,10 @@ const express = require('express');
 const app = express();
 
 const axios = require('axios');
+const { CLIENT_ID, CLIENT_SECRET } = require('../config');
 
-const clientID = process.env.REACT_APP_CLIENT_ID;
-const clientSecret = process.env.REACT_APP_CLIENT_SECRET;
+const clientID = CLIENT_ID;
+const clientSecret = CLIENT_SECRET;
 
 app.get('/auth/user', (req, res) => {
   const requestToken = req.query.code;
