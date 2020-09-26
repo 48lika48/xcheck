@@ -8,6 +8,7 @@ import {
   UserRole,
   IReviewRequest,
   IReview,
+  IDispute,
 } from 'src/models';
 
 export const getUsers = async () => {
@@ -50,6 +51,21 @@ export const addCheckSession = async (checkSession: ICheckSession) => {
   return res;
 };
 
+export const deleteCheckSession = async (sessionId: string) => {
+  const res = deleteData(Endpoint.checkSessions, sessionId);
+  return res;
+};
+
+export const updateCheckSession = async (data: ICheckSession, sessionId: string) => {
+  await fetch(`${HEROKU_URL}checkSessions/${sessionId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const getReviewRequests = async () => {
   const res = await getData(Endpoint.reviewRequests);
   return res;
@@ -72,6 +88,31 @@ export const getReviews = async () => {
 
 export const addReview = async (review: IReview) => {
   const res = await addData(Endpoint.reviews, review);
+  return res;
+};
+
+export const updateReview = (data: IReview) => {
+  fetch(`${HEROKU_URL}${Endpoint.reviews}/${data.id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const getDispute = async () => {
+  const res = await getData(Endpoint.disputes);
+  return res;
+};
+
+export const addDispute = async (dispute: IDispute) => {
+  const res = await addData(Endpoint.disputes, dispute);
+  return res;
+};
+
+export const deleteDispute = async (id: string) => {
+  const res = await deleteData(Endpoint.disputes, id);
   return res;
 };
 
@@ -120,7 +161,7 @@ export const deleteData = async (endpoint: Endpoint, id: string) => {
   return res.json();
 };
 
-export const registerUser = async (githubLogin: string, users: IUser[]) => {
+export const registerUser = async (githubLogin: string, users: IUser[], role?: UserRole) => {
   const lastIdNumber = users.length
     ? +users.reduce((maxId, user) => {
         const userId = user.id.includes('user-') ? +user.id.split('user-')[1] : 0;
@@ -130,7 +171,7 @@ export const registerUser = async (githubLogin: string, users: IUser[]) => {
   const user = {
     id: `user-${lastIdNumber + 1}`,
     githubId: githubLogin,
-    roles: [UserRole.student],
+    roles: [role || UserRole.student],
   };
   addUser(user);
   return user;

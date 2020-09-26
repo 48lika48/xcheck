@@ -1,7 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
-import { IReview, IReviewRequest, ITask, ITaskScore } from '../../models';
-import { getTasks, getReviewRequests, getReviews, addReviewRequest, deleteReviewRequest, updateReviewRequest } from 'src/services/heroku';
+import { IReview, IReviewRequest, ITask, ITaskScore, IDispute } from '../../models';
+import {
+  getTasks,
+  getReviewRequests,
+  getReviews,
+  addReviewRequest,
+  deleteReviewRequest,
+  updateReviewRequest,
+  addDispute,
+  updateReview,
+  deleteDispute
+} from 'src/services/heroku';
 
 interface ReviewRequest {
   tasks: Array<ITask>,
@@ -10,6 +20,7 @@ interface ReviewRequest {
   error: string | null,
   isLoading: boolean,
   selfGrade: ITaskScore | null,
+  disputes: Array<IDispute>,
 }
 
 const initialState: ReviewRequest = {
@@ -19,6 +30,7 @@ const initialState: ReviewRequest = {
   error: null,
   isLoading: false,
   selfGrade: null,
+  disputes: [],
 }
 
 const reviewRequestSlice = createSlice({
@@ -48,6 +60,13 @@ const reviewRequestSlice = createSlice({
         state.reviewRequests.splice(index, 1, data)
       }
     },
+    updateReviewData(state, action: PayloadAction<IReview>){
+      const updatedRreview = state.reviews.find((review: IReview) => review.id === action.payload.id)
+      const index = updatedRreview && state.reviews.indexOf(updatedRreview)
+      if (index && index !== -1) {
+        state.reviews.splice(index, 1, action.payload)
+      }
+    },
     getDataFailure(state, action: PayloadAction<string | null>){
       state.error = action.payload
     },
@@ -61,9 +80,14 @@ const reviewRequestSlice = createSlice({
       state.selfGrade = action.payload
     },
     deleteRequestData(state, action: PayloadAction<string>){
-      console.log('delete')
       state.reviewRequests = state.reviewRequests.filter(request => request.id !== action.payload)
     },
+    deleteDisputeData(state, action: PayloadAction<string>){
+      state.disputes = state.disputes.filter(dispute => dispute.id !== action.payload)
+    },
+    setDisputeData(state, action: PayloadAction<IDispute>){
+      state.disputes.push(action.payload)
+    }
   },
 })
 
@@ -78,6 +102,9 @@ export const {
   deleteRequestData,
   setSelfGrade,
   updateRequestData,
+  setDisputeData,
+  updateReviewData,
+  deleteDisputeData
 } = reviewRequestSlice.actions
 
 export const fetchAllData = ():AppThunk => async dispatch => {
@@ -113,14 +140,45 @@ export const updateRequest = (arg: {data: IReviewRequest, id: string}):AppThunk 
   }
 }
 
+export const updateReviewState = (review: IReview):AppThunk => async dispatch => {
+  try {
+    dispatch(updateReviewData(review))
+    await updateReview(review)
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
+  }
+}
+
 export const addSelfGrade = (data: ITaskScore | null):AppThunk => dispatch => {
     dispatch(setSelfGrade(data))
+}
+
+export const addDisputeData = (data: IDispute):AppThunk => async dispatch => {
+  dispatch(setIsLoading(true))
+  try {
+    dispatch(setDisputeData(data))
+    await addDispute(data)
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
+  } finally {
+    dispatch(setIsLoading(false))
+  }
+
 }
 
 export const deleteRequestItem = (requestId: string):AppThunk => async dispatch => {
   try {
     deleteReviewRequest(requestId)
     dispatch(deleteRequestData(requestId))
+  } catch (err) {
+    dispatch(getDataFailure(err.toString()))
+  }
+}
+
+export const deleteDisputeItem = (disputeId: string):AppThunk => async dispatch => {
+  try {
+    dispatch(deleteDisputeData(disputeId))
+    await deleteDispute(disputeId)
   } catch (err) {
     dispatch(getDataFailure(err.toString()))
   }

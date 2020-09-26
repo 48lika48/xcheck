@@ -42,10 +42,17 @@ const selfGradeSlice = createSlice({
       }
       state.taskScore.items.forEach((item) => {
         if (item.id === action.payload.id) {
-          item.score = action.payload.score;
-          item.comment = action.payload.comment;
+          if (action.payload.score) {
+            item.score = action.payload.score;
+          }
+          if (action.payload.comment) {
+            item.comment = action.payload.comment;
+          }
         }
       });
+    },
+    resetTaskScore(state) {
+      state.taskScore.items = [];
     },
   },
 });
@@ -55,6 +62,7 @@ export const {
   loadTaskSuccess,
   getTasksError,
   saveTaskScoreResults,
+  resetTaskScore,
 } = selfGradeSlice.actions;
 
 export const getData = (tasks: ITask[], taskName: string): AppThunk => async (dispatch) => {

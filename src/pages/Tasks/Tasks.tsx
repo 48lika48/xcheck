@@ -2,7 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Tag, Button, Popconfirm, Input, Spin } from 'antd';
+import { Table, Space, Button, Tag, Input, Spin } from 'antd';
+
 import { ITask } from 'src/models';
 
 const columns = [
@@ -16,7 +17,7 @@ const columns = [
     title: 'Deadline',
     dataIndex: 'endDate',
     key: 'endDate',
-    render: (text: string) => `${text.slice(0, 10)} ${text.slice(11, text.length - 6)}`,
+    render: (text: string) => `${text.slice(0, 10)} ${text.slice(11, text.length - 6)}`
   },
   {
     title: 'Author',
@@ -32,12 +33,13 @@ const columns = [
         {state.toUpperCase()}
       </Tag>
     ),
+
   },
   {
     title: 'Action',
     key: 'action',
     render: (text: any, record: any) => (
-      <Action />
+      <Action/>
     ),
   },
   {
@@ -65,9 +67,7 @@ const Action: React.FC = () => {
   return (
     <Space size="middle">
       <Button type="link">Edit</Button>
-      <Popconfirm title="Are you sure delete this task?" okText="Yes" cancelText="No">
       <Button type="link">Delete</Button>
-      </Popconfirm>
     </Space>
   )
 }

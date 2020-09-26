@@ -35,6 +35,7 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
       </Form.Item>
       <Form.List name="basic-tasks">
         {(fields, { add, remove }) => {
+          console.log('click')
           fields.length === 0 && fields.push(...taskData.subtasks.basic.map((item: string, index: number) => {
             return {
               fieldKey: index,
@@ -42,6 +43,7 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
               key: index,
               name: index,
             }
+            
           }));
           return (
             <div>
@@ -94,7 +96,10 @@ const Basic: React.FC<BasicProps> = ({ onDataChange, taskData }) => {
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       style={{ margin: '0 8px' }}
-                      onClick={() => remove(field.name)}
+                      onClick={() => {
+                        remove(field.name)
+                        updateArray(taskData.goals || [], index, '')
+                      }}
                     />
                   ) : null}
                 </Form.Item>
