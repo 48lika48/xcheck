@@ -42,6 +42,7 @@ export const TaskManager: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchTasks());
+    onDataChange('author', githubId);
   }, [githubId, dispatch]);
 
   const onDataChange = (field: string, value: any) => {

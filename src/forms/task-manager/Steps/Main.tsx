@@ -118,6 +118,7 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
                       style={{ margin: '0 8px' }}
                       onClick={() => {
                         remove(field.name);
+                        updateArray(taskData.goals || [], index, '')
                       }}
                     />
                   ) : null}

@@ -147,6 +147,7 @@ export enum ReviewState {
 }
 
 export interface IDispute {
+  id: string;
   reviewId: string | undefined;
   state: DisputeState;
   item: string;

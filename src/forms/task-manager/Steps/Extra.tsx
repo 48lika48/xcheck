@@ -93,7 +93,10 @@ const Extra: React.FC<ExtraProps> = ({ onDataChange, taskData }) => {
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       style={{ margin: '0 8px' }}
-                      onClick={() => remove(field.name)}
+                      onClick={() => {
+                        remove(field.name)
+                        updateArray(taskData.goals || [], index, '')
+                      }}
                     />
                   ) : null}
                 </Form.Item>
