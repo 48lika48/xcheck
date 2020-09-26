@@ -52,9 +52,9 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
               </span>
             }
             key="1"
-          > 
-          <TaskManager />
-          <Tasks />
+          >
+            <TaskManager />
+            <Tasks />
           </TabPane>
           <TabPane
             tab={

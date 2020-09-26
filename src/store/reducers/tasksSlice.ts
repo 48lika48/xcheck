@@ -5,12 +5,14 @@ import { AppThunk } from '../store';
 
 interface ITasksState {
   allTasks: ITask[];
+  editedTaskId: string | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: ITasksState = {
   allTasks: [],
+  editedTaskId: null,
   isLoading: false,
   error: null,
 };
@@ -37,6 +39,12 @@ const usersSlice = createSlice({
     addNewTask(state, action: PayloadAction<ITask>) {
       state.allTasks = [...state.allTasks, action.payload];
       state.isLoading = false;
+    },
+    startEditingTask(state, action: PayloadAction<string>) {
+      state.editedTaskId = action.payload;
+    },
+    finishEditingTask(state) {
+      state.editedTaskId = null;
     },
     fetchTaskFailure: loadingFailed,
   },
