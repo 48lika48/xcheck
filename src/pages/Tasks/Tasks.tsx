@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
 import { Table, Space, Button, Tag, Input, Spin, Popconfirm, Popover, List } from 'antd';
+import { CheckCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 
-import { ITask } from 'src/models';
-import { fetchDeleteTask, startEditingTask } from 'src/store/reducers/tasksSlice';
+import { ITask, TaskState } from 'src/models';
+import { changeTaskStatus, fetchDeleteTask, startEditingTask } from 'src/store/reducers/tasksSlice';
 
 const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
   const { currentUser } = useSelector((state: RootState) => state.users);
@@ -39,6 +40,7 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
 }
 
 export const Tasks: React.FC = () => {
+  const dispatch = useDispatch();
   const { allTasks, isLoading } = useSelector((state: RootState) => state.tasks);
 
   const defaulVisiblePopovers: { [key: string]: boolean } = {};
@@ -53,6 +55,10 @@ export const Tasks: React.FC = () => {
   const handleVisiblePopover = (visible: boolean, id: string) => {
     defaulVisiblePopovers[id] = visible;
     setVisiblePopover({ ...defaulVisiblePopovers });
+  }
+
+  const handleTaskStatusChange = (id: string, status: TaskState) => {
+    dispatch(changeTaskStatus(id, status));
   }
 
   const columns = [
@@ -82,12 +88,18 @@ export const Tasks: React.FC = () => {
           content={
             <List
               itemLayout="horizontal"
-              dataSource={['DRAFT', 'PUBLISHED', 'ARCHIVED']}
+              dataSource={[TaskState.DRAFT, TaskState.PUBLISHED, TaskState.ARCHIVED]}
               size="small"
               renderItem={item => (
-                <List.Item style={{ padding: '5px' }}
-                  onClick={() => console.log(item)}>
-                  <Tag color={item === 'DRAFT' ? 'volcano' : 'green'}>{item}</Tag>
+                <List.Item
+                  style={{ padding: '5px' }}
+                  onClick={() => handleTaskStatusChange(data.id, item)}>
+                  <Tag
+                    color={item === state ? 'success' : 'default'}
+                    icon={item === state ? <CheckCircleOutlined /> : <RightCircleOutlined />}
+                    style={{ cursor: 'pointer' }}>
+                    {item}
+                  </Tag>
                 </List.Item>
               )}
             />}
@@ -96,7 +108,7 @@ export const Tasks: React.FC = () => {
           onVisibleChange={(visible: boolean): void => {
             handleVisiblePopover(visible, data.id)
           }}
-          style={{ maxWidth: '130', padding: '5px 10px' }}
+
         >
           <Tag color={state === 'DRAFT' ? 'volcano' : 'green'}>
             {state.toUpperCase()}

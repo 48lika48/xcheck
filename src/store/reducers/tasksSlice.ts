@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ITask } from 'src/models';
+import { ITask, TaskState } from 'src/models';
 import { getTasks, addTask, deleteTask, updateTask } from 'src/services/heroku';
 import { AppThunk } from '../store';
 
@@ -27,7 +27,7 @@ function loadingFailed(state: ITasksState, action: PayloadAction<string>) {
   state.error = action.payload;
 }
 
-const usersSlice = createSlice({
+const tasksSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
@@ -47,6 +47,14 @@ const usersSlice = createSlice({
     finishEditingTask(state) {
       state.editedTaskId = null;
     },
+    setTaskStatus(state, action: PayloadAction<{ taskId: string; status: TaskState }>) {
+      const taskIndex = state.allTasks.findIndex(
+        (item: ITask) => item.id === action.payload.taskId
+      );
+      if (taskIndex >= 0) {
+        state.allTasks[taskIndex].state = action.payload.status;
+      }
+    },
     fetchTaskFailure: loadingFailed,
   },
 });
@@ -58,9 +66,10 @@ export const {
   getAllTasks,
   startEditingTask,
   finishEditingTask,
-} = usersSlice.actions;
+  setTaskStatus,
+} = tasksSlice.actions;
 
-export default usersSlice.reducer;
+export default tasksSlice.reducer;
 
 export const fetchTasks = (): AppThunk => async (dispatch) => {
   try {
@@ -98,6 +107,19 @@ export const fetchUpdateTask = (taskId: string, data: ITask): AppThunk => async 
     console.log(response);
     dispatch(finishEditingTask());
     dispatch(fetchTasks());
+  } catch (err) {
+    dispatch(fetchTaskFailure(err.toString()));
+  }
+};
+
+export const changeTaskStatus = (taskId: string, status: TaskState): AppThunk => async (
+  dispatch
+) => {
+  try {
+    dispatch(setTaskStatus({ taskId, status }));
+    const tasks = await getTasks();
+    const targetTask = tasks.find((item: ITask) => item.id === taskId);
+    await updateTask(taskId, { ...targetTask, state: status });
   } catch (err) {
     dispatch(fetchTaskFailure(err.toString()));
   }
