@@ -22,63 +22,69 @@ const validateMessages = {
   }
 };
 
-export const CheckForm: React.FC<any> = ({ item, index }) => {
+export const CheckForm: React.FC<any> = ({ subtask, score, category, index }) => {
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const minScore = score >= 0 ? 0 : score;
+  const maxScore = score > 0 ? score : 0;
+  const averageScore = (maxScore + minScore) / 2;
 
   return (
     <Form
       form={form}
-      id={index.toString()}
       validateMessages={validateMessages}
     >
-
       <Paragraph>
-        {!item.maxScore ?
-          <Text type='danger' strong>{item.category}</Text>
-          : <Text strong>{item.category}</Text>}
+        {!maxScore ?
+          <Text type='danger' strong>{category}</Text>
+          : <Text strong>{category}</Text>}
       </Paragraph>
-      <Paragraph>{item.title}</Paragraph>
+      <Paragraph>{subtask}</Paragraph>
       <Space>
         <Button type='dashed' onClick={() => {
-          dispatch(saveTaskScoreResults({ id: item.id, score: item.minScore }));
+          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: minScore, subtask: subtask }));
           form.setFieldsValue({
-            score: item.minScore
+            score: minScore
           });
         }}>0%</Button>
         <Button type='default' onClick={() => {
-          dispatch(saveTaskScoreResults({ id: item.id, score: (item.minScore + item.maxScore) / 2 }));
+          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: averageScore, subtask: subtask }));
           form.setFieldsValue({
-            score: (item.minScore + item.maxScore) / 2
+            score: averageScore
           });
         }}>50%</Button>
         <Button type='primary' onClick={() => {
-          dispatch(saveTaskScoreResults({ id: item.id, score: item.maxScore }));
+          dispatch(saveTaskScoreResults({ id: `${category}_item_${index}`, score: maxScore, subtask: subtask }));
           form.setFieldsValue({
-            score: item.maxScore
+            score: maxScore
           });
         }}>100%</Button>
       </Space>
       <Form.Item
         name='score'
         shouldUpdate={true}
-        initialValue={item.score}
-        label={`Score from ${item.minScore} to ${item.maxScore}`}
+        initialValue={''}
+        label={`Score from ${minScore} to ${maxScore}`}
         rules={[
           {
             type: 'number',
-            min: item.minScore,
-            max: item.maxScore,
+            min: minScore,
+            max: maxScore,
             required: true
           }
         ]}
         style={{ margin: '10px 0' }}
       >
         <InputNumber
-          id={`${item.id}_score_${index}`}
+          id={`${category}_score_${index}`}
           onChange={(scoreValue) => {
-            dispatch(saveTaskScoreResults({ id: item.id, score: scoreValue }))
+            dispatch(saveTaskScoreResults(
+              {
+                id: `${category}_item_${index}`,
+                score: scoreValue,
+                subtask: subtask
+              }))
           }}
         />
       </Form.Item>
@@ -90,10 +96,16 @@ export const CheckForm: React.FC<any> = ({ item, index }) => {
         <TextArea
           placeholder="Comment"
           style={inputStyle}
-          autoSize id={`${item.id}_comment_${index}`}
+          autoSize
+          id={`${category}_comment_${index}`}
           onBlur={(event) => {
             if (event.currentTarget.value.trim().length) {
-              dispatch(saveTaskScoreResults({ id: item.id, comment: event.currentTarget.value }))
+              dispatch(saveTaskScoreResults(
+                {
+                  id: `${category}_item_${index}`,
+                  comment: event.currentTarget.value,
+                  subtask: subtask
+                }))
             }
           }}
         />

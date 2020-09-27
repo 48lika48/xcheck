@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { ICheckSession } from '../../models';
+import { ICheckSession, ICheckSessionAttendee, IReviewRequest } from '../../models';
 import { AppThunk } from '../store';
 import {
   addCheckSession,
   deleteCheckSession,
   getCheckSessions,
+  getReviewRequests,
   updateCheckSession,
 } from '../../services/heroku';
 import { message } from 'antd';
+import { shuffleArray } from '../../pages/crossSessionCreatePage/utils';
 
 const successUpdate = () => {
   message.success('Session updated');
@@ -20,6 +22,9 @@ const successSave = () => {
 const successDeleted = () => {
   message.warning('Session deleted!!!');
 };
+const reorderStudents = () => {
+  message.success('Redistribution of students completed!');
+};
 
 interface ICrossSessionsSlice {
   loading: boolean;
@@ -28,6 +33,7 @@ interface ICrossSessionsSlice {
   sessions: ICheckSession[];
   isEdit: boolean;
   editData: ICheckSession | null;
+  requests: IReviewRequest[];
 }
 const initialState: ICrossSessionsSlice = {
   loading: false,
@@ -36,6 +42,7 @@ const initialState: ICrossSessionsSlice = {
   isShowModal: false,
   isEdit: false,
   editData: null,
+  requests: [],
 };
 const crossSessionSlice = createSlice({
   name: 'crossSessions',
@@ -103,6 +110,35 @@ export const editSession = (data: ICheckSession, sessionId: string): AppThunk =>
 ) => {
   try {
     dispatch(startLoading());
+    let shuffled = await getReviewRequests();
+    let attendeeArray: ICheckSessionAttendee[] = [];
+    shuffled = shuffleArray(
+      shuffled.filter((request: IReviewRequest) => request.crossCheckSessionId === sessionId)
+    );
+    shuffled.forEach((item: IReviewRequest) =>
+      attendeeArray.push({ githubId: item.author, reviewerOf: [] })
+    );
+    const length = shuffled.length;
+    attendeeArray.forEach((item, index) => {
+      if (index + data.desiredReviewersAmount + 1 > length) {
+        shuffled
+          .slice(index + 1)
+          .forEach((i: IReviewRequest) => attendeeArray[index].reviewerOf.push(i.author));
+        shuffled
+          .slice(0, data.desiredReviewersAmount)
+          .forEach((i: IReviewRequest) => attendeeArray[index].reviewerOf.push(i.author));
+      } else {
+        shuffled
+          .slice(index + 1, index + data.desiredReviewersAmount + 1)
+          .forEach((i: IReviewRequest) => attendeeArray[index].reviewerOf.push(i.author));
+      }
+    });
+    if (data.state === 'CROSS_CHECK') {
+      reorderStudents();
+      data.attendees = attendeeArray;
+    } else {
+      data.attendees = [];
+    }
     await updateCheckSession(data, sessionId);
     await dispatch(fetchSessions());
     dispatch(endLoading());

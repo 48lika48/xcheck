@@ -18,6 +18,17 @@ export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGrad
   const dispatch = useDispatch();
   const { task, taskScore } = useSelector((state: RootState) => state.selfGradeSlice);
 
+  const scoreLength = (score: any): number | null => {
+    let length = 0;
+    if (!score) {
+      return null;
+    }
+    Object.keys(score).forEach((category) => {
+      length += (score[category].length);
+    })
+    return length;
+  }
+
   const cancelChanges = (): void => {
     setIsDisabledButton(true);
     dispatch(resetTaskScore());
@@ -30,7 +41,7 @@ export const SelfGradeModal: React.FC<SelfGradeModalProps> = ({ taskId, selfGrad
   };
 
   const handleEndCheck = (): void => {
-    if (taskScore.items.length !== task?.items?.length) {
+    if (taskScore.items.length !== scoreLength(task?.score)) {
       message.warning(WARNING_MESSAGE);
       return;
     }
