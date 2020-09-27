@@ -28,7 +28,7 @@ export const setGithubCookie = (res: IGithubInfo): void => {
 
 export const checkAuthorization = (): boolean => {
   const githubCookie = getCookie('gituser');
-  return !!(githubCookie && githubCookie.hasOwnProperty('name'));
+  return !!(githubCookie && githubCookie.hasOwnProperty('login'));
 };
 
 export const getGithubUserName = (): string => {

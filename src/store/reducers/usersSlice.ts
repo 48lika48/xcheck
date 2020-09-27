@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IUser, UserRole } from 'src/models';
 import { getGithubLogin } from 'src/services/github-auth';
-import { getUsers, registerUser } from 'src/services/heroku';
+import { getUsers, registerUser, setUserRoles } from 'src/services/heroku';
 import { AppThunk } from '../store';
 
 const defaultUser = { id: '', githubId: '', roles: [UserRole.student] };
@@ -85,6 +85,11 @@ export const fetchUsers = (currentRole: UserRole): AppThunk => async (dispatch) 
     }
 
     // only for cross-check
+    if (currentUser && !currentUser.roles.includes(currentRole)) {
+      setUserRoles(currentUser.id, [...currentUser.roles, currentRole]);
+      return dispatch(setCurrentUser(currentUser));
+    }
+
     const newUser = await registerUser(githubLogin, users, currentRole);
     return dispatch(setCurrentUser(newUser));
 

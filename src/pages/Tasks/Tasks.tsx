@@ -73,7 +73,7 @@ export const Tasks: React.FC = () => {
       key: 'id',
       fixed: 'left',
       render: (text: string) => <Button type="link" style={{ padding: 0 }}>{text}</Button>,
-    }  as const,
+    } as const,
     {
       title: 'Deadline',
       dataIndex: 'endDate',
@@ -157,7 +157,7 @@ export const Tasks: React.FC = () => {
       <div className="tasks-spiner">
         <Spin />
       </div> :
-      <Table  columns={columns}
+      <Table columns={columns}
         expandable={{
           expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
           rowExpandable: record => record.id !== 'Not Expandable',

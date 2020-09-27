@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk } from '../store';
-import { IReview, IReviewRequest, ITask, ITaskScore, IDispute } from '../../models';
+import { createSlice /* PayloadAction */ } from '@reduxjs/toolkit';
+// import { AppThunk } from '../store';
+import { IReviewRequest /* IReview, ITask, ITaskScore, IDispute */ } from '../../models';
 
 interface IReviewCreateSlice {
   isShowModal: boolean;

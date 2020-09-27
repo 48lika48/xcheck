@@ -70,7 +70,7 @@ export const ReviewPage: React.FC = () => {
       fixed: 'left',
       sorter: (a: { reviewedStudent: string | any[] }, b: { reviewedStudent: string | any[] }) =>
         a.reviewedStudent.length - b.reviewedStudent.length,
-    }  as const,
+    } as const,
     {
       title: 'Task',
       dataIndex: 'task',
@@ -151,7 +151,7 @@ export const ReviewPage: React.FC = () => {
           </Tooltip>
         </Badge>
       </Space>
-      {error && <h1>{`Error: ${error}`}</h1>}
+      {error && <h4>No requests for you</h4>}
       <ReviewCreatePage
         isEdit={false}
         isShowModal={isShowModal}
@@ -160,7 +160,7 @@ export const ReviewPage: React.FC = () => {
         task={allTasks}
         save={saveHandler}
       />
-      <Table columns={columns} dataSource={reviews} rowKey="id"  scroll={{ x: 1300 }} />
+      <Table columns={columns} dataSource={reviews} rowKey="id" scroll={{ x: 1300 }} />
       <Button onClick={() => getData()} icon={<ReloadOutlined />}>
         Reload
       </Button>
