@@ -5,14 +5,14 @@ import { addRequest, updateRequest, addSelfGrade } from '../../../../store/reduc
 import { Button, Col, Form, Input, Row, Select, Alert, message } from 'antd';
 import { SelfGradeModal } from '../../../../forms/SelfGradeModal/SelfGradeModal';
 import { urlWithIpPattern, githubPrUrl } from '../../../../services/validators';
-import { IReviewRequest, ReviewRequestState } from '../../../../models';
+import { IReviewRequest, ReviewRequestState, ICheckSession, CrossCheckSessionState } from '../../../../models';
 
 
 
 export const ReviewRequestForm: React.FC = () => {
 
   const dispatch = useDispatch();
-  const { tasks, reviewRequests, isLoading, selfGrade } = useSelector((state: RootState) => state.reviewRequest)
+  const { tasks, reviewRequests, isLoading, selfGrade, sessions } = useSelector((state: RootState) => state.reviewRequest)
   const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData)
 
   const [form] = Form.useForm();
@@ -37,9 +37,11 @@ export const ReviewRequestForm: React.FC = () => {
       return;
     }
     try {
+      const crossCheckSession = sessions.find((session: ICheckSession) => session.taskId === taskId)
+
       const data: IReviewRequest = {
         id: submittedRequest && typeof submittedRequest !== 'boolean' ? submittedRequest.id : Date.now().toString(),
-        crossCheckSessionId: null,
+        crossCheckSessionId: crossCheckSession && crossCheckSession.state === CrossCheckSessionState.REQUESTS_GATHERING ?  crossCheckSession.id : null,
         author: githubId,
         task: taskId,
         state: values.status,

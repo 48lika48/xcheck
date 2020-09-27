@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store'
-import { IReview, IReviewRequest, ITask, ITaskScore, IDispute } from '../../models';
+import { IReview, IReviewRequest, ITask, ITaskScore, IDispute, ICheckSession } from '../../models';
 import {
   getTasks,
   getReviewRequests,
@@ -10,7 +10,8 @@ import {
   updateReviewRequest,
   addDispute,
   updateReview,
-  deleteDispute
+  deleteDispute,
+  getCheckSessions,
 } from 'src/services/heroku';
 
 interface ReviewRequest {
@@ -21,6 +22,7 @@ interface ReviewRequest {
   isLoading: boolean,
   selfGrade: ITaskScore | null,
   disputes: Array<IDispute>,
+  sessions: Array<ICheckSession>,
 }
 
 const initialState: ReviewRequest = {
@@ -31,6 +33,7 @@ const initialState: ReviewRequest = {
   isLoading: false,
   selfGrade: null,
   disputes: [],
+  sessions: []
 }
 
 const reviewRequestSlice = createSlice({
@@ -48,6 +51,9 @@ const reviewRequestSlice = createSlice({
     getReviewRequestsData(state, action: PayloadAction<Array<IReviewRequest>>){
       state.error = null
       state.reviewRequests = action.payload
+    },
+    getSessions(state, action: PayloadAction<Array<ICheckSession>>) {
+      state.sessions = action.payload;
     },
     setRequest(state, action: PayloadAction<IReviewRequest>){
       state.reviewRequests.push(action.payload)
@@ -104,16 +110,18 @@ export const {
   updateRequestData,
   setDisputeData,
   updateReviewData,
-  deleteDisputeData
+  deleteDisputeData,
+  getSessions,
 } = reviewRequestSlice.actions
 
 export const fetchAllData = ():AppThunk => async dispatch => {
   try {
     dispatch(setIsLoading(true))
-    const [ tasks, requests, reviews ] = await Promise.all([getTasks(), getReviewRequests(), getReviews()]);
+    const [ tasks, requests, reviews, checkSessions ] = await Promise.all([getTasks(), getReviewRequests(), getReviews(), getCheckSessions()]);
     dispatch(getTasksData(tasks))
     dispatch(getReviewRequestsData(requests))
     dispatch(getReviewsData(reviews))
+    dispatch(getSessions(checkSessions))
   } catch (err) {
     dispatch(getDataFailure(err.toString()))
   } finally {
