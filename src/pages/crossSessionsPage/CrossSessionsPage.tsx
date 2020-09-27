@@ -15,11 +15,11 @@ import {
 import { PlusOutlined } from '@ant-design/icons';
 import { SessionsTable } from './components/sessionsTable';
 import { CrossSessionCreate } from '../crossSessionCreatePage';
-import { ICheckSession, ITask } from '../../models';
+import { ICheckSession, ITask, TaskState } from '../../models';
 
 export const CrossSessionsPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { sessions, loading, isShowModal, isEdit, editData } = useSelector(
+  const { sessions, loading, isShowModal, isEdit, editData, requests } = useSelector(
     (state: RootState) => state.crossSessions
   );
   const { allTasks } = useSelector((state: RootState) => state.tasks);
@@ -57,6 +57,7 @@ export const CrossSessionsPage: React.FC = () => {
   }
 
   function sortTasks(taskArray: ITask[], sessionsArray: ICheckSession[]) {
+    taskArray = taskArray.filter((i) => i.state === TaskState.PUBLISHED);
     return taskArray.filter(
       (element) => !sessionsArray.find((session) => session.taskId === element.id)
     );
@@ -76,7 +77,7 @@ export const CrossSessionsPage: React.FC = () => {
         Add a session
       </Button>
       {sortTasks(allTasks, sessions).length === 0 && (
-        <Alert message={'Sessions for all tasks was created'} type="success" banner />
+        <Alert message={'Sessions for all published tasks was created'} type="success" banner />
       )}
       <CrossSessionCreate
         isShowModal={isShowModal}
@@ -85,6 +86,7 @@ export const CrossSessionsPage: React.FC = () => {
         isEdit={isEdit}
         editData={editData}
         onSave={formSave}
+        requests={requests}
       />
       <SessionsTable sessions={sessions} openRow={openHandler} handleDelete={handleDelete} />
     </Spin>
