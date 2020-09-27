@@ -44,7 +44,6 @@ export interface ITask {
   items?: ITaskItem[];
   subtasks?: { [key: string]: string[] };
   score?: { [key: string]: number[] };
-
   maxScore?: 0;
 }
 

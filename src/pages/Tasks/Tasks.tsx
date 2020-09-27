@@ -131,9 +131,20 @@ export const Tasks: React.FC = () => {
       title: 'Comment',
       dataIndex: 'comment',
       key: 'comment',
-      render: (text: string) => (
-        <Input placeholder="" bordered={true} />
-      ),
+      render: (text: string, data: any) => {
+        const localKey = 'comments';
+        const localComments = localStorage.getItem(localKey) || JSON.stringify({});
+        const comments = JSON.parse(localComments);
+        const comment = comments[data.id];
+        return (
+          <Input placeholder="" bordered={true}
+            defaultValue={comment}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const newComments = { ...comments, [data.id]: e.currentTarget.value }
+              localStorage.setItem(localKey, JSON.stringify(newComments));
+            }} />
+        )
+      },
     },
   ];
 

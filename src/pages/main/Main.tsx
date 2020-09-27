@@ -91,7 +91,6 @@ export const Main: React.FC<{ logoutHandler: any }> = ({ logoutHandler }) => {
               <CrossSessionsPage />
             </TabPane>
           )}
-
         </Tabs>
       </Content>
       <Footer className="footer">
