@@ -145,6 +145,7 @@ export const TaskManager: React.FC = () => {
         width={1000}
         visible={isShowModal}
         okText="Save"
+        cancelText="Close"
         onOk={saveChanges}
         onCancel={closeManager}
         okButtonProps={{ disabled: isDisabled }}

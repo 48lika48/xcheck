@@ -15,19 +15,24 @@ type StepProps = {
   taskData: ITask
 }
 
+const steps: { [key: string]: number } = { basic: 0, advanced: 1, extra: 2, fines: 3 };
+
 const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData }) => {
   const { currentRole } = useSelector((state: RootState) => state.users.currentUser);
   const isDisabled = currentRole === UserRole.student;
   return (
-    <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
+    <Form
+      name="dynamic_form_item" {...formItemLayoutWithOutLabel}
+    >
       <Form.Item
+        name={`${stepId}-description`}
         label={`${stepId[0].toUpperCase() + stepId.slice(1)} for:`}
         {...formItemLayout}
-        name={`${stepId}-description`}
         rules={[{ required: true, message: 'Please input short description!' }]}
-        initialValue={taskData.requirements && taskData.requirements[0]}
+        initialValue={taskData.requirements && taskData.requirements[steps[stepId]]}
       >
         <TextArea
+
           placeholder={`${stepId} scope short description`}
           style={{ width: '60%' }}
           autoSize
@@ -37,7 +42,7 @@ const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData })
               taskData.requirements && onDataChange('requirements', updateArray(taskData.requirements, 0, e.currentTarget.value))
             }
           }
-          value={taskData.requirements && taskData.requirements[0]}
+          value={taskData.requirements && taskData.requirements[steps[stepId]]}
         />
       </Form.Item>
       <Form.List name={`${stepId}-tasks`}>
