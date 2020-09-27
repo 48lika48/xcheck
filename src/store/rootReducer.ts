@@ -6,12 +6,14 @@ import {
   reviewsPageReducer,
   crossSessionSlice,
   selfGradeSlice,
+  reviewCreateSlice,
 } from './reducers';
 
 const rootReducer = combineReducers({
   users: usersReducer,
   tasks: tasksReducer,
   reviewsPage: reviewsPageReducer,
+  reviewCreate: reviewCreateSlice,
   crossSessions: crossSessionSlice,
   reviewRequest: reviewRequestReducer,
   selfGradeSlice: selfGradeSlice,

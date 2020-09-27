@@ -4,6 +4,7 @@ import reviewRequestReducer from './reviewRequestSlice';
 import tasksReducer from './tasksSlice';
 import selfGradeSlice from './selfGradeSlice';
 import crossSessionSlice from './crossSessionsSlice';
+import reviewCreateSlice from './reviewCreateSlice';
 
 export {
   usersReducer,
@@ -12,4 +13,5 @@ export {
   reviewsPageReducer,
   selfGradeSlice,
   crossSessionSlice,
+  reviewCreateSlice,
 };
