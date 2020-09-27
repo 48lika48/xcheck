@@ -39,11 +39,20 @@ export const TaskManager: React.FC = () => {
   const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
   const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData);
+  const { editedTaskId, allTasks } = useSelector((state: RootState) => state.tasks);
 
   useEffect(() => {
     dispatch(fetchTasks());
     onDataChange('author', githubId);
   }, [githubId, dispatch]);
+
+  useEffect(() => {
+    if (editedTaskId) {
+      showManager();
+      const task = allTasks.filter((item: ITask) => item.id === editedTaskId);
+      !!task && setTaskData(task[0]);
+    }
+  }, [allTasks, editedTaskId])
 
   const onDataChange = (field: string, value: any) => {
     if (field === 'allData') { return setTaskData(value) }
@@ -62,7 +71,6 @@ export const TaskManager: React.FC = () => {
     showUploadList: false,
     onChange: async (info: { file: { uid: null; }; }) => setFileList([info.file]),
   };
-
 
   const steps = [
     {

@@ -50,7 +50,14 @@ const usersSlice = createSlice({
   },
 });
 
-export const { fetchTaskStart, addNewTask, fetchTaskFailure, getAllTasks } = usersSlice.actions;
+export const {
+  fetchTaskStart,
+  addNewTask,
+  fetchTaskFailure,
+  getAllTasks,
+  startEditingTask,
+  finishEditingTask,
+} = usersSlice.actions;
 
 export default usersSlice.reducer;
 

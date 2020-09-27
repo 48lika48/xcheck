@@ -5,7 +5,7 @@ import { RootState } from '../../store/rootReducer';
 import { Table, Space, Button, Tag, Input, Spin, Popconfirm } from 'antd';
 
 import { ITask } from 'src/models';
-import { fetchDeleteTask } from 'src/store/reducers/tasksSlice';
+import { fetchDeleteTask, startEditingTask } from 'src/store/reducers/tasksSlice';
 
 const columns = [
   {
@@ -61,6 +61,10 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
     dispatch(fetchDeleteTask(taskId));
   }
 
+  const handelEdit = (taskId: string) => {
+    dispatch(startEditingTask(taskId));
+  }
+
   if (currentRole === 'student') {
     return (
       <Space size="middle">
@@ -71,9 +75,9 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
 
   return (
     <Space size="middle">
-      <Button type="link" style={{ padding: 0 }}>Edit</Button>
+      <Button type="link" style={{ padding: 0 }} onClick={() => handelEdit(taskId)}>Edit</Button>
       <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(taskId)}>
-      <Button type="link" style={{ padding: 0 }}>Delete</Button>
+        <Button type="link" style={{ padding: 0 }}>Delete</Button>
       </Popconfirm>
     </Space>
   )
@@ -85,18 +89,18 @@ export const Tasks: React.FC = () => {
   const tasksWithKey = allTasks.map((task: ITask) => {
     return { ...task, key: task.id }
   })
-  console.log(tasksWithKey);
+
   return (
     isLoading ?
       <div className="tasks-spiner">
         <Spin />
       </div> :
       <Table columns={columns}
-      expandable={{
-        expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
-        rowExpandable: record => record.id !== 'Not Expandable',
-      }}
-      dataSource={tasksWithKey} />
+        expandable={{
+          expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
+          rowExpandable: record => record.id !== 'Not Expandable',
+        }}
+        dataSource={tasksWithKey} />
   )
 }
 
