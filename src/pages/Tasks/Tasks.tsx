@@ -5,7 +5,7 @@ import { RootState } from '../../store/rootReducer';
 import { Table, Space, Button, Tag, Input, Spin, Popconfirm, Popover, List } from 'antd';
 import { CheckCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 
-import { ITask, TaskState } from 'src/models';
+import { ITask, TaskState, UserRole } from 'src/models';
 import { changeTaskStatus, fetchDeleteTask, startEditingTask } from 'src/store/reducers/tasksSlice';
 
 const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
@@ -42,6 +42,7 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
 export const Tasks: React.FC = () => {
   const dispatch = useDispatch();
   const { allTasks, isLoading } = useSelector((state: RootState) => state.tasks);
+  const { currentRole } = useSelector((state: RootState) => state.users.currentUser);
 
   const defaulVisiblePopovers: { [key: string]: boolean } = {};
   allTasks.forEach((item: ITask) => defaulVisiblePopovers[item.id] = false)
@@ -53,8 +54,10 @@ export const Tasks: React.FC = () => {
   });
 
   const handleVisiblePopover = (visible: boolean, id: string) => {
-    defaulVisiblePopovers[id] = visible;
-    setVisiblePopover({ ...defaulVisiblePopovers });
+    if (currentRole !== UserRole.student) {
+      defaulVisiblePopovers[id] = visible;
+      setVisiblePopover({ ...defaulVisiblePopovers });
+    } 
   }
 
   const handleTaskStatusChange = (id: string, status: TaskState) => {
