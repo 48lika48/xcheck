@@ -12,7 +12,7 @@ const columns = [
     title: 'Name',
     dataIndex: 'id',
     key: 'id',
-    render: (text: string) => <Button type="link">{text}</Button>,
+    render: (text: string) => <Button type="link" style={{ padding: 0 }}>{text}</Button>,
   },
   {
     title: 'Deadline',
@@ -34,7 +34,6 @@ const columns = [
         {state.toUpperCase()}
       </Tag>
     ),
-
   },
   {
     title: 'Action',
@@ -65,16 +64,16 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
   if (currentRole === 'student') {
     return (
       <Space size="middle">
-        <Button type="link">Open</Button>
+        <Button type="link" style={{ padding: 0 }}>Open</Button>
       </Space>
     )
   }
 
   return (
     <Space size="middle">
-      <Button type="link">Edit</Button>
+      <Button type="link" style={{ padding: 0 }}>Edit</Button>
       <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(taskId)}>
-        <Button type="link">Delete</Button>
+      <Button type="link" style={{ padding: 0 }}>Delete</Button>
       </Popconfirm>
     </Space>
   )
@@ -86,13 +85,18 @@ export const Tasks: React.FC = () => {
   const tasksWithKey = allTasks.map((task: ITask) => {
     return { ...task, key: task.id }
   })
-
+  console.log(tasksWithKey);
   return (
     isLoading ?
       <div className="tasks-spiner">
         <Spin />
       </div> :
-      <Table columns={columns} dataSource={tasksWithKey} />
+      <Table columns={columns}
+      expandable={{
+        expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
+        rowExpandable: record => record.id !== 'Not Expandable',
+      }}
+      dataSource={tasksWithKey} />
   )
 }
 
