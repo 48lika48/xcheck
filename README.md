@@ -1,11 +1,15 @@
 # X Check App / RS Assessment Tool
+
 ---
+
 ## Technology stack
 
 - Typescript
 - React
 - Node.js
+
 ---
+
 ## Getting Started
 
 ### Prerequisites
@@ -41,7 +45,7 @@
 - student (create request to check, review the work of other students, open a dispute)
 - author (create tasks, edit tasks, etc ...)
 - supervisor (all application features are available, etc ...)
-- course manager (starting a crosscheck session, etc ...)
+- course manager (create tasks, edit tasks, starting a crosscheck session, etc ...)
 
 #### Import/export tasks
 
