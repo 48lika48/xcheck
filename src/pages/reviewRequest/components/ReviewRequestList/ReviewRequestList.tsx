@@ -225,7 +225,8 @@ export const ReviewRequestList: React.FC = () => {
         expandable={{ expandedRowRender }}
         pagination={false}
         size='small'
-        tableLayout='fixed' />
+        tableLayout='fixed' 
+        scroll={{ x: 1300 }} />
       <ReviewDetails
         visible={detailsModal.visible}
         hideDetailsModal={hideDetailsModal}

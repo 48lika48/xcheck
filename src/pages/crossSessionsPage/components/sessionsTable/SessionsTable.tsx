@@ -13,9 +13,10 @@ export const SessionsTable = (props: {
     {
       title: 'Task name',
       dataIndex: 'taskId',
+      fixed: 'left',
       sorter: (a: { taskId: string | any[] }, b: { taskId: string | any[] }) =>
         a.taskId.length - b.taskId.length,
-    },
+    } as const,
     {
       title: 'Status',
       dataIndex: 'state',
@@ -80,5 +81,5 @@ export const SessionsTable = (props: {
       ),
     },
   ];
-  return <Table dataSource={sessions} columns={columns} rowKey="id" />;
+  return <Table dataSource={sessions} columns={columns} rowKey="id"  scroll={{ x: 1300 }} />;
 };
