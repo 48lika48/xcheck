@@ -1,0 +1,17 @@
+.create-button {
+  display: block;
+}
+
+.steps-action {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.ant-form-item-control-input-content {
+  .ant-input[disabled],
+  .ant-input-number-disabled {
+    color: #001;
+    cursor: auto;
+  }
+}

@@ -1,0 +1,47 @@
+#root .ant-layout {
+  min-height: 100vh;
+  padding: 0;
+
+  &-content {
+    padding: 0 20px;
+    background-color: #fefefe;
+  }
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+  a {
+    font-size: 0.8rem;
+    color: #000000d9;
+    text-decoration: none;
+    transition: all 0.3s ease 0s;
+    &:hover {
+      color: #000000;
+      text-shadow: 0 0 2px #0015;
+    }
+    &.github {
+      position: relative;
+      padding-left: 30px;
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0px;
+        top: -4px;
+        width: 24px;
+        height: 24px;
+        background-image: url(/img/github.svg);
+        background-size: cover;
+        filter: invert(80%);
+      }
+      &:hover::after {
+        filter: invert(100%);
+      }
+    }
+  }
+}
