@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, message } from 'antd';
+import React from 'react';
+import { Modal } from 'antd';
 import { ReviewForm } from '../../../../forms/SelfGradeModal/ReviewForm';
 import { IReviewRequest, ITask } from '../../../../models';
 
@@ -9,10 +9,11 @@ interface IReviewCreatePage {
   closeManager: () => void;
   reviewRequest: IReviewRequest | null;
   task: ITask[] | undefined;
+  save: (result: any) => void;
 }
 
 export const ReviewCreatePage = (props: IReviewCreatePage) => {
-  const { isEdit, isShowModal, closeManager, reviewRequest, task } = props;
+  const { isEdit, isShowModal, closeManager, reviewRequest, task, save } = props;
   return (
     <Modal
       title={
@@ -25,6 +26,7 @@ export const ReviewCreatePage = (props: IReviewCreatePage) => {
       onCancel={() => closeManager()}
     >
       <ReviewForm
+        save={save}
         reviewRequest={reviewRequest}
         task={task?.find((item) => item.id === reviewRequest?.task)}
       />

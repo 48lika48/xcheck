@@ -3,7 +3,7 @@ import { AppThunk } from '../store';
 import { CrossCheckSessionState, ICheckSession, IReview, IReviewRequest } from '../../models';
 import { getReviews } from '../../services/dbApi';
 import { getGithubLogin } from '../../services/github-auth';
-import { getCheckSessionsByState, getReviewRequests } from '../../services/heroku';
+import { addReview, getCheckSessionsByState, getReviewRequests } from '../../services/heroku';
 
 interface IReviewTableData extends IReview {
   key: number;
@@ -135,6 +135,15 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
   } catch (err) {
     dispatch(endLoading());
     dispatch(getReviewsFail(err.toString()));
+  }
+};
+
+export const setReview = (data: IReview): AppThunk => async (dispatch) => {
+  try {
+    dispatch(startLoading());
+    await addReview(data);
+  } catch (e) {
+    dispatch(endLoading());
   }
 };
 

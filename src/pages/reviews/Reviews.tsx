@@ -10,6 +10,7 @@ import {
   fetchReviewsByAuthor,
   fetchReviewsRequests,
   resetRequests,
+  setReview,
 } from '../../store/reducers/reviewsPageSlice';
 import { ReloadOutlined } from '@ant-design/icons';
 import { RequestSelector } from './components/requestSelector';
@@ -46,7 +47,16 @@ export const ReviewPage: React.FC = () => {
     // }
     getData();
   }
-
+  function saveHandler(result: any) {
+    dispatch(hideModal());
+    dispatch(setReview(result));
+    dispatch(setRequest(null));
+    dispatch(resetRequests());
+    // if (isEdit) {
+    //   dispatch(endEdit());
+    // }
+    getData();
+  }
   function changeHandler(value: string) {
     console.log(value);
     dispatch(setRequest(setRequestForForm(requestsForReview, value)));
@@ -147,6 +157,7 @@ export const ReviewPage: React.FC = () => {
         closeManager={closeHandler}
         reviewRequest={request}
         task={allTasks}
+        save={saveHandler}
       />
       <Table columns={columns} dataSource={reviews} rowKey="id" />
       <Button onClick={() => getData()} icon={<ReloadOutlined />}>
@@ -155,4 +166,3 @@ export const ReviewPage: React.FC = () => {
     </Spin>
   );
 };
-// TODO add user role behavior
