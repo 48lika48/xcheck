@@ -1,56 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
-import { Table, Space, Button, Tag, Input, Spin, Popconfirm } from 'antd';
+import { Table, Space, Button, Tag, Input, Spin, Popconfirm, Popover, List } from 'antd';
 
 import { ITask } from 'src/models';
 import { fetchDeleteTask, startEditingTask } from 'src/store/reducers/tasksSlice';
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'id',
-    key: 'id',
-    render: (text: string) => <Button type="link" style={{ padding: 0 }}>{text}</Button>,
-  },
-  {
-    title: 'Deadline',
-    dataIndex: 'endDate',
-    key: 'endDate',
-    render: (text: string) => `${text.slice(0, 10)} ${text.slice(11, text.length - 6)}`
-  },
-  {
-    title: 'Author',
-    dataIndex: 'author',
-    key: 'author',
-  },
-  {
-    title: 'Status',
-    key: 'state',
-    dataIndex: 'state',
-    render: (state: string) => (
-      <Tag color={state === 'DRAFT' ? 'volcano' : 'green'}>
-        {state.toUpperCase()}
-      </Tag>
-    ),
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text: any, record: any) => (
-      <Action taskId={text.id} />
-    ),
-  },
-  {
-    title: 'Comment',
-    dataIndex: 'comment',
-    key: 'comment',
-    render: (text: string) => (
-      <Input placeholder="" bordered={true} />
-    ),
-  },
-];
 
 const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
   const { currentUser } = useSelector((state: RootState) => state.users);
@@ -86,9 +41,86 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
 export const Tasks: React.FC = () => {
   const { allTasks, isLoading } = useSelector((state: RootState) => state.tasks);
 
+  const defaulVisiblePopovers: { [key: string]: boolean } = {};
+  allTasks.forEach((item: ITask) => defaulVisiblePopovers[item.id] = false)
+  const [isVisiblePopover, setVisiblePopover] = useState(defaulVisiblePopovers);
+
+
   const tasksWithKey = allTasks.map((task: ITask) => {
     return { ...task, key: task.id }
-  })
+  });
+
+  const handleVisiblePopover = (visible: boolean, id: string) => {
+    defaulVisiblePopovers[id] = visible;
+    setVisiblePopover({ ...defaulVisiblePopovers });
+  }
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text: string) => <Button type="link" style={{ padding: 0 }}>{text}</Button>,
+    },
+    {
+      title: 'Deadline',
+      dataIndex: 'endDate',
+      key: 'endDate',
+      render: (text: string) => `${text.slice(0, 10)} ${text.slice(11, text.length - 6)}`
+    },
+    {
+      title: 'Author',
+      dataIndex: 'author',
+      key: 'author',
+    },
+    {
+      title: 'Status',
+      key: 'state',
+      dataIndex: 'state',
+      render: (state: string, data: any) => (
+        <Popover
+          content={
+            <List
+              itemLayout="horizontal"
+              dataSource={['DRAFT', 'PUBLISHED', 'ARCHIVED']}
+              size="small"
+              renderItem={item => (
+                <List.Item style={{ padding: '5px' }}
+                  onClick={() => console.log(item)}>
+                  <Tag color={item === 'DRAFT' ? 'volcano' : 'green'}>{item}</Tag>
+                </List.Item>
+              )}
+            />}
+          trigger="click"
+          visible={isVisiblePopover[data.id]}
+          onVisibleChange={(visible: boolean): void => {
+            handleVisiblePopover(visible, data.id)
+          }}
+          style={{ maxWidth: '130', padding: '5px 10px' }}
+        >
+          <Tag color={state === 'DRAFT' ? 'volcano' : 'green'}>
+            {state.toUpperCase()}
+          </Tag>
+        </Popover>
+
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text: any, record: any) => (
+        <Action taskId={text.id} />
+      ),
+    },
+    {
+      title: 'Comment',
+      dataIndex: 'comment',
+      key: 'comment',
+      render: (text: string) => (
+        <Input placeholder="" bordered={true} />
+      ),
+    },
+  ];
 
   return (
     isLoading ?
