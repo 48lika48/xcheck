@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Button, Select, DatePicker, InputNumber, Space, Checkbox, Tooltip } from 'antd';
-import { ICheckSession, ITask } from '../../../../models';
+import { ICheckSession, IReviewRequest, ITask } from '../../../../models';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 const tailLayout = {
@@ -13,6 +13,7 @@ interface ICrossSessionForm {
   editData: any;
   onSave: (value: ICheckSession) => void;
   onCancel: () => void;
+  requests: IReviewRequest[];
 }
 
 const state: string[] = ['DRAFT', 'REQUESTS_GATHERING', 'CROSS_CHECK', 'COMPLETED'];
@@ -20,11 +21,13 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
   const { id, tasks, isEdit, editData, onSave, onCancel } = props;
   let startData = '';
   let endData = '';
+  const [form] = Form.useForm();
   const onFinish = (values: any) => {
     values.startDate = isEdit ? editData.startDate : startData;
     values.endDate = isEdit ? editData.endData : endData;
     values.id = isEdit ? editData.id : `${values.taskId}-crossCheck`;
     values.state = isEdit ? values.state : `DRAFT`;
+    values.attendees = [];
     onSave(values);
   };
   return (
@@ -35,6 +38,7 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
       layout="horizontal"
       initialValues={{ size: 'default' }}
       onFinish={onFinish}
+      form={form}
     >
       <Form.Item
         label="Task name"
@@ -131,13 +135,11 @@ export const CrossSessionForm = (props: ICrossSessionForm) => {
           </Form.Item>
         </Tooltip>
       </Form.Item>
-
       <Form.Item>
         <Space size={'small'}>
           <Button type="primary" htmlType="submit">
             Save
           </Button>
-
           <Button onClick={() => onCancel()}>Cancel</Button>
         </Space>
       </Form.Item>
