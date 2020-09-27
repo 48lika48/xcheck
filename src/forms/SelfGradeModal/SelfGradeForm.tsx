@@ -15,6 +15,7 @@ type Iprops = {
 
 export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
   const dispatch = useDispatch();
+  const checkFormsElements: Array<any> | undefined = [];
   const { tasks } = useSelector((state: RootState) => state.reviewRequest);
   const { task, loading } = useSelector((state: RootState) => state.selfGradeSlice);
   useEffect(
@@ -23,6 +24,21 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
     },
     [dispatch, props.taskId, tasks]
   );
+  if (task && task.subtasks) {
+    Object.keys(task.subtasks).map((category: string) => {
+      return (
+        task.subtasks && task.subtasks[category].forEach((item: any, index: number) => {
+          checkFormsElements.push(
+            <CheckForm
+              key={task.subtasks && task.score && `${category}_item${index}`}
+              subtask={item}
+              score={task.score && task.score[category][index]}
+              category={category}
+              index={index}
+            />);
+        }))
+    })
+  }
 
   return loading ? (
     <Space>
@@ -31,19 +47,11 @@ export const SelfGradeForm: React.FC<Iprops> = (props: any) => {
     </Space>
   ) : (
       <React.Fragment>
-        {task && task.items ? (
-          task.items.map((item: any, index: number) => {
-            return (
-              <CheckForm
-                key={task.items && task.items.length - index}
-                item={item}
-                index={index}
-              />
-            )
-          })
-        ) : (
-            <Paragraph>Close Modal and open later</Paragraph>
-          )}
+        {
+          task && task.subtasks ? (checkFormsElements)
+            :
+            (<Paragraph>Close Modal and open later</Paragraph>)
+        }
         <Button onClick={props.handleEndCheck}>
           Save and Close Check
         <SmileTwoTone />
