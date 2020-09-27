@@ -4,7 +4,9 @@ import { Form, Button, Input, Space, DatePicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { formItemLayout, formItemLayoutWithOutLabel } from './constants/constants';
 import { updateArray } from './helpers';
-import { ITask } from 'src/models';
+import { ITask, UserRole } from 'src/models';
+import { RootState } from 'src/store/rootReducer';
+import { useSelector } from 'react-redux';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -15,6 +17,10 @@ type MainProps = {
 }
 
 const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
+  const { activeTaskId } = useSelector((state: RootState) => state.tasks);
+  const { currentRole } = useSelector((state: RootState) => state.users.currentUser);
+  const isDisabled = currentRole === UserRole.student;
+
   return (
     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
       <Form.Item
@@ -27,6 +33,7 @@ const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
           placeholder="task name"
           style={{ width: '60%' }}
           value={taskData.id}
+          disabled={!!activeTaskId}
           onChange={
             (e: React.FormEvent<HTMLInputElement>) => onDataChange('id', e.currentTarget.value)}
         />
@@ -42,6 +49,7 @@ const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
           style={{ width: '60%' }}
           autoSize
           value={taskData.description}
+          disabled={isDisabled}
           onChange={
             (e: React.ChangeEvent<HTMLTextAreaElement>) => onDataChange('description', e.currentTarget.value)}
         />
@@ -54,7 +62,10 @@ const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
         <Space direction="vertical" size={12} >
           <RangePicker
             ranges={{}}
-            value={[moment(taskData.startDate), moment(taskData.endDate)]}
+            disabled={isDisabled}
+            value={[
+              taskData.startDate ? moment(taskData.startDate) : moment(),
+              taskData.endDate ? moment(taskData.endDate) : moment()]}
             showTime
             format="DD.MM.YYYY HH:mm"
             onChange={
@@ -104,6 +115,7 @@ const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
                       placeholder="task goal"
                       style={{ width: '60%' }}
                       autoSize
+                      disabled={isDisabled}
                       onChange={
                         (e: React.ChangeEvent<HTMLTextAreaElement>) => {
                           onDataChange('goals', updateArray(taskData.goals || [], index, e.currentTarget.value))
@@ -116,6 +128,7 @@ const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       style={{ margin: '0 8px' }}
+                      hidden={isDisabled}
                       onClick={() => {
                         remove(field.name);
                         updateArray(taskData.goals || [], index, '')
@@ -127,6 +140,7 @@ const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
               <Form.Item>
                 <Button
                   type="dashed"
+                  hidden={isDisabled}
                   onClick={() => add()}
                   style={{ width: '60%' }}
                 >

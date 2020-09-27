@@ -5,14 +5,14 @@ import { AppThunk } from '../store';
 
 interface ITasksState {
   allTasks: ITask[];
-  editedTaskId: string | null;
+  activeTaskId: string | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: ITasksState = {
   allTasks: [],
-  editedTaskId: null,
+  activeTaskId: null,
   isLoading: false,
   error: null,
 };
@@ -23,7 +23,7 @@ function startLoading(state: ITasksState) {
 
 function loadingFailed(state: ITasksState, action: PayloadAction<string>) {
   state.isLoading = false;
-  state.editedTaskId = null;
+  state.activeTaskId = null;
   state.error = action.payload;
 }
 
@@ -42,10 +42,10 @@ const tasksSlice = createSlice({
       state.isLoading = false;
     },
     startEditingTask(state, action: PayloadAction<string>) {
-      state.editedTaskId = action.payload;
+      state.activeTaskId = action.payload;
     },
     finishEditingTask(state) {
-      state.editedTaskId = null;
+      state.activeTaskId = null;
     },
     setTaskStatus(state, action: PayloadAction<{ taskId: string; status: TaskState }>) {
       const taskIndex = state.allTasks.findIndex(

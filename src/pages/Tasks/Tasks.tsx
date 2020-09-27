@@ -17,21 +17,21 @@ const Action: React.FC<{ taskId: string }> = ({ taskId }) => {
     dispatch(fetchDeleteTask(taskId));
   }
 
-  const handelEdit = (taskId: string) => {
+  const handleOpenTask = (taskId: string) => {
     dispatch(startEditingTask(taskId));
   }
 
   if (currentRole === 'student') {
     return (
       <Space size="middle">
-        <Button type="link" style={{ padding: 0 }}>Open</Button>
+        <Button type="link" style={{ padding: 0 }} onClick={() => handleOpenTask(taskId)}>Open</Button>
       </Space>
     )
   }
 
   return (
     <Space size="middle">
-      <Button type="link" style={{ padding: 0 }} onClick={() => handelEdit(taskId)}>Edit</Button>
+      <Button type="link" style={{ padding: 0 }} onClick={() => handleOpenTask(taskId)}>Edit</Button>
       <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(taskId)}>
         <Button type="link" style={{ padding: 0 }}>Delete</Button>
       </Popconfirm>
@@ -57,7 +57,7 @@ export const Tasks: React.FC = () => {
     if (currentRole !== UserRole.student) {
       defaulVisiblePopovers[id] = visible;
       setVisiblePopover({ ...defaulVisiblePopovers });
-    } 
+    }
   }
 
   const handleTaskStatusChange = (id: string, status: TaskState) => {

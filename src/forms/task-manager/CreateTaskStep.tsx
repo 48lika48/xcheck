@@ -3,7 +3,9 @@ import { Form, Button, Input, InputNumber } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { formItemLayout, formItemLayoutWithOutLabel } from './constants/constants';
 import { updateArray, updateSubtasks, updateMaxScore, updateScores } from './helpers';
-import { ITask } from 'src/models';
+import { ITask, UserRole } from 'src/models';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
 
 const { TextArea } = Input;
 
@@ -14,6 +16,8 @@ type StepProps = {
 }
 
 const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData }) => {
+  const { currentRole } = useSelector((state: RootState) => state.users.currentUser);
+  const isDisabled = currentRole === UserRole.student;
   return (
     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
       <Form.Item
@@ -27,6 +31,7 @@ const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData })
           placeholder={`${stepId} scope short description`}
           style={{ width: '60%' }}
           autoSize
+          disabled={isDisabled}
           onChange={
             (e: React.ChangeEvent<HTMLTextAreaElement>) => {
               taskData.requirements && onDataChange('requirements', updateArray(taskData.requirements, 0, e.currentTarget.value))
@@ -71,6 +76,7 @@ const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData })
                       <TextArea
                         placeholder="subtask"
                         style={{ width: '60%' }}
+                        disabled={isDisabled}
                         onChange={
                           (e: React.ChangeEvent<HTMLTextAreaElement>) => {
                             onDataChange('subtasks', updateSubtasks(taskData.subtasks, stepId, index, e.currentTarget.value))
@@ -83,6 +89,7 @@ const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData })
                         placeholder="Score"
                         min={0}
                         style={{ width: '11%', marginLeft: '2%' }}
+                        disabled={isDisabled}
                         onChange={
                           (value: any) => {
                             onDataChange('score', updateScores(taskData.score, stepId, index, +value));
@@ -97,6 +104,7 @@ const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData })
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       style={{ margin: '0 8px' }}
+                      hidden={isDisabled}
                       onClick={() => {
                         remove(field.name)
                         updateArray(taskData.goals || [], index, '')
@@ -108,6 +116,7 @@ const CreateTaskStep: React.FC<StepProps> = ({ stepId, onDataChange, taskData })
               <Form.Item>
                 <Button
                   type="dashed"
+                  hidden={isDisabled}
                   onClick={() => add()}
                   style={{ width: '60%' }}
                 >

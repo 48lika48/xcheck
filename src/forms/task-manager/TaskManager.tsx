@@ -39,8 +39,10 @@ export const TaskManager: React.FC = () => {
   const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
   const { userData, currentRole } = useSelector((state: RootState) => state.users.currentUser);
-  const { editedTaskId, allTasks } = useSelector((state: RootState) => state.tasks);
+  const { activeTaskId, allTasks } = useSelector((state: RootState) => state.tasks);
   const { githubId } = userData;
+
+  const isDisabled = currentRole === UserRole.student;
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -48,14 +50,14 @@ export const TaskManager: React.FC = () => {
   }, [githubId, dispatch]);
 
   useEffect(() => {
-    if (editedTaskId) {
+    if (activeTaskId) {
       showManager();
-      const task = { ...allTasks.filter((item: ITask) => item.id === editedTaskId)[0] };
+      const task = { ...allTasks.filter((item: ITask) => item.id === activeTaskId)[0] };
       task.subtasks = task.subtasks && { ...task.subtasks };
       task.score = task.score && { ...task.score };
       setTaskData(task);
     }
-  }, [allTasks, editedTaskId])
+  }, [allTasks, activeTaskId])
 
   const onDataChange = (field: string, value: any) => {
     if (field === 'allData') { return setTaskData(value) }
@@ -124,8 +126,8 @@ export const TaskManager: React.FC = () => {
   }
 
   const saveChanges = (): void => {
-    if (editedTaskId) {
-      dispatch(fetchUpdateTask(editedTaskId, taskData));
+    if (activeTaskId) {
+      dispatch(fetchUpdateTask(activeTaskId, taskData));
       message.success('Changes saved!')
     } else {
       dispatch(fetchNewTask(taskData));
@@ -145,7 +147,7 @@ export const TaskManager: React.FC = () => {
         okText="Save"
         onOk={saveChanges}
         onCancel={closeManager}
-        okButtonProps={{ disabled: false }}
+        okButtonProps={{ disabled: isDisabled }}
         cancelButtonProps={{ disabled: false }}
       >
         <Steps current={step} style={{ margin: '20px 0px' }}>
@@ -167,7 +169,8 @@ export const TaskManager: React.FC = () => {
               </Button>
             )}
             {step === steps.length - 1 && (
-              <Button type="primary" onClick={createTask}>
+
+              <Button type="primary" onClick={createTask} hidden={isDisabled}>
                 Done
               </Button>
             )}
@@ -175,7 +178,7 @@ export const TaskManager: React.FC = () => {
           <Form.Item>
             <Space>
               <Upload {...load}>
-                <Button icon={<UploadOutlined />}>Import data</Button>
+                <Button icon={<UploadOutlined />} hidden={isDisabled}>Import data</Button>
               </Upload>
               <Button icon={<DownloadOutlined />} onClick={() => saveTask(taskData)}>Export data</Button>
             </Space>
