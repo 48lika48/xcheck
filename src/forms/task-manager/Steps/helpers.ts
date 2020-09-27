@@ -2,7 +2,8 @@ import { ITask } from 'src/models';
 import { defaultScore, defaultSubtask } from '../TaskManager';
 
 export const updateArray = (currentArray: string[], index: number, value: string): string[] => {
-  currentArray[index] = value;
+  const newArray = [...currentArray];
+  newArray[index] = value;
   return currentArray;
 };
 
@@ -11,21 +12,9 @@ export const updateSubtasks = (
   category: string,
   index: number,
   value: string
-): {} => {
-  switch (category) {
-    case 'basic':
-      currentSubtasks.basic[index] = value;
-      break;
-    case 'advanced':
-      currentSubtasks.advanced[index] = value;
-      break;
-    case 'extra':
-      currentSubtasks.extra[index] = value;
-      break;
-    case 'fines':
-      currentSubtasks.fines[index] = value;
-      break;
-  }
+): ITask['subtasks'] => {
+  currentSubtasks[category] = [...currentSubtasks[category]];
+  currentSubtasks[category][index] = value;
   return currentSubtasks;
 };
 
@@ -34,21 +23,9 @@ export const updateScores = (
   category: string,
   index: number,
   value: number
-): {} => {
-  switch (category) {
-    case 'basic':
-      currentScore.basic[index] = +value;
-      break;
-    case 'advanced':
-      currentScore.advanced[index] = +value;
-      break;
-    case 'extra':
-      currentScore.extra[index] = +value;
-      break;
-    case 'fines':
-      currentScore.fines[index] = +value;
-      break;
-  }
+): ITask['score'] => {
+  currentScore[category] = [...currentScore[category]];
+  currentScore[category][index] = value;
   return currentScore;
 };
 

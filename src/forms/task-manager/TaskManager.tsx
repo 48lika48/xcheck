@@ -9,7 +9,7 @@ import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
 import { ITask, TaskState } from '../../models';
-import { fetchNewTask, fetchTasks, fetchUpdateTask } from 'src/store/reducers/tasksSlice';
+import { fetchNewTask, fetchTasks, fetchUpdateTask, finishEditingTask } from 'src/store/reducers/tasksSlice';
 import { RootState } from 'src/store/rootReducer';
 const { Step } = Steps;
 
@@ -49,8 +49,10 @@ export const TaskManager: React.FC = () => {
   useEffect(() => {
     if (editedTaskId) {
       showManager();
-      const task = allTasks.filter((item: ITask) => item.id === editedTaskId);
-      !!task && setTaskData(task[0]);
+      const task = { ...allTasks.filter((item: ITask) => item.id === editedTaskId)[0] };
+      task.subtasks = task.subtasks && { ...task.subtasks };
+      task.score = task.score && { ...task.score };
+      setTaskData(task);
     }
   }, [allTasks, editedTaskId])
 
@@ -96,11 +98,13 @@ export const TaskManager: React.FC = () => {
   ];
 
   const showManager = (): void => {
+    setStep(0);
     setIsShowModal(true);
   }
 
   const closeManager = (): void => {
     setIsShowModal(false);
+    dispatch(finishEditingTask());
   }
 
   const next = (): void => {
@@ -113,6 +117,9 @@ export const TaskManager: React.FC = () => {
 
   const createTask = (): void => {
     saveChanges();
+    setIsShowModal(false);
+    setTaskData(defaultTask);
+    setStep(0);
   }
 
   const saveChanges = (): void => {
@@ -123,10 +130,6 @@ export const TaskManager: React.FC = () => {
       dispatch(fetchNewTask(taskData));
       message.success('Task created!');
     }
-
-    setTaskData(defaultTask);
-    setStep(0);
-    setIsShowModal(false);
   }
 
   return (
