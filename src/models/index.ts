@@ -42,9 +42,7 @@ export interface ITask {
   categoriesOrder?: TaskCategory[];
   requirements?: string[];
   items?: ITaskItem[];
-  subtasks?: {
-    [key: string]: Array<string | undefined>;
-  };
+  subtasks?: { [key: string]: Array<string | undefined> };
   score?: { [key: string]: number[] };
 
   maxScore?: 0;
@@ -133,6 +131,7 @@ export interface ITaskScoreItem {
   id: string;
   score: number;
   comment: string;
+  subtask: string;
 }
 
 export enum ReviewState {
