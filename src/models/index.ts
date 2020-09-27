@@ -43,7 +43,7 @@ export interface ITask {
   requirements?: string[];
   items?: ITaskItem[];
   subtasks?: {
-    [key: string]: Array<string | undefined>;
+    [key: string]: string[];
   };
   score?: { [key: string]: number[] };
 

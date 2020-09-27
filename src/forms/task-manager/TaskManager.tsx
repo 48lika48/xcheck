@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Main, Basic, Advanced, Extra, Fines } from './steps';
-
 import { Form, Modal, Button, Steps, Space, Upload, message } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
@@ -11,6 +9,8 @@ import { parsTask } from 'src/services/parser-task';
 import { ITask, TaskState, UserRole } from '../../models';
 import { fetchNewTask, fetchTasks, fetchUpdateTask, finishEditingTask } from 'src/store/reducers/tasksSlice';
 import { RootState } from 'src/store/rootReducer';
+import CreateTaskStep from './CreateTaskStep';
+import MainStep from './MainStep';
 const { Step } = Steps;
 
 export const defaultSubtask = { basic: [], advanced: [], extra: [], fines: [] };
@@ -78,23 +78,23 @@ export const TaskManager: React.FC = () => {
   const steps = [
     {
       title: "Main",
-      content: <Main onDataChange={onDataChange} taskData={taskData} />
+      content: <MainStep onDataChange={onDataChange} taskData={taskData} />
     },
     {
       title: 'Basic Scope',
-      content: <Basic onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="basic" onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Advanced scope',
-      content: <Advanced onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="advanced" onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Extra scope',
-      content: <Extra onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="extra" onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Fines',
-      content: <Fines onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="fines" onDataChange={onDataChange} taskData={taskData} />,
     }
   ];
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import moment from 'moment';
 import { Form, Button, Input, Space, DatePicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { formItemLayout, formItemLayoutWithOutLabel } from '../constants/constants';
+import { formItemLayout, formItemLayoutWithOutLabel } from './constants/constants';
 import { updateArray } from './helpers';
 import { ITask } from 'src/models';
 
@@ -14,7 +14,7 @@ type MainProps = {
   taskData: ITask
 }
 
-const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
+const MainStep: React.FC<MainProps> = ({ onDataChange, taskData }) => {
   return (
     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} >
       <Form.Item
@@ -140,4 +140,4 @@ const Main: React.FC<MainProps> = ({ onDataChange, taskData }) => {
     </Form>
   );
 }
-export default Main;
+export default MainStep;

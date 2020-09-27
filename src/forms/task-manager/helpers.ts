@@ -1,5 +1,5 @@
 import { ITask } from 'src/models';
-import { defaultScore, defaultSubtask } from '../TaskManager';
+import { defaultScore, defaultSubtask } from './TaskManager';
 
 export const updateArray = (currentArray: string[], index: number, value: string): string[] => {
   const newArray = [...currentArray];
