@@ -67,9 +67,10 @@ export const ReviewPage: React.FC = () => {
     {
       title: 'Reviewed Student',
       dataIndex: 'reviewedStudent',
+      fixed: 'left',
       sorter: (a: { reviewedStudent: string | any[] }, b: { reviewedStudent: string | any[] }) =>
         a.reviewedStudent.length - b.reviewedStudent.length,
-    },
+    }  as const,
     {
       title: 'Task',
       dataIndex: 'task',
@@ -159,7 +160,7 @@ export const ReviewPage: React.FC = () => {
         task={allTasks}
         save={saveHandler}
       />
-      <Table columns={columns} dataSource={reviews} rowKey="id" />
+      <Table columns={columns} dataSource={reviews} rowKey="id"  scroll={{ x: 1300 }} />
       <Button onClick={() => getData()} icon={<ReloadOutlined />}>
         Reload
       </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
 
@@ -64,13 +64,16 @@ export const Tasks: React.FC = () => {
     dispatch(changeTaskStatus(id, status));
   }
 
+
+
   const columns = [
     {
       title: 'Name',
       dataIndex: 'id',
       key: 'id',
+      fixed: 'left',
       render: (text: string) => <Button type="link" style={{ padding: 0 }}>{text}</Button>,
-    },
+    }  as const,
     {
       title: 'Deadline',
       dataIndex: 'endDate',
@@ -81,6 +84,7 @@ export const Tasks: React.FC = () => {
       title: 'Author',
       dataIndex: 'author',
       key: 'author',
+
     },
     {
       title: 'Status',
@@ -142,12 +146,13 @@ export const Tasks: React.FC = () => {
       <div className="tasks-spiner">
         <Spin />
       </div> :
-      <Table columns={columns}
+      <Table  columns={columns}
         expandable={{
           expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
           rowExpandable: record => record.id !== 'Not Expandable',
         }}
-        dataSource={tasksWithKey} />
+        dataSource={tasksWithKey}
+        scroll={{ x: 1300 }} />
   )
 }
 
