@@ -9,7 +9,7 @@ import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
 import { ITask, TaskState } from '../../models';
-import { fetchNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
+import { fetchNewTask, fetchTasks, fetchUpdateTask } from 'src/store/reducers/tasksSlice';
 import { RootState } from 'src/store/rootReducer';
 const { Step } = Steps;
 
@@ -112,16 +112,19 @@ export const TaskManager: React.FC = () => {
   }
 
   const createTask = (): void => {
-    dispatch(fetchNewTask(taskData));
-    message.success('Task created!');
-    setTaskData(defaultTask);
-    setStep(0);
-    setIsShowModal(false);
+    saveChanges();
   }
 
   const saveChanges = (): void => {
-    dispatch(fetchNewTask(taskData));
-    message.success('Changes saved!');
+    if (editedTaskId) {
+      dispatch(fetchUpdateTask(editedTaskId, taskData));
+      message.success('Changes saved!')
+    } else {
+      dispatch(fetchNewTask(taskData));
+      message.success('Task created!');
+    }
+
+    setTaskData(defaultTask);
     setStep(0);
     setIsShowModal(false);
   }
