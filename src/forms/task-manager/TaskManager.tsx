@@ -8,7 +8,7 @@ import { Form, Modal, Button, Steps, Space, Upload, message } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
-import { ITask, TaskState } from '../../models';
+import { ITask, TaskState, UserRole } from '../../models';
 import { fetchNewTask, fetchTasks, fetchUpdateTask, finishEditingTask } from 'src/store/reducers/tasksSlice';
 import { RootState } from 'src/store/rootReducer';
 const { Step } = Steps;
@@ -38,8 +38,9 @@ export const TaskManager: React.FC = () => {
   const [step, setStep] = useState(0);
   const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
-  const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData);
+  const { userData, currentRole } = useSelector((state: RootState) => state.users.currentUser);
   const { editedTaskId, allTasks } = useSelector((state: RootState) => state.tasks);
+  const { githubId } = userData;
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -134,9 +135,9 @@ export const TaskManager: React.FC = () => {
 
   return (
     <>
-      <Button type="primary" onClick={showManager}>
+      {currentRole !== UserRole.student && <Button type="primary" onClick={showManager}>
         Create task +
-      </Button>
+      </Button>}
       <Modal
         title="Create task"
         width={1000}
