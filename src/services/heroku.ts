@@ -41,6 +41,21 @@ export const addTask = async (task: ITask) => {
   return res;
 };
 
+export const deleteTask = async (taskId: string) => {
+  const res = deleteData(Endpoint.tasks, taskId);
+  return res;
+};
+
+export const updateTask = async (id: string, data: ITask) => {
+  fetch(`${HEROKU_URL}${Endpoint.tasks}/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const getCheckSessions = async () => {
   const res = await getData(Endpoint.checkSessions);
   return res;

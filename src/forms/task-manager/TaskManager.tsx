@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Main, Basic, Advanced, Extra, Fines } from './steps';
-
 import { Form, Modal, Button, Steps, Space, Upload, message } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveTask } from 'src/services/save-task';
 import { parsTask } from 'src/services/parser-task';
-import { ITask, TaskState } from '../../models';
-import { fetchNewTask, fetchTasks } from 'src/store/reducers/tasksSlice';
+import { ITask, TaskState, UserRole } from '../../models';
+import { fetchNewTask, fetchTasks, fetchUpdateTask, finishEditingTask } from 'src/store/reducers/tasksSlice';
 import { RootState } from 'src/store/rootReducer';
+import CreateTaskStep from './CreateTaskStep';
+import MainStep from './MainStep';
 const { Step } = Steps;
 
 export const defaultSubtask = { basic: [], advanced: [], extra: [], fines: [] };
@@ -38,12 +38,26 @@ export const TaskManager: React.FC = () => {
   const [step, setStep] = useState(0);
   const [taskData, setTaskData] = useState(defaultTask);
   const [fileList, setFileList] = React.useState([{ uid: null }]);
-  const { githubId } = useSelector((state: RootState) => state.users.currentUser.userData);
+  const { userData, currentRole } = useSelector((state: RootState) => state.users.currentUser);
+  const { activeTaskId, allTasks } = useSelector((state: RootState) => state.tasks);
+  const { githubId } = userData;
+
+  const isDisabled = currentRole === UserRole.student;
 
   useEffect(() => {
     dispatch(fetchTasks());
     onDataChange('author', githubId);
   }, [githubId, dispatch]);
+
+  useEffect(() => {
+    if (activeTaskId) {
+      showManager();
+      const task = { ...allTasks.filter((item: ITask) => item.id === activeTaskId)[0] };
+      task.subtasks = task.subtasks && { ...task.subtasks };
+      task.score = task.score && { ...task.score };
+      setTaskData(task);
+    }
+  }, [allTasks, activeTaskId])
 
   const onDataChange = (field: string, value: any) => {
     if (field === 'allData') { return setTaskData(value) }
@@ -63,36 +77,37 @@ export const TaskManager: React.FC = () => {
     onChange: async (info: { file: { uid: null; }; }) => setFileList([info.file]),
   };
 
-
   const steps = [
     {
       title: "Main",
-      content: <Main onDataChange={onDataChange} taskData={taskData} />
+      content: <MainStep onDataChange={onDataChange} taskData={taskData} />
     },
     {
       title: 'Basic Scope',
-      content: <Basic onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="basic" onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Advanced scope',
-      content: <Advanced onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="advanced" onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Extra scope',
-      content: <Extra onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="extra" onDataChange={onDataChange} taskData={taskData} />,
     },
     {
       title: 'Fines',
-      content: <Fines onDataChange={onDataChange} taskData={taskData} />,
+      content: <CreateTaskStep stepId="fines" onDataChange={onDataChange} taskData={taskData} />,
     }
   ];
 
   const showManager = (): void => {
+    setStep(0);
     setIsShowModal(true);
   }
 
   const closeManager = (): void => {
     setIsShowModal(false);
+    dispatch(finishEditingTask());
   }
 
   const next = (): void => {
@@ -104,33 +119,36 @@ export const TaskManager: React.FC = () => {
   }
 
   const createTask = (): void => {
-    dispatch(fetchNewTask(taskData));
-    message.success('Task created!');
+    saveChanges();
+    setIsShowModal(false);
     setTaskData(defaultTask);
     setStep(0);
-    setIsShowModal(false);
   }
 
   const saveChanges = (): void => {
-    dispatch(fetchNewTask(taskData));
-    message.success('Changes saved!');
-    setStep(0);
-    setIsShowModal(false);
+    if (activeTaskId) {
+      dispatch(fetchUpdateTask(activeTaskId, taskData));
+      message.success('Changes saved!')
+    } else {
+      dispatch(fetchNewTask(taskData));
+      message.success('Task created!');
+    }
   }
 
   return (
     <>
-      <Button type="primary" onClick={showManager}>
+      {currentRole !== UserRole.student && <Button type="primary" onClick={showManager}>
         Create task +
-      </Button>
+      </Button>}
       <Modal
         title="Create task"
         width={1000}
         visible={isShowModal}
         okText="Save"
+        cancelText="Close"
         onOk={saveChanges}
         onCancel={closeManager}
-        okButtonProps={{ disabled: false }}
+        okButtonProps={{ disabled: isDisabled }}
         cancelButtonProps={{ disabled: false }}
       >
         <Steps current={step} style={{ margin: '20px 0px' }}>
@@ -152,7 +170,8 @@ export const TaskManager: React.FC = () => {
               </Button>
             )}
             {step === steps.length - 1 && (
-              <Button type="primary" onClick={createTask}>
+
+              <Button type="primary" onClick={createTask} hidden={isDisabled}>
                 Done
               </Button>
             )}
@@ -160,7 +179,7 @@ export const TaskManager: React.FC = () => {
           <Form.Item>
             <Space>
               <Upload {...load}>
-                <Button icon={<UploadOutlined />}>Import data</Button>
+                <Button icon={<UploadOutlined />} hidden={isDisabled}>Import data</Button>
               </Upload>
               <Button icon={<DownloadOutlined />} onClick={() => saveTask(taskData)}>Export data</Button>
             </Space>

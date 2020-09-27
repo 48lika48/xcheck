@@ -6,7 +6,7 @@ import {
   updateSubtasks,
   updateMaxScore,
   updateScores,
-} from '../forms/task-manager/steps/helpers';
+} from '../forms/task-manager/helpers';
 import { defaultScore, defaultSubtask } from 'src/forms/task-manager/TaskManager';
 
 const categories = ['basic', 'advanced', 'extra', 'fines'];
