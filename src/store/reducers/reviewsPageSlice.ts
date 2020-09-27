@@ -125,13 +125,14 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
     dispatch(startLoading());
     const sessions = await getCheckSessionsByState(CrossCheckSessionState.CROSS_CHECK);
     const requests: IReviewRequest[] = await getReviewRequests();
-    console.log(sessions);
-    sessions.forEach((item) => {
-      const sessionAttendees = item.attendees.filter((attendee) => attendee.githubId === user)[0];
-      let sortedReq = requests.filter((request) => request.crossCheckSessionId === item.id);
-      sortedReq = sortedReq.filter((req) => sessionAttendees.reviewerOf.includes(req.author));
-      dispatch(setRqForReviews(sortedReq));
-    });
+    if (sessions) {
+      sessions.forEach((item) => {
+        const sessionAttendees = item.attendees.filter((attendee) => attendee.githubId === user)[0];
+        let sortedReq = requests.filter((request) => request.crossCheckSessionId === item.id);
+        sortedReq = sortedReq.filter((req) => sessionAttendees.reviewerOf.includes(req.author));
+        dispatch(setRqForReviews(sortedReq));
+      });
+    }
   } catch (err) {
     dispatch(endLoading());
     dispatch(getReviewsFail(err.toString()));
