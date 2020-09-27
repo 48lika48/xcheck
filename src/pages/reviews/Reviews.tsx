@@ -29,6 +29,7 @@ export const ReviewPage: React.FC = () => {
   const { allTasks } = useSelector((state: RootState) => state.tasks);
   const { isShowModal, request } = useSelector((state: RootState) => state.reviewCreate);
   const getData = useCallback(() => {
+    dispatch(resetRequests());
     dispatch(fetchReviewsByAuthor());
     dispatch(fetchReviewsRequests());
     dispatch(fetchRequestsToReview());

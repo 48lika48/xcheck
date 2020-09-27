@@ -65,9 +65,9 @@ const reviewsPageSlice = createSlice({
     setRqForReviews(state, action) {
       let reviewsId: string[] = [];
       state.reviews.forEach((review) => reviewsId.push(review.requestId));
-      state.requestsForReview = action.payload.filter(
-        (item: IReviewRequest) => !reviewsId.includes(item.id)
-      );
+      action.payload
+        .filter((item: IReviewRequest) => !reviewsId.includes(item.id))
+        .forEach((i: IReviewRequest) => state.requestsForReview.push(i));
     },
     setData(state, action) {
       state.reviews.forEach((item: IReviewTableData, index: number) => {
@@ -125,6 +125,7 @@ export const fetchRequestsToReview = (): AppThunk => async (dispatch) => {
     dispatch(startLoading());
     const sessions = await getCheckSessionsByState(CrossCheckSessionState.CROSS_CHECK);
     const requests: IReviewRequest[] = await getReviewRequests();
+    console.log(sessions);
     sessions.forEach((item) => {
       const sessionAttendees = item.attendees.filter((attendee) => attendee.githubId === user)[0];
       let sortedReq = requests.filter((request) => request.crossCheckSessionId === item.id);
