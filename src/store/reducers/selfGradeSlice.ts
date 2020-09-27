@@ -48,6 +48,9 @@ const selfGradeSlice = createSlice({
           if (action.payload.comment) {
             item.comment = action.payload.comment;
           }
+          if (action.payload.subtask) {
+            item.subtask = action.payload.subtask;
+          }
         }
       });
     },
