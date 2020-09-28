@@ -9,6 +9,7 @@ import {
   IReviewRequest,
   IReview,
   IDispute,
+  CrossCheckSessionState,
 } from 'src/models';
 
 export const getUsers = async () => {
@@ -59,6 +60,11 @@ export const updateTask = async (id: string, data: ITask) => {
 export const getCheckSessions = async () => {
   const res = await getData(Endpoint.checkSessions);
   return res;
+};
+
+export const getCheckSessionsByState = async (type: CrossCheckSessionState) => {
+  let sortedSessions: ICheckSession[] = await getCheckSessions();
+  return sortedSessions.filter((item) => item.state === type);
 };
 
 export const addCheckSession = async (checkSession: ICheckSession) => {

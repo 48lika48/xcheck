@@ -3,41 +3,26 @@ import { Select } from 'antd';
 import { IReviewRequest } from '../../../../models';
 const { Option } = Select;
 
-function onChange(value: any) {
-  console.log(`selected ${value}`);
-}
-
-function onBlur() {
-  console.log('blur');
-}
-
-function onFocus() {
-  console.log('focus');
-}
-
-function onSearch(val: String) {
-  console.log('search:', val);
-}
-
 interface IRequestSelectorProps {
   requests: IReviewRequest[];
+  select: (value: string) => void;
+  loading: boolean;
 }
 
 export const RequestSelector = (props: IRequestSelectorProps) => {
-  const { requests } = props;
+  const { requests, select, loading } = props;
   return (
     <Select
-      showSearch
+      loading={loading}
       style={{ width: 200, marginBottom: '1rem' }}
-      placeholder="Select a person"
+      placeholder="Select a request"
       optionFilterProp="children"
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onSearch={onSearch}
-      onChange={onChange}
+      onChange={select}
+      disabled={requests.length === 0}
       filterOption={(input, option) =>
         option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
+      allowClear
     >
       {requests.map((item) => (
         <Option key={item.id} value={item.id}>{`${item.task} - ${item.author}`}</Option>
@@ -45,4 +30,3 @@ export const RequestSelector = (props: IRequestSelectorProps) => {
     </Select>
   );
 };
-//TODO Selector handlers
